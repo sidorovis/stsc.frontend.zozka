@@ -5,7 +5,21 @@ import java.rmi.UnexpectedException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import javafx.application.Platform;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
 import org.controlsfx.dialog.Dialogs;
 import org.jfree.chart.JFreeChart;
@@ -33,24 +47,14 @@ import stsc.general.simulator.multistarter.genetic.StrategyGeneticSearcher;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 import stsc.general.simulator.multistarter.grid.StrategyGridSearcher;
 import stsc.general.statistic.EquityCurve;
-import stsc.general.statistic.Statistics;
+import stsc.general.statistic.Metrics;
 import stsc.general.statistic.StatisticsWithDistanceSelector;
 import stsc.general.statistic.cost.function.CostWeightedSumFunction;
 import stsc.general.strategy.TradingStrategy;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 public class StrategiesPane extends BorderPane {
+
+	private static Metrics METRICS = new Metrics(Metrics.createInit());
 
 	public static class StatisticsDescription {
 		private static DecimalFormat df = new DecimalFormat("0.0000");
@@ -65,8 +69,8 @@ public class StrategiesPane extends BorderPane {
 			return tradingStrategy.getSettings().getId();
 		}
 
-		public SimpleDoubleProperty getProperty(String methodName) {
-			final Double value = Statistics.invokeMethod(tradingStrategy.getStatistics(), methodName);
+		public SimpleDoubleProperty getProperty(String metricName) {
+			final Double value = tradingStrategy.getMetrics().getMetric(metricName);
 			df.format(value);
 			return new SimpleDoubleProperty(Double.valueOf(df.format(value)));
 		}
@@ -128,13 +132,23 @@ public class StrategiesPane extends BorderPane {
 			column.setEditable(false);
 			table.getColumns().add(column);
 		}
-		for (String columnName : Statistics.getStatisticsMethods()) {
+
+		for (Map.Entry<String, Integer> e : METRICS.getIntegerMetrics().entrySet()) {
 			final TableColumn<StatisticsDescription, Number> column = new TableColumn<>();
-			column.setCellValueFactory(cellData -> cellData.getValue().getProperty(columnName));
-			column.setText(columnName);
+			column.setCellValueFactory(cellData -> cellData.getValue().getProperty(e.getKey()));
+			column.setText(e.getKey());
 			column.setEditable(false);
 			table.getColumns().add(column);
 		}
+
+		for (Map.Entry<String, Double> e : METRICS.getDoubleMetrics().entrySet()) {
+			final TableColumn<StatisticsDescription, Number> column = new TableColumn<>();
+			column.setCellValueFactory(cellData -> cellData.getValue().getProperty(e.getKey()));
+			column.setText(e.getKey());
+			column.setEditable(false);
+			table.getColumns().add(column);
+		}
+
 		setCenter(table);
 		table.setItems(model);
 		table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -156,7 +170,7 @@ public class StrategiesPane extends BorderPane {
 		final int selected = table.getSelectionModel().getSelectedIndex();
 		if (selected >= 0) {
 			final StatisticsDescription sd = model.get(selected);
-			drawStatistics(sd.tradingStrategy.getSettings().getId(), sd.tradingStrategy.getStatistics());
+			drawStatistics(sd.tradingStrategy.getSettings().getId(), sd.tradingStrategy.getMetrics());
 		}
 	}
 
@@ -168,11 +182,11 @@ public class StrategiesPane extends BorderPane {
 		}
 	}
 
-	private void drawStatistics(long id, Statistics statistics) {
+	private void drawStatistics(long id, Metrics metrics) {
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 		final TimeSeries ts = new TimeSeries("Equity Curve:" + String.valueOf(id));
 
-		final EquityCurve equityCurveInMoney = statistics.getEquityCurveInMoney();
+		final EquityCurve equityCurveInMoney = metrics.getEquityCurveInMoney();
 
 		for (int i = 0; i < equityCurveInMoney.size(); ++i) {
 			final EquityCurve.Element e = equityCurveInMoney.get(i);
@@ -181,15 +195,14 @@ public class StrategiesPane extends BorderPane {
 		dataset.addSeries(ts);
 
 		chart.getXYPlot().setDataset(dataset);
-		final XYItemRenderer renderer = new StandardXYItemRenderer(StandardXYItemRenderer.LINES, new SerieXYToolTipGenerator(
-				String.valueOf(id)));
+		final XYItemRenderer renderer = new StandardXYItemRenderer(StandardXYItemRenderer.LINES, new SerieXYToolTipGenerator(String.valueOf(id)));
 		renderer.setSeriesPaint(0, Color.RED);
 		chart.getXYPlot().setRenderer(renderer);
 		chart.getXYPlot().setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 	}
 
-	private Optional<StrategySearcher> startCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel,
-			StockStorage stockStorage, SimulationType simulationType) throws BadAlgorithmException, InterruptedException {
+	private Optional<StrategySearcher> startCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage,
+			SimulationType simulationType) throws BadAlgorithmException, InterruptedException {
 		if (simulationType.equals(SimulationType.GRID)) {
 			return startGridCalculation(period, settingsModel, stockStorage);
 		} else {
@@ -197,8 +210,8 @@ public class StrategiesPane extends BorderPane {
 		}
 	}
 
-	private Optional<StrategySearcher> startGridCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel,
-			StockStorage stockStorage) throws BadAlgorithmException {
+	private Optional<StrategySearcher> startGridCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage)
+			throws BadAlgorithmException {
 		try {
 			final SimulatorSettingsGridList list = settingsModel.generateGridSettings(stockStorage, period);
 			checkCorrectSize(list.size());
@@ -212,8 +225,8 @@ public class StrategiesPane extends BorderPane {
 		return Optional.empty();
 	}
 
-	private Optional<StrategySearcher> startGeneticCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel,
-			StockStorage stockStorage) throws BadAlgorithmException, InterruptedException {
+	private Optional<StrategySearcher> startGeneticCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage)
+			throws BadAlgorithmException, InterruptedException {
 		try {
 			final SimulatorSettingsGeneticList list = settingsModel.generateGeneticSettings(stockStorage, period);
 			final ObservableStrategySelector selector = createSelector();

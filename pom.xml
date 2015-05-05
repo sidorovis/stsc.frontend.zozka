@@ -4,7 +4,7 @@
 
   <groupId>stsc</groupId>
   <artifactId>stsc.frontend.zozka</artifactId>
-  <version>0.0.17-PROSEP</version>
+  <version>0.0.18-WEBINTERFACE</version>
   <packaging>jar</packaging>
 
   <name>stsc.frontend.zozka</name>
@@ -85,12 +85,12 @@
     <dependency>
       <groupId>stsc</groupId>
       <artifactId>stsc.general</artifactId>
-      <version>${project.version}</version>
+      <version>0.0.17-PROSEP</version>
     </dependency>
     <dependency>
       <groupId>stsc</groupId>
       <artifactId>stsc.stocks.yahoo.downloader</artifactId>
-      <version>${project.version}</version>
+      <version>0.0.17-PROSEP</version>
     </dependency>
     <dependency>
       <groupId>stsc</groupId>

@@ -2,6 +2,7 @@ package stsc.frontend.zozka.panes;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -25,7 +26,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 
 import stsc.common.FromToPeriod;
 import stsc.general.statistic.EquityCurve;
-import stsc.general.statistic.Statistics;
+import stsc.general.statistic.Metrics;
 
 public class EquityPane {
 
@@ -61,15 +62,15 @@ public class EquityPane {
 	@FXML
 	private TableColumn<StatisticElement, String> statisticValue;
 
-	public EquityPane(final Stage owner, Statistics statistics, FromToPeriod period) throws IOException {
+	public EquityPane(final Stage owner, Metrics metrics, FromToPeriod period) throws IOException {
 		final URL location = EquityPane.class.getResource("04_equity_pane.fxml");
 		final FXMLLoader loader = new FXMLLoader(location);
 		loader.setController(this);
 		this.gui = loader.load();
 
 		initialize();
-		loadStatisticsTableModel(statistics);
-		setChartPane(statistics);
+		loadStatisticsTableModel(metrics);
+		setChartPane(metrics);
 	}
 
 	private void initialize() {
@@ -79,10 +80,12 @@ public class EquityPane {
 		statisticValue.setCellValueFactory(cellData -> cellData.getValue().propertyValue());
 	}
 
-	private void loadStatisticsTableModel(Statistics statistics) {
-		for (String methodName : Statistics.getStatisticsMethods()) {
-			final Double result = Statistics.invokeMethod(statistics, methodName);
-			statisticsTableModel.add(new StatisticElement(methodName, result.toString()));
+	private void loadStatisticsTableModel(Metrics metrics) {
+		for (Map.Entry<String, Integer> e : metrics.getIntegerMetrics().entrySet()) {
+			statisticsTableModel.add(new StatisticElement(e.getKey(), e.getValue().toString()));
+		}
+		for (Map.Entry<String, Double> e : metrics.getDoubleMetrics().entrySet()) {
+			statisticsTableModel.add(new StatisticElement(e.getKey(), e.getValue().toString()));
 		}
 	}
 
@@ -93,11 +96,11 @@ public class EquityPane {
 		assert statisticValue != null : "fx:id=\"statisticValue\" was not injected: check your FXML file.";
 	}
 
-	private void setChartPane(Statistics statistics) {
+	private void setChartPane(Metrics metrics) {
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 		final TimeSeries ts = new TimeSeries("Equity Curve");
 
-		final EquityCurve equityCurveInMoney = statistics.getEquityCurveInMoney();
+		final EquityCurve equityCurveInMoney = metrics.getEquityCurveInMoney();
 
 		for (int i = 0; i < equityCurveInMoney.size(); ++i) {
 			final EquityCurve.Element e = equityCurveInMoney.get(i);

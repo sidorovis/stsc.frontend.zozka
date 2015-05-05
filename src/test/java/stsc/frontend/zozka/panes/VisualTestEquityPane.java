@@ -20,7 +20,7 @@ public class VisualTestEquityPane extends Application {
 				"EodExecutions = a1\na1.loadLine = OpenWhileSignalAlgorithm( Level( f = 0.75d, Diff(In(e=close), In(e=open)) ) )\n");
 		final SimulatorSettings settings = new SimulatorSettings(0, init);
 		final Simulator simulator = new Simulator(settings);
-		final EquityPane equityPane = new EquityPane(parent, simulator.getStatistics(), period);
+		final EquityPane equityPane = new EquityPane(parent, simulator.getMetrics(), period);
 		final Scene scene = new Scene(equityPane.getMainPane());
 		parent.setScene(scene);
 		parent.show();

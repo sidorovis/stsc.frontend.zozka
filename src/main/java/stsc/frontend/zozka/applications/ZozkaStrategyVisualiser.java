@@ -35,7 +35,7 @@ import stsc.frontend.zozka.panes.CurvesViewPane;
 import stsc.frontend.zozka.panes.EquityPane;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorSettings;
-import stsc.general.statistic.Statistics;
+import stsc.general.statistic.Metrics;
 import stsc.general.trading.TradeProcessorInit;
 
 public class ZozkaStrategyVisualiser extends Application {
@@ -144,8 +144,7 @@ public class ZozkaStrategyVisualiser extends Application {
 			final Simulator simulator = new Simulator(settings, stockNames);
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
 
-			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(owner, stock, period, executionsName,
-					signalsStorage);
+			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(owner, stock, period, executionsName, signalsStorage);
 			final Tab tab = new Tab();
 			tab.setText(stock.getName());
 			tab.setContent(stockViewPane.getMainPane());
@@ -198,16 +197,16 @@ public class ZozkaStrategyVisualiser extends Application {
 
 			final Simulator simulator = new Simulator(settings);
 
-			addEquityPaneTab(simulator, period, simulator.getStatistics());
+			addEquityPaneTab(simulator, period, simulator.getMetrics());
 		} catch (BadAlgorithmException | BadSignalException | IOException e) {
 			Dialogs.create().showException(e);
 		}
 	}
 
-	private void addEquityPaneTab(Simulator simulator, FromToPeriod period, Statistics statistics) throws IOException {
-		final EquityPane equityPane = new EquityPane(owner, statistics, period);
+	private void addEquityPaneTab(Simulator simulator, FromToPeriod period, Metrics metrics) throws IOException {
+		final EquityPane equityPane = new EquityPane(owner, metrics, period);
 		final Tab tab = new Tab();
-		tab.setText("E:" + tabPane.getTabs().size() + " " + String.format("%.3f", statistics.getAvGain()));
+		tab.setText("E:" + tabPane.getTabs().size() + " " + String.format("%.3f", metrics.getDoubleMetric("avGain")));
 		tab.setContent(equityPane.getMainPane());
 		tabPane.getTabs().add(tab);
 		tabPane.getSelectionModel().select(tab);
