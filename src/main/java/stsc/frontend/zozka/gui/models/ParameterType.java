@@ -11,8 +11,8 @@ import stsc.general.simulator.multistarter.MpSubExecution;
 
 public enum ParameterType {
 
-	INTEGER("Integer", Integer.class, MpInteger.class), DOUBLE("Double", Double.class, MpDouble.class), STRING("String", String.class,
-			MpString.class), SUB_EXECUTION("Sub Execution", String.class, MpSubExecution.class);
+	INTEGER("Integer", Integer.class, MpInteger.class), DOUBLE("Double", Double.class, MpDouble.class), STRING("String", String.class, MpString.class), SUB_EXECUTION(
+			"Sub Execution", String.class, MpSubExecution.class);
 
 	private static class NameToParameterType {
 		public static final Map<String, ParameterType> values = new HashMap<>();
@@ -20,9 +20,9 @@ public enum ParameterType {
 
 	private final String name;
 	private final Class<?> classType;
-	private final Class<? extends MpIterator<?>> iteratorType;
+	private final Class<? extends MpIterator<?, ?>> iteratorType;
 
-	private <T> ParameterType(String name, Class<T> classType, Class<? extends MpIterator<T>> iteratorType) {
+	private <T> ParameterType(String name, Class<T> classType, Class<? extends MpIterator<T, ?>> iteratorType) {
 		this.name = name;
 		this.classType = classType;
 		this.iteratorType = iteratorType;
@@ -37,7 +37,7 @@ public enum ParameterType {
 		return classType;
 	}
 
-	public Class<? extends MpIterator<?>> getIteratorType() {
+	public Class<? extends MpIterator<?, ?>> getIteratorType() {
 		return iteratorType;
 	}
 
