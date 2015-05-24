@@ -189,8 +189,7 @@ public class CreateAlgorithmController implements Initializable {
 	private void connectQuestionButton() {
 		questionButton.setOnAction(e -> {
 			Dialogs.create().owner(stage).title("Information").masthead(null)
-					.message("To understand what is happening\nhere than please ask developer and then\nchange this text. Thanks!")
-					.showInformation();
+					.message("To understand what is happening\nhere than please ask developer and then\nchange this text. Thanks!").showInformation();
 		});
 	}
 
@@ -277,8 +276,8 @@ public class CreateAlgorithmController implements Initializable {
 	}
 
 	private Optional<String> getParameterName() {
-		final Optional<String> parameterName = Dialogs.create().owner(stage).title("Enter Parameter Name").masthead("Parameter name:")
-				.message("Enter: ").showTextInput("ParameterName");
+		final Optional<String> parameterName = Dialogs.create().owner(stage).title("Enter Parameter Name").masthead("Parameter name:").message("Enter: ")
+				.showTextInput("ParameterName");
 		if (parameterName.isPresent()) {
 			if (!parameterNamePattern.matcher(parameterName.get()).matches()) {
 				Dialogs.create().owner(stage).title("Bad Parameter Name").masthead("Parameter name not match pattern.")
@@ -313,8 +312,7 @@ public class CreateAlgorithmController implements Initializable {
 		if (!to.isPresent()) {
 			return;
 		}
-		model.getNumberAlgorithms().add(
-				new NumberAlgorithmParameter(parameterName, ParameterType.INTEGER, from.get(), step.get(), to.get()));
+		model.addNumberAlgorithm(new NumberAlgorithmParameter(parameterName, ParameterType.INTEGER, from.get(), step.get(), to.get()));
 	}
 
 	private void addDoubleParameter(String parameterName, String defaultFrom, String defaultStep, String defaultTo) {
@@ -331,13 +329,12 @@ public class CreateAlgorithmController implements Initializable {
 		if (!to.isPresent()) {
 			return;
 		}
-		model.getNumberAlgorithms()
-				.add(new NumberAlgorithmParameter(parameterName, ParameterType.DOUBLE, from.get(), step.get(), to.get()));
+		model.addNumberAlgorithm(new NumberAlgorithmParameter(parameterName, ParameterType.DOUBLE, from.get(), step.get(), to.get()));
 	}
 
 	private Optional<String> readIntegerParameter(final String defaultValue, String masthead, String message, String errorMessage) {
-		final Optional<String> integerParameter = Dialogs.create().owner(stage).title("Integer Parameter").masthead(masthead)
-				.message(message).showTextInput(defaultValue);
+		final Optional<String> integerParameter = Dialogs.create().owner(stage).title("Integer Parameter").masthead(masthead).message(message)
+				.showTextInput(defaultValue);
 		if (integerParameter.isPresent() && !NumberAlgorithmParameter.integerParPattern.matcher(integerParameter.get()).matches()) {
 			Dialogs.create().owner(stage).title("Integer Parameter").masthead("Please insert integer").message(errorMessage).showError();
 			return Optional.empty();
@@ -345,10 +342,8 @@ public class CreateAlgorithmController implements Initializable {
 		return Optional.of(integerParameter.get());
 	}
 
-	private Optional<String> readDoubleParameter(final String defaultValue, String title, String masthead, String message,
-			String errorMessage) {
-		final Optional<String> doubleParameter = Dialogs.create().owner(stage).title(title).masthead(masthead).message(message)
-				.showTextInput(defaultValue);
+	private Optional<String> readDoubleParameter(final String defaultValue, String title, String masthead, String message, String errorMessage) {
+		final Optional<String> doubleParameter = Dialogs.create().owner(stage).title(title).masthead(masthead).message(message).showTextInput(defaultValue);
 		if (doubleParameter.isPresent() && !NumberAlgorithmParameter.doubleParPattern.matcher(doubleParameter.get()).matches()) {
 			Dialogs.create().owner(stage).title(title).masthead("Please insert double").message(errorMessage).showError();
 			return Optional.empty();
@@ -372,8 +367,7 @@ public class CreateAlgorithmController implements Initializable {
 		final ArrayList<String> values = new ArrayList<>();
 		while (true) {
 			final Optional<String> stringValue = Dialogs.create().owner(stage).title(title)
-					.masthead("Hack: add several divided by ','.\nPress 'Cancel' to finish enter.").message("Enter domen value: ")
-					.showTextInput("");
+					.masthead("Hack: add several divided by ','.\nPress 'Cancel' to finish enter.").message("Enter domen value: ").showTextInput("");
 			if (stringValue.isPresent()) {
 				values.add(stringValue.get());
 			} else {

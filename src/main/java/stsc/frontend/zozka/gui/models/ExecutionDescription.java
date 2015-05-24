@@ -66,10 +66,30 @@ public final class ExecutionDescription implements Externalizable {
 		return algorithmName;
 	}
 
+	public ExecutionDescription addNumberAlgorithm(final NumberAlgorithmParameter numberAlgorithmParameter) {
+		numberAlgorithms.add(numberAlgorithmParameter);
+		return this;
+	}
+
+	public ExecutionDescription addTextAlgorithm(final TextAlgorithmParameter textAlgorithmParameter) {
+		textAlgorithms.add(textAlgorithmParameter);
+		return this;
+	}
+
+	/**
+	 * Please do not use it to change {@link ExecutionDescription}.
+	 * 
+	 * @return {@link ObservableList} of {@link NumberAlgorithmParameter}.
+	 */
 	public ObservableList<NumberAlgorithmParameter> getNumberAlgorithms() {
 		return numberAlgorithms;
 	}
 
+	/**
+	 * Please do not use it to change {@link ExecutionDescription}.
+	 * 
+	 * @return {@link ObservableList} of {@link TextAlgorithmParameter}.
+	 */
 	public ObservableList<TextAlgorithmParameter> getTextAlgorithms() {
 		return textAlgorithms;
 	}
