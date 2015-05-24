@@ -1,9 +1,12 @@
 package stsc.frontend.zozka.gui.models;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.common.collect.Ordering;
 
 import stsc.common.FromToPeriod;
 import stsc.common.Settings;
@@ -44,6 +47,35 @@ public class ExecutionDescriptionTest {
 			Assert.assertTrue(22 >= aSettings.getInteger("pName").intValue());
 			Assert.assertEquals(3 * ((int) ((aSettings.getInteger("pName").doubleValue() - 10.0) / 3.0)) + 10.0, aSettings.getInteger("pName").doubleValue(),
 					Settings.doubleEpsilon);
+		}
+	}
+
+	@Test
+	public void testExecutionDescriptionForString() throws BadParameterException {
+		final ExecutionDescription from = new ExecutionDescription(AlgorithmType.STOCK_VALUE, "testExecution", "testAlgorithm");
+		Assert.assertFalse(from.parameterNameExists("notexists"));
+		from.addTextAlgorithm(new TextAlgorithmParameter("pName", ParameterType.STRING, Arrays.asList("asd", "cvb", "tyu")));
+		final GeneticExecutionInitializer gei = from.createGeneticExecution(new FromToPeriod(new Date(), new Date()));
+		Assert.assertEquals("testAlgorithm", gei.getAlgorithmName());
+		Assert.assertEquals("testExecution", gei.getExecutionName());
+		for (int i = 0; i < 1000; ++i) {
+			final AlgorithmSettings aSettings = gei.generateRandom();
+			Assert.assertTrue(Arrays.asList("asd", "cvb", "tyu").contains(aSettings.getString("pName")));
+		}
+	}
+
+	@Test
+	public void testExecutionDescriptionForSubExecutions() throws BadParameterException {
+		final ExecutionDescription from = new ExecutionDescription(AlgorithmType.STOCK_VALUE, "testExecution", "testAlgorithm");
+		Assert.assertFalse(from.parameterNameExists("notexists"));
+		from.addTextAlgorithm(new TextAlgorithmParameter("pName", ParameterType.SUB_EXECUTION, Arrays.asList("vfe", "oru", "lkj")));
+		final GeneticExecutionInitializer gei = from.createGeneticExecution(new FromToPeriod(new Date(), new Date()));
+		Assert.assertEquals("testAlgorithm", gei.getAlgorithmName());
+		Assert.assertEquals("testExecution", gei.getExecutionName());
+		for (int i = 0; i < 1000; ++i) {
+			final AlgorithmSettings aSettings = gei.generateRandom();
+			aSettings.getSubExecutions().sort(Ordering.natural());
+			Assert.assertTrue(Arrays.asList("lkj", "vfe", "oru").contains(aSettings.getSubExecutions().get(0)));
 		}
 	}
 }
