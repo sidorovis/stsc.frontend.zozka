@@ -114,8 +114,7 @@ public class ZozkaStrategySelector extends Application {
 			return;
 		final FromToPeriod period = periodAndDatafeedController.getPeriod();
 		try {
-			final StrategiesPane pane = new StrategiesPane(owner, period, simulatorSettingsController.getModel(), stockStorage, chart,
-					simulationType);
+			final StrategiesPane pane = new StrategiesPane(owner, period, simulatorSettingsController.getModel(), stockStorage, chart, simulationType);
 			final Tab tab = new Tab(tabName + "(" + (new Date()) + ")");
 			tab.setContent(pane);
 			tabPane.getTabs().add(tab);

@@ -3,6 +3,7 @@ package stsc.frontend.zozka.gui.models;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.util.List;
 
@@ -20,6 +21,10 @@ import stsc.general.simulator.multistarter.genetic.GeneticExecutionInitializer;
 import stsc.general.simulator.multistarter.grid.AlgorithmSettingsGridIterator;
 import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 
+/**
+ * {@link ExecutionDescription} is a GUI version of {@link AlgorithmParameters}
+ * with {@link AlgorithmType}, {@link #executionName}, {@link #algorithmName} .<br/>
+ */
 public final class ExecutionDescription implements Externalizable {
 
 	private static final long serialVersionUID = 1312747786515253819L;
@@ -31,8 +36,10 @@ public final class ExecutionDescription implements Externalizable {
 	private final ObservableList<NumberAlgorithmParameter> numberAlgorithms;
 	private final ObservableList<TextAlgorithmParameter> textAlgorithms;
 
-	public static ExecutionDescription createForLoadFromFile() {
-		return new ExecutionDescription();
+	public static ExecutionDescription loadFromFile(ObjectInputStream is) throws ClassNotFoundException, IOException {
+		final ExecutionDescription ed = new ExecutionDescription();
+		ed.readExternal(is);
+		return ed;
 	}
 
 	private ExecutionDescription() {

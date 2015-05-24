@@ -76,7 +76,7 @@ public final class NumberAlgorithmParameter implements Function<Void, Boolean> {
 		return valid;
 	}
 
-	public void validate() {
+	private void validate() {
 		try {
 			valid = false;
 

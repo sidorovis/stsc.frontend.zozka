@@ -24,7 +24,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class SimulatorSettingsController {
+public final class SimulatorSettingsController {
 
 	private final Stage owner;
 	private final Parent gui;

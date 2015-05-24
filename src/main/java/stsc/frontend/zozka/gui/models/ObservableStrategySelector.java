@@ -5,18 +5,19 @@ import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import stsc.general.statistic.BorderedStrategySelector;
 import stsc.general.statistic.StrategySelector;
 import stsc.general.strategy.TradingStrategy;
 
-public class ObservableStrategySelector extends BorderedStrategySelector {
+/**
+ * This class provide adapter for {@link StrategySelector} to JavaFx
+ * {@link ObservableList}.
+ */
+public class ObservableStrategySelector implements StrategySelector {
 
 	final private StrategySelector selector;
-	final private ObservableList<TradingStrategy> strategyList = FXCollections.synchronizedObservableList(FXCollections
-			.observableArrayList());
+	final private ObservableList<TradingStrategy> strategyList = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
 	public ObservableStrategySelector(StrategySelector selector) {
-		super(selector.size());
 		this.selector = selector;
 	}
 
@@ -35,8 +36,8 @@ public class ObservableStrategySelector extends BorderedStrategySelector {
 	}
 
 	@Override
-	public synchronized void removeStrategy(TradingStrategy strategy) {
-		strategyList.remove(strategy);
+	public synchronized boolean removeStrategy(TradingStrategy strategy) {
+		return strategyList.remove(strategy);
 	}
 
 	@Override
@@ -44,7 +45,23 @@ public class ObservableStrategySelector extends BorderedStrategySelector {
 		return selector.getStrategies();
 	}
 
-	public ObservableList<TradingStrategy> getStrategyList() {
+	@Override
+	public synchronized int currentStrategiesAmount() {
+		return selector.currentStrategiesAmount();
+	}
+
+	@Override
+	public int maxPossibleAmount() {
+		return selector.maxPossibleAmount();
+	}
+
+	/**
+	 * JavaFx {@link ObservableList} adapter for GUI.
+	 * 
+	 * @return observable list of {@link TradingStrategy}.
+	 */
+	public ObservableList<TradingStrategy> getObservableStrategyList() {
 		return strategyList;
 	}
+
 }

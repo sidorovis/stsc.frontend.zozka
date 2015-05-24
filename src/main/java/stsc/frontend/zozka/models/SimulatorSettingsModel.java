@@ -15,13 +15,18 @@ import javafx.collections.ObservableList;
 import stsc.common.FromToPeriod;
 import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.gui.models.ExecutionDescription;
+import stsc.general.simulator.SimulatorSettings;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.genetic.GeneticExecutionInitializer;
 import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticList;
 import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 
-public class SimulatorSettingsModel {
+/**
+ * This class store GUI version of {@link SimulatorSettings} (+period field and
+ * etc.).
+ */
+public final class SimulatorSettingsModel {
 
 	private final ObservableList<ExecutionDescription> model;
 
@@ -67,8 +72,7 @@ public class SimulatorSettingsModel {
 			final int size = is.readInt();
 			model.clear();
 			for (int i = 0; i < size; ++i) {
-				final ExecutionDescription ed = ExecutionDescription.createForLoadFromFile();
-				ed.readExternal(is);
+				final ExecutionDescription ed = ExecutionDescription.loadFromFile(is);
 				model.add(ed);
 			}
 		}
@@ -87,8 +91,7 @@ public class SimulatorSettingsModel {
 		return new SimulatorSettingsGridList(stockStorage, period, stocks, eods, false);
 	}
 
-	public SimulatorSettingsGeneticList generateGeneticSettings(StockStorage stockStorage, FromToPeriod period)
-			throws BadParameterException {
+	public SimulatorSettingsGeneticList generateGeneticSettings(StockStorage stockStorage, FromToPeriod period) throws BadParameterException {
 		final List<GeneticExecutionInitializer> stocks = new ArrayList<>();
 		final List<GeneticExecutionInitializer> eods = new ArrayList<>();
 		for (ExecutionDescription executionDescription : model) {

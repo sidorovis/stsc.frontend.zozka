@@ -11,8 +11,10 @@ import stsc.general.simulator.multistarter.MpSubExecution;
 
 public enum ParameterType {
 
-	INTEGER("Integer", Integer.class, MpInteger.class), DOUBLE("Double", Double.class, MpDouble.class), STRING("String", String.class, MpString.class), SUB_EXECUTION(
-			"Sub Execution", String.class, MpSubExecution.class);
+	INTEGER("Integer", Integer.class, MpInteger.class), 
+	DOUBLE("Double", Double.class, MpDouble.class), 
+	STRING("String", String.class, MpString.class), 
+	SUB_EXECUTION("Sub Execution", String.class, MpSubExecution.class);
 
 	private static class NameToParameterType {
 		public static final Map<String, ParameterType> values = new HashMap<>();
