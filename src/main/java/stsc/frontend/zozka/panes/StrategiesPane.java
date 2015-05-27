@@ -49,10 +49,11 @@ import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 import stsc.general.simulator.multistarter.grid.StrategyGridSearcher;
 import stsc.general.statistic.EquityCurve;
 import stsc.general.statistic.Metrics;
-import stsc.general.statistic.StatisticsWithDistanceSelector;
 import stsc.general.statistic.cost.function.CostWeightedProductFunction;
 import stsc.general.statistic.cost.function.CostWeightedSumFunction;
 import stsc.general.strategy.TradingStrategy;
+import stsc.general.strategy.selector.StatisticsWithDistanceSelector;
+import stsc.general.strategy.selector.StrategyFilteringSelector;
 
 public class StrategiesPane extends BorderPane {
 
@@ -238,14 +239,10 @@ public class StrategiesPane extends BorderPane {
 
 			addListenerOnChanged(selector.getObservableStrategyList());
 
-			final StrategyGeneticSearcherBuilder builder = StrategyGeneticSearcher.getBuilder();
-			builder.withThreadAmount(4).withSimulatorSettings(list);
-			builder.withStrategySelector(selector);
-			builder.withPopulationCostFunction(new CostWeightedProductFunction());
-			builder.withPopulationSize(300);
+			final StrategyGeneticSearcher sgs = createStrategyGeneticSearcher(list, selector);
 
-			final StrategyGeneticSearcher sgs = builder.build();
-
+			// TODO fix this thread creating process, it is very unstable (but
+			// OK for now).
 			new Thread(() -> {
 				try {
 					sgs.waitAndGetSelector();
@@ -262,15 +259,24 @@ public class StrategiesPane extends BorderPane {
 		return Optional.empty();
 	}
 
+	private StrategyGeneticSearcher createStrategyGeneticSearcher(SimulatorSettingsGeneticList list, ObservableStrategySelector selector) {
+		final StrategyGeneticSearcherBuilder builder = StrategyGeneticSearcher.getBuilder();
+		builder.withThreadAmount(4).withSimulatorSettings(list);
+		builder.withStrategySelector(selector);
+		builder.withPopulationCostFunction(new CostWeightedProductFunction());
+		builder.withPopulationSize(300);
+		return builder.build();
+	}
+
 	private ObservableStrategySelector createSelector() {
 		final CostWeightedSumFunction costFunction = new CostWeightedSumFunction();
-		costFunction.withParameter("winProb", 1.0);
+		costFunction.withParameter("winProb", 4.0);
 		costFunction.withParameter("ddValueAvGain", -1.0);
 		costFunction.withParameter("avGain", 1.0);
 		costFunction.withParameter("kelly", 1.0);
 		costFunction.withParameter("avWin", 1.0);
 		costFunction.withParameter("avLoss", -1.0);
-		costFunction.withParameter("freq", 3.0);
+		costFunction.withParameter("freq", 1.0);
 		costFunction.withParameter("maxLoss", -1.0);
 		final StatisticsWithDistanceSelector selectorBase = new StatisticsWithDistanceSelector(100, 3, costFunction);
 		selectorBase.withDistanceParameter("winProb", 0.75);
@@ -278,7 +284,10 @@ public class StrategiesPane extends BorderPane {
 		selectorBase.withDistanceParameter("avWin", 0.075);
 		selectorBase.withDistanceParameter("startMonthMax", 0.45);
 		selectorBase.withDistanceParameter("avLoss", 0.7);
-		final ObservableStrategySelector selector = new ObservableStrategySelector(selectorBase);
+		final StrategyFilteringSelector filteringSelector = new StrategyFilteringSelector(selectorBase);
+		filteringSelector.withDoubleMinFilter("freq", 0.01);
+		filteringSelector.withDoubleMinFilter("winProb", 0.2);
+		final ObservableStrategySelector selector = new ObservableStrategySelector(filteringSelector);
 		return selector;
 	}
 

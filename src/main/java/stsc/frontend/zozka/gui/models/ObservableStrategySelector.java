@@ -1,12 +1,11 @@
 package stsc.frontend.zozka.gui.models;
 
 import java.util.List;
-import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import stsc.general.statistic.StrategySelector;
 import stsc.general.strategy.TradingStrategy;
+import stsc.general.strategy.selector.StrategySelector;
 
 /**
  * This class provide adapter for {@link StrategySelector} to JavaFx
@@ -22,17 +21,23 @@ public class ObservableStrategySelector implements StrategySelector {
 	}
 
 	@Override
-	public synchronized Optional<TradingStrategy> addStrategy(TradingStrategy strategy) {
-		final Optional<TradingStrategy> deleted = selector.addStrategy(strategy);
-		if (deleted.isPresent()) {
-			if (!deleted.get().equals(strategy)) {
-				strategyList.remove(deleted.get());
-				strategyList.add(strategy);
+	public synchronized List<TradingStrategy> addStrategy(final TradingStrategy newStrategy) {
+		final List<TradingStrategy> deletedStrategies = selector.addStrategy(newStrategy);
+		boolean newStrategyWasAdded = true;
+		if (!deletedStrategies.isEmpty()) {
+			for (TradingStrategy i : deletedStrategies) {
+				if (i.equals(newStrategy)) {
+					newStrategyWasAdded = false;
+				}
+				strategyList.remove(i);
+			}
+			if (newStrategyWasAdded) {
+				strategyList.add(newStrategy);
 			}
 		} else {
-			strategyList.add(strategy);
+			strategyList.add(newStrategy);
 		}
-		return deleted;
+		return deletedStrategies;
 	}
 
 	@Override
