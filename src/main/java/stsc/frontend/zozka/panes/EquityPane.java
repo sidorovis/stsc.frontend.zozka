@@ -26,6 +26,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 
 import stsc.common.FromToPeriod;
 import stsc.general.statistic.EquityCurve;
+import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
 
 public class EquityPane {
@@ -81,11 +82,11 @@ public class EquityPane {
 	}
 
 	private void loadStatisticsTableModel(Metrics metrics) {
-		for (Map.Entry<String, Integer> e : metrics.getIntegerMetrics().entrySet()) {
-			statisticsTableModel.add(new StatisticElement(e.getKey(), e.getValue().toString()));
+		for (Map.Entry<MetricType, Integer> e : metrics.getIntegerMetrics().entrySet()) {
+			statisticsTableModel.add(new StatisticElement(e.getKey().name(), e.getValue().toString()));
 		}
-		for (Map.Entry<String, Double> e : metrics.getDoubleMetrics().entrySet()) {
-			statisticsTableModel.add(new StatisticElement(e.getKey(), e.getValue().toString()));
+		for (Map.Entry<MetricType, Double> e : metrics.getDoubleMetrics().entrySet()) {
+			statisticsTableModel.add(new StatisticElement(e.getKey().name(), e.getValue().toString()));
 		}
 	}
 

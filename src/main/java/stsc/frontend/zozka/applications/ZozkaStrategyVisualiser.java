@@ -35,6 +35,7 @@ import stsc.frontend.zozka.panes.CurvesViewPane;
 import stsc.frontend.zozka.panes.EquityPane;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorSettings;
+import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
 import stsc.general.trading.TradeProcessorInit;
 
@@ -206,7 +207,7 @@ public class ZozkaStrategyVisualiser extends Application {
 	private void addEquityPaneTab(Simulator simulator, FromToPeriod period, Metrics metrics) throws IOException {
 		final EquityPane equityPane = new EquityPane(owner, metrics, period);
 		final Tab tab = new Tab();
-		tab.setText("E:" + tabPane.getTabs().size() + " " + String.format("%.3f", metrics.getDoubleMetric("avGain")));
+		tab.setText("E:" + tabPane.getTabs().size() + " " + String.format("%.3f", metrics.getDoubleMetric(MetricType.avGain)));
 		tab.setContent(equityPane.getMainPane());
 		tabPane.getTabs().add(tab);
 		tabPane.getSelectionModel().select(tab);

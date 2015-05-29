@@ -48,6 +48,7 @@ import stsc.general.simulator.multistarter.genetic.StrategyGeneticSearcherBuilde
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 import stsc.general.simulator.multistarter.grid.StrategyGridSearcher;
 import stsc.general.statistic.EquityCurve;
+import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
 import stsc.general.statistic.cost.function.CostWeightedProductFunction;
 import stsc.general.statistic.cost.function.CostWeightedSumFunction;
@@ -57,7 +58,7 @@ import stsc.general.strategy.selector.StrategyFilteringSelector;
 
 public class StrategiesPane extends BorderPane {
 
-	private static Metrics METRICS = new Metrics(Metrics.createInit());
+	private static Metrics METRICS = new Metrics(Metrics.getBuilder());
 
 	public static class StatisticsDescription {
 		private static DecimalFormat df = new DecimalFormat("0.0000");
@@ -72,8 +73,8 @@ public class StrategiesPane extends BorderPane {
 			return tradingStrategy.getSettings().getId();
 		}
 
-		public SimpleDoubleProperty getProperty(String metricName) {
-			final Double value = tradingStrategy.getMetrics().getMetric(metricName);
+		public SimpleDoubleProperty getProperty(MetricType metricType) {
+			final Double value = tradingStrategy.getMetrics().getMetric(metricType);
 			df.format(value);
 			return new SimpleDoubleProperty(Double.valueOf(df.format(value)));
 		}
@@ -136,18 +137,18 @@ public class StrategiesPane extends BorderPane {
 			table.getColumns().add(column);
 		}
 
-		for (Map.Entry<String, Integer> e : METRICS.getIntegerMetrics().entrySet()) {
+		for (Map.Entry<MetricType, Integer> e : METRICS.getIntegerMetrics().entrySet()) {
 			final TableColumn<StatisticsDescription, Number> column = new TableColumn<>();
 			column.setCellValueFactory(cellData -> cellData.getValue().getProperty(e.getKey()));
-			column.setText(e.getKey());
+			column.setText(e.getKey().name());
 			column.setEditable(false);
 			table.getColumns().add(column);
 		}
 
-		for (Map.Entry<String, Double> e : METRICS.getDoubleMetrics().entrySet()) {
+		for (Map.Entry<MetricType, Double> e : METRICS.getDoubleMetrics().entrySet()) {
 			final TableColumn<StatisticsDescription, Number> column = new TableColumn<>();
 			column.setCellValueFactory(cellData -> cellData.getValue().getProperty(e.getKey()));
-			column.setText(e.getKey());
+			column.setText(e.getKey().name());
 			column.setEditable(false);
 			table.getColumns().add(column);
 		}
@@ -270,23 +271,23 @@ public class StrategiesPane extends BorderPane {
 
 	private ObservableStrategySelector createSelector() {
 		final CostWeightedSumFunction costFunction = new CostWeightedSumFunction();
-		costFunction.withParameter("winProb", 4.0);
-		costFunction.withParameter("ddValueAvGain", -1.0);
-		costFunction.withParameter("avGain", 1.0);
-		costFunction.withParameter("kelly", 1.0);
-		costFunction.withParameter("avWin", 1.0);
-		costFunction.withParameter("avLoss", -1.0);
-		costFunction.withParameter("freq", 1.0);
-		costFunction.withParameter("maxLoss", -1.0);
+		costFunction.withParameter(MetricType.winProb, 4.0);
+		costFunction.withParameter(MetricType.ddValueAvGain, -1.0);
+		costFunction.withParameter(MetricType.avGain, 1.0);
+		costFunction.withParameter(MetricType.kelly, 1.0);
+		costFunction.withParameter(MetricType.avWin, 1.0);
+		costFunction.withParameter(MetricType.avLoss, -1.0);
+		costFunction.withParameter(MetricType.freq, 1.0);
+		costFunction.withParameter(MetricType.maxLoss, -1.0);
 		final StatisticsWithDistanceSelector selectorBase = new StatisticsWithDistanceSelector(100, 3, costFunction);
-		selectorBase.withDistanceParameter("winProb", 0.75);
-		selectorBase.withDistanceParameter("avGain", 0.075);
-		selectorBase.withDistanceParameter("avWin", 0.075);
-		selectorBase.withDistanceParameter("startMonthMax", 0.45);
-		selectorBase.withDistanceParameter("avLoss", 0.7);
+		selectorBase.withDistanceParameter(MetricType.winProb, 0.75);
+		selectorBase.withDistanceParameter(MetricType.avGain, 0.075);
+		selectorBase.withDistanceParameter(MetricType.avWin, 0.075);
+		selectorBase.withDistanceParameter(MetricType.startMonthMax, 0.45);
+		selectorBase.withDistanceParameter(MetricType.avLoss, 0.7);
 		final StrategyFilteringSelector filteringSelector = new StrategyFilteringSelector(selectorBase);
-		filteringSelector.withDoubleMinFilter("freq", 0.01);
-		filteringSelector.withDoubleMinFilter("winProb", 0.2);
+		filteringSelector.withDoubleMinFilter(MetricType.freq, 0.01);
+		filteringSelector.withDoubleMinFilter(MetricType.winProb, 0.2);
 		final ObservableStrategySelector selector = new ObservableStrategySelector(filteringSelector);
 		return selector;
 	}
