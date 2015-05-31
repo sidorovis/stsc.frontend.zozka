@@ -10,6 +10,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import stsc.common.FromToPeriod;
+import stsc.common.algorithms.AlgorithmType;
 import stsc.general.simulator.multistarter.AlgorithmParameters;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.MpDouble;

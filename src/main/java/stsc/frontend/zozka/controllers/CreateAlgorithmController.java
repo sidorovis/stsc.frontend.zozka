@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 
 import org.controlsfx.dialog.Dialogs;
 
+import stsc.common.algorithms.AlgorithmType;
 import stsc.common.algorithms.BadAlgorithmException;
-import stsc.frontend.zozka.gui.models.AlgorithmType;
 import stsc.frontend.zozka.gui.models.ExecutionDescription;
 import stsc.frontend.zozka.gui.models.NumberAlgorithmParameter;
 import stsc.frontend.zozka.gui.models.ParameterType;
@@ -22,6 +22,7 @@ import stsc.storage.AlgorithmsStorage;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -162,7 +163,7 @@ public class CreateAlgorithmController implements Initializable {
 	}
 
 	private void connectActionsForAlgorithmType() {
-		algorithmType.setItems(AlgorithmType.getObservableList());
+		algorithmType.setItems(FXCollections.observableArrayList(AlgorithmType.values()));
 		algorithmType.getSelectionModel().select(0);
 		algorithmType.valueProperty().addListener(new ChangeListener<AlgorithmType>() {
 			@Override

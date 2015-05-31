@@ -10,7 +10,7 @@ import javafx.collections.ObservableList;
 
 import org.junit.Test;
 
-import stsc.frontend.zozka.gui.models.AlgorithmType;
+import stsc.common.algorithms.AlgorithmType;
 import stsc.frontend.zozka.gui.models.ExecutionDescription;
 import stsc.frontend.zozka.gui.models.NumberAlgorithmParameter;
 import stsc.frontend.zozka.gui.models.ParameterType;

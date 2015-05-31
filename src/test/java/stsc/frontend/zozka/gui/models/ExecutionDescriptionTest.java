@@ -11,6 +11,7 @@ import com.google.common.collect.Ordering;
 import stsc.common.FromToPeriod;
 import stsc.common.Settings;
 import stsc.common.algorithms.AlgorithmSettings;
+import stsc.common.algorithms.AlgorithmType;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.genetic.GeneticExecutionInitializer;
 
