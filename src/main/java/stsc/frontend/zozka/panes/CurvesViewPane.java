@@ -165,7 +165,7 @@ public class CurvesViewPane {
 
 	private void addChartForEod() {
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
-		final JFreeChart chart = ChartFactory.createTimeSeriesChart("", "Time", "Value", dataset, false, false, false);
+		final JFreeChart chart = ChartFactory.createTimeSeriesChart("", "Time", "Value", dataset, true, true, false);
 		chart.getXYPlot().setRenderer(0, chartDataset.getRenderer());
 		for (CurveChartSetting serie : tableModel) {
 			final int index = serie.getIndex();
