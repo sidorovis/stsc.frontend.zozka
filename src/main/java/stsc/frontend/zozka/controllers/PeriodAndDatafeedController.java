@@ -57,7 +57,7 @@ public class PeriodAndDatafeedController extends Pane {
 	private void initialize() {
 		validateGui();
 		fromPeriod.setValue(LocalDate.of(1990, 1, 1));
-		toPeriod.setValue(LocalDate.of(2010, 12, 31));
+		toPeriod.setValue(LocalDate.of(2020, 12, 31));
 	}
 
 	private void validateGui() {
