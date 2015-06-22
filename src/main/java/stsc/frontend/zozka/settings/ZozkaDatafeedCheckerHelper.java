@@ -159,14 +159,14 @@ public class ZozkaDatafeedCheckerHelper {
 
 	private boolean askUserForRedownloadAndRedownload(Stage owner, Stock stock, String error, String value) {
 		if (isUserAgreeForAction(owner, stock, "Want you redownload data?", error, value)) {
-			return redownloadStock(owner, stock.getName());
+			return redownloadStock(owner, stock.getInstrumentName());
 		} else {
 			return true;
 		}
 	}
 
 	private boolean isUserAgreeForAction(Stage owner, Stock stock, String title, String errorString, String mastheadPostfix) {
-		final Action response = Dialogs.create().owner(owner).title(title).masthead("Stock " + stock.getName() + mastheadPostfix)
+		final Action response = Dialogs.create().owner(owner).title(title).masthead("Stock " + stock.getInstrumentName() + mastheadPostfix)
 				.message(errorString).showConfirm();
 		return response == Dialog.Actions.YES;
 	}
@@ -187,7 +187,7 @@ public class ZozkaDatafeedCheckerHelper {
 			if (isSave) {
 				s.storeUniteFormatToFolder(datafeedPath + YahooFileStockStorage.DATA_FOLDER);
 				dataStockList.updateStock(s);
-				if (isLiquid(s) && isValid(s) || filteredStockDataList.getStockStorage().getStock(s.getName()) != null) {
+				if (isLiquid(s) && isValid(s) || filteredStockDataList.getStockStorage().getStock(s.getInstrumentName()) != null) {
 					s.storeUniteFormatToFolder(datafeedPath + YahooFileStockStorage.FILTER_DATA_FOLDER);
 					filteredStockDataList.updateStock(s);
 				} else {

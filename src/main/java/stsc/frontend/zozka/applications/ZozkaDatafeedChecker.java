@@ -106,7 +106,7 @@ public class ZozkaDatafeedChecker extends Application {
 			@Override
 			public Optional<Void> apply(StockDescription sd) {
 				try {
-					final String stockName = sd.getStock().getName();
+					final String stockName = sd.getStock().getInstrumentName();
 					final Optional<Stock> data = dataStockList.getStockStorage().getStock(stockName);
 					final Optional<Stock> filtered = filteredStockDataList.getStockStorage().getStock(stockName);
 					final ZozkaDatafeedCheckerHelper helper = new ZozkaDatafeedCheckerHelper(datafeedPath, dataStockList,
@@ -208,7 +208,7 @@ public class ZozkaDatafeedChecker extends Application {
 		final StockListDialog stockListDialog = new StockListDialog(owner,
 				"List of Stocks which have different days size at data and filtered data.");
 		stockListDialog.setOnMouseDoubleClicked(sd -> {
-			final String stockName = sd.getStock().getName();
+			final String stockName = sd.getStock().getInstrumentName();
 			final Optional<Stock> data = dataStockStorage.getStock(stockName);
 			final Optional<Stock> filtered = filteredDataStockStorage.getStock(stockName);
 			final ZozkaDatafeedCheckerHelper helper = new ZozkaDatafeedCheckerHelper(datafeedPath, dataStockList, filteredStockDataList,

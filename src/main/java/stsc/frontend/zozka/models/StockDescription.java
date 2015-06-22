@@ -20,7 +20,7 @@ public final class StockDescription {
 
 	public StockDescription(int id, Stock stock) {
 		this.id = new SimpleIntegerProperty(id);
-		this.name = new SimpleStringProperty(stock.getName());
+		this.name = new SimpleStringProperty(stock.getInstrumentName());
 		this.liquid = new SimpleBooleanProperty(ZozkaDatafeedCheckerHelper.isLiquid(stock));
 		this.valid = new SimpleBooleanProperty(ZozkaDatafeedCheckerHelper.isValid(stock));
 		this.stock = stock;
@@ -48,7 +48,7 @@ public final class StockDescription {
 
 	@Override
 	public String toString() {
-		return "StockDescription('" + stock.getName() + "' with days size:" + stock.getDays().size() + ")\n[\n\tliquid: "
+		return "StockDescription('" + stock.getInstrumentName() + "' with days size:" + stock.getDays().size() + ")\n[\n\tliquid: "
 				+ liquid.getValue().booleanValue() + "; \n\tvalid: " + valid.getValue().booleanValue() + ";\n]";
 	}
 

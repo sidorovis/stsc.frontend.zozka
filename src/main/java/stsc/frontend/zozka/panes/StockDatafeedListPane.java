@@ -191,7 +191,7 @@ public class StockDatafeedListPane extends BorderPane {
 		model.forEach(new Consumer<StockDescription>() {
 			@Override
 			public void accept(StockDescription sd) {
-				if (sd.getStock().getName().equals(newStockData.getName())) {
+				if (sd.getStock().getInstrumentName().equals(newStockData.getInstrumentName())) {
 					sd.setStock(newStockData);
 				}
 			}

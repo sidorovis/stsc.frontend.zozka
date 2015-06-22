@@ -141,13 +141,13 @@ public class ZozkaStrategyVisualiser extends Application {
 			final List<String> executionsName = init.generateOutForStocks();
 			final SimulatorSettings settings = new SimulatorSettings(0, init);
 
-			final Set<String> stockNames = new HashSet<String>(Arrays.asList(new String[] { stock.getName() }));
+			final Set<String> stockNames = new HashSet<String>(Arrays.asList(new String[] { stock.getInstrumentName() }));
 			final Simulator simulator = new Simulator(settings, stockNames);
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
 
 			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(owner, stock, period, executionsName, signalsStorage);
 			final Tab tab = new Tab();
-			tab.setText(stock.getName());
+			tab.setText(stock.getInstrumentName());
 			tab.setContent(stockViewPane.getMainPane());
 			tabPane.getTabs().add(tab);
 			tabPane.getSelectionModel().select(tab);

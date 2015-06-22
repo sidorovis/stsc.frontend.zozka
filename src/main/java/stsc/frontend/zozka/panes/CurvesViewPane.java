@@ -65,7 +65,7 @@ public class CurvesViewPane {
 			SignalsStorage signalsStorage) throws IOException {
 		final CandleSticksChartDataset chartDataset = new CandleSticksChartDataset(new DatasetForStock(stock));
 		final CurvesViewPane result = new CurvesViewPane(owner, stock, chartDataset, period);
-		result.loadTableModel(stock.getName(), executionsName, signalsStorage);
+		result.loadTableModel(stock.getInstrumentName(), executionsName, signalsStorage);
 		result.addChartForStock(chartDataset.getTimeSeriesCollection());
 		return result;
 	}
