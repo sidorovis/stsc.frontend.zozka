@@ -17,6 +17,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import stsc.frontend.zozka.models.StockDescription;
 
+/**
+ * {@link StockListDialog} is GUI dialog with stock list placed into table order
+ * with {@link StockDescription} table model. <br/>
+ * Used for processing / updating / fixing yahoo datafeed state.
+ */
 public final class StockListDialog extends Alert {
 
 	private final ObservableList<StockDescription> model = FXCollections.observableArrayList();
