@@ -3,7 +3,7 @@ package stsc.frontend.zozka.dialogs;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class VisualTestTextAreaDialog extends Application {
+public final class VisualTestTextAreaDialog extends Application {
 
 	@Override
 	public void start(Stage parent) throws Exception {

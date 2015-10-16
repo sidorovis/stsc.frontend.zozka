@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class VisualTestDatePickerDialog extends Application {
+public final class VisualTestDatePickerDialog extends Application {
 
 	@Override
 	public void start(Stage parent) throws Exception {

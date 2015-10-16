@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.panes.internal;
+package stsc.frontend.zozka.panes;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -6,7 +6,13 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
-public class ProgressWithStopPane extends BorderPane {
+/**
+ * This is {@link BorderPane} (GUI element) that shows progress of some
+ * operation (for example market datafeed load or whatever). <br/>
+ * could be instrumented with stop button (use
+ * {@link #setOnStopButtonAction(Runnable)} method).
+ */
+public final class ProgressWithStopPane extends BorderPane {
 
 	private final HBox pane = new HBox();
 	private final ProgressIndicator indicator = new ProgressIndicator();

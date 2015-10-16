@@ -9,7 +9,7 @@ import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.models.StockDescription;
 import stsc.storage.mocks.StockStorageMock;
 
-public class VisualTestStockListDialog extends Application {
+public final class VisualTestStockListDialog extends Application {
 
 	@Override
 	public void start(Stage parent) throws Exception {

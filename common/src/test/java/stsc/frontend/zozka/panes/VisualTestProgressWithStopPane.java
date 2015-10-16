@@ -1,12 +1,13 @@
-package stsc.frontend.zozka.panes.internal;
+package stsc.frontend.zozka.panes;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import stsc.frontend.zozka.panes.ProgressWithStopPane;
 
-public class VisualTestProgressWithStopPane extends Application {
+public final class VisualTestProgressWithStopPane extends Application {
 
 	double percent = 0.0;
 
