@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.models;
+package stsc.frontend.zozka.common.models;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;

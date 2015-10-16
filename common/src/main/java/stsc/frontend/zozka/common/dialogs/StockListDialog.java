@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.dialogs;
+package stsc.frontend.zozka.common.dialogs;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -15,7 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import stsc.frontend.zozka.models.StockDescription;
+import stsc.frontend.zozka.common.models.StockDescription;
 
 /**
  * {@link StockListDialog} is GUI dialog with stock list placed into table order

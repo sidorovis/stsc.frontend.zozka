@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import stsc.frontend.zozka.common.dialogs.DatePickerDialog;
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 
 public final class VisualTestDatePickerDialog extends Application {
 

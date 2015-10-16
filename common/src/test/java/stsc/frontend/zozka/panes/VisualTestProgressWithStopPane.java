@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import stsc.frontend.zozka.panes.ProgressWithStopPane;
+import stsc.frontend.zozka.common.panes.ProgressWithStopPane;
 
 public final class VisualTestProgressWithStopPane extends Application {
 

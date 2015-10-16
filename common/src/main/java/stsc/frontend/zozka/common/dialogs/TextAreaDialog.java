@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.dialogs;
+package stsc.frontend.zozka.common.dialogs;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;

@@ -3,6 +3,7 @@ package stsc.frontend.zozka.models;
 import org.junit.Assert;
 import org.junit.Test;
 
+import stsc.frontend.zozka.common.models.StockDescription;
 import stsc.storage.mocks.StockStorageMock;
 
 public class StockDescriptionTest {

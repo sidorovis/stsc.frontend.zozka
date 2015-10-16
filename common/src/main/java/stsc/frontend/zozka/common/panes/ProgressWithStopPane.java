@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.panes;
+package stsc.frontend.zozka.common.panes;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

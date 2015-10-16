@@ -2,6 +2,7 @@ package stsc.frontend.zozka.dialogs;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 
 public final class VisualTestTextAreaDialog extends Application {
 

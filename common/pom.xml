@@ -104,10 +104,6 @@
 		</dependency>
 		<dependency>
 			<groupId>stsc</groupId>
-			<artifactId>stsc.signals</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>stsc</groupId>
 			<artifactId>stsc.stocks.yahoo.liquidator</artifactId>
 		</dependency>
 

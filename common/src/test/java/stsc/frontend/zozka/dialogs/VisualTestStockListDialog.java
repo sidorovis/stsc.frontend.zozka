@@ -6,7 +6,9 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import stsc.common.stocks.Stock;
 import stsc.common.storage.StockStorage;
-import stsc.frontend.zozka.models.StockDescription;
+import stsc.frontend.zozka.common.dialogs.StockListDialog;
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
+import stsc.frontend.zozka.common.models.StockDescription;
 import stsc.storage.mocks.StockStorageMock;
 
 public final class VisualTestStockListDialog extends Application {
