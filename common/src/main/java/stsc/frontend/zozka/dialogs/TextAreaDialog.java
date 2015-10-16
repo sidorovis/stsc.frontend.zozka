@@ -19,18 +19,19 @@ public final class TextAreaDialog extends Alert {
 		super(AlertType.NONE);
 		setTitle(title);
 		setHeaderText(null);
-		setContentText(null);
 		this.textArea = new TextArea(value);
 		textArea.setEditable(false);
 		textArea.setWrapText(true);
 		textArea.setMaxWidth(Double.MAX_VALUE);
 		textArea.setMaxHeight(Double.MAX_VALUE);
-		GridPane.setVgrow(textArea, Priority.ALWAYS);
 		GridPane.setHgrow(textArea, Priority.ALWAYS);
-		GridPane expContent = new GridPane();
-		expContent.setMaxWidth(Double.MAX_VALUE);
-		expContent.add(textArea, 0, 0);
-		getDialogPane().setContent(expContent);
+		GridPane.setVgrow(textArea, Priority.ALWAYS);
+
+		final GridPane gridPane = new GridPane();
+		gridPane.setMaxHeight(Double.MAX_VALUE);
+		gridPane.setMaxWidth(Double.MAX_VALUE);
+		gridPane.add(textArea, 0, 0);
+		getDialogPane().setContent(gridPane);
 		getButtonTypes().add(ButtonType.CLOSE);
 		setResizable(true);
 		getDialogPane().setPrefSize(600, 600);

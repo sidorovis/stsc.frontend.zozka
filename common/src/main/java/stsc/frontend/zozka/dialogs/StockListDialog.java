@@ -5,6 +5,8 @@ import java.util.function.Function;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -13,12 +15,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
-import org.controlsfx.dialog.Dialog;
-
 import stsc.frontend.zozka.models.StockDescription;
 
-public class StockListDialog extends Dialog {
+public final class StockListDialog extends Alert {
 
 	private final ObservableList<StockDescription> model = FXCollections.observableArrayList();
 	private final BorderPane borderPane = new BorderPane();
@@ -34,13 +33,14 @@ public class StockListDialog extends Dialog {
 	}
 
 	public StockListDialog(Stage owner, String title, boolean showLiquidColumn, boolean showValidColumn) {
-		super(owner, title);
-		this.getWindow().setWidth(640);
-		this.getWindow().setHeight(480);
-		this.setContent(borderPane);
+		super(AlertType.NONE);
+		getDialogPane().setPrefSize(800, 600);
+		getDialogPane().setContent(borderPane);
 		borderPane.setCenter(table);
 		borderPane.setBottom(new Label());
+		setResizable(true);
 		configurateTable(showLiquidColumn, showValidColumn);
+		getButtonTypes().add(ButtonType.CLOSE);
 	}
 
 	private void configurateTable(boolean showLiquidColumn, boolean showValidColumn) {

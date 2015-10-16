@@ -2,18 +2,18 @@ package stsc.frontend.zozka.dialogs;
 
 import java.util.Optional;
 
-import stsc.common.stocks.Stock;
-import stsc.frontend.zozka.models.StockDescription;
-import stsc.yahoo.YahooFileStockStorage;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import stsc.common.stocks.Stock;
+import stsc.common.storage.StockStorage;
+import stsc.frontend.zozka.models.StockDescription;
+import stsc.storage.mocks.StockStorageMock;
 
 public class VisualTestStockListDialog extends Application {
 
 	@Override
 	public void start(Stage parent) throws Exception {
-		final YahooFileStockStorage ss = new YahooFileStockStorage("./test_data/data", "./test_data/filtered_data");
-		ss.waitForLoad();
+		final StockStorage ss = StockStorageMock.getStockStorage();
 		final StockListDialog dialog = new StockListDialog(parent, "StockList");
 		int index = 0;
 		for (String stockName : ss.getStockNames()) {
