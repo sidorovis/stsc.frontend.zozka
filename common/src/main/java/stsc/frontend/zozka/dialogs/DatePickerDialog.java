@@ -10,7 +10,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class DatePickerDialog extends Stage {
+/**
+ * Dialog to choose date ({@link LocalDate} object). Could return true / false
+ * (was 'ok' button pressed or not). And picked date. <br/>
+ * Could be used to choose begin / end values of period for simulation.
+ */
+public final class DatePickerDialog extends Stage {
 
 	private boolean pressed = false;
 	private final BorderPane bp = new BorderPane();
