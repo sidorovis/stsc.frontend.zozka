@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.charts.panels;
+package stsc.frontend.zozka.charts.pane;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,6 +15,7 @@ import stsc.common.FromToPeriod;
 import stsc.common.stocks.Stock;
 import stsc.common.storage.SignalsStorage;
 import stsc.common.storage.StockStorage;
+import stsc.frontend.zozka.charts.panes.CurvesViewPane;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.trading.TradeProcessorInit;

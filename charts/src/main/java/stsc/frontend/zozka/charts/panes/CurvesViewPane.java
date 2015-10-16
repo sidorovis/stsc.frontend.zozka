@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.charts.panels;
+package stsc.frontend.zozka.charts.panes;
 
 import java.io.IOException;
 import java.net.URL;
