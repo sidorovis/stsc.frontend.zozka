@@ -1,6 +1,7 @@
 package stsc.frontend.zozka.components;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import stsc.common.storage.StockStorage;
 import javafx.application.Application;
@@ -9,7 +10,7 @@ import javafx.stage.Stage;
 public class VisualTestDatafeedLoader extends Application {
 
 	private void load(Stage stage, File f) throws Exception {
-		final DatafeedLoader loader = new DatafeedLoader(stage, f);
+		final DatafeedLoader loader = new DatafeedLoader(Paths.get(f.getAbsolutePath()));
 		loader.startLoad(rh -> {
 			StockStorage stockStorage;
 			try {
@@ -19,17 +20,15 @@ public class VisualTestDatafeedLoader extends Application {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}, eh -> {
+		} , eh -> {
 			System.out.println(eh);
 		});
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		final File f = new File("./test_data");
-		for (int i = 0; i < 10; ++i) {
-			load(stage, f);
-		}
+		final File f = new File("D:\\dev\\1\\yd");
+		load(stage, f);
 	}
 
 	public static void main(String[] args) {

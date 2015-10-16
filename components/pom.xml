@@ -100,11 +100,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>stsc</groupId>
-			<artifactId>stsc.common</artifactId>
+			<artifactId>stsc.frontend.zozka.common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>stsc</groupId>
-			<artifactId>stsc.stocks.yahoo.liquidator</artifactId>
+			<artifactId>stsc.stocks.yahoo.core</artifactId>
 		</dependency>
 
 		<dependency>
