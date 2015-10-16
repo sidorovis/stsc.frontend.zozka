@@ -1,8 +1,6 @@
 package stsc.frontend.zozka.components;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Path;
@@ -11,11 +9,9 @@ import javafx.application.Platform;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ProgressBarBuilder;
-import javafx.stage.Window;
 import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 import stsc.yahoo.YahooDatafeedSettings;
@@ -38,7 +34,10 @@ public final class DatafeedLoader {
 	public void startLoad(EventHandler<WorkerStateEvent> successHandler, EventHandler<WorkerStateEvent> exitHandler)
 			throws ClassNotFoundException, IOException, InterruptedException {
 		final ProgressBar progressBar = new ProgressBar(0.0);
-		final ProgressBarTask task = new ProgressBarTask(yahooFileStockStorage, progressBar);
+		final ProgressBarTask task = ProgressBarTask.getBuilder(). //
+				setBackgroundProcess(yahooFileStockStorage). //
+				setProgressBar(progressBar). //
+				build();
 		this.loadThread = new Thread(task);
 		this.loadThread.start();
 
