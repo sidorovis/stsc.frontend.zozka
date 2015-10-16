@@ -7,7 +7,7 @@ public class VisualTestTextAreaDialog extends Application {
 
 	@Override
 	public void start(Stage parent) throws Exception {
-		final TextAreaDialog ad = new TextAreaDialog(parent, "Strategy: 14",
+		final TextAreaDialog ad = new TextAreaDialog("Strategy: 14",
 				"hello world\nresult\n " + System.getProperty("java.version") + "\n"
 						+ "This is a long text. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et "
 						+ "dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, "

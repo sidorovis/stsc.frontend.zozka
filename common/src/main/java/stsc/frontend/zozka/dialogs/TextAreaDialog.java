@@ -5,7 +5,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.stage.Stage;
 
 /**
  * This is a dialog windows (GUI) for showing large texts with possibility to
@@ -15,7 +14,7 @@ public final class TextAreaDialog extends Alert {
 
 	private final TextArea textArea;
 
-	public TextAreaDialog(Stage owner, String title, String value) {
+	public TextAreaDialog(String title, String value) {
 		super(AlertType.NONE);
 		setTitle(title);
 		setHeaderText(null);
