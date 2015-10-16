@@ -9,7 +9,11 @@ import javafx.beans.value.ChangeListener;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.AbstractXYDataset;
 
-abstract class CurveChartSetting {
+/**
+ * Abstract settings class for different charts. <br/>
+ * Regulates visibility of one chart unit (curve / candlestick ...).
+ */
+public abstract class CurveChartSetting {
 
 	private final BooleanProperty showAlgorithm;
 	private final StringProperty title;

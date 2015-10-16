@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.panes;
+package stsc.frontend.zozka.charts.panels;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -6,34 +6,37 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.controlsfx.dialog.Dialog;
-
 import javafx.application.Application;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import stsc.common.FromToPeriod;
 import stsc.common.stocks.Stock;
 import stsc.common.storage.SignalsStorage;
+import stsc.common.storage.StockStorage;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.trading.TradeProcessorInit;
-import stsc.yahoo.YahooFileStockStorage;
+import stsc.storage.mocks.StockStorageMock;
 
 public class VisualTestCurvesViewPane extends Application {
 
+	private final static StockStorage stockStorage = StockStorageMock.getStockStorage();
+
 	@Override
 	public void start(Stage parent) throws Exception {
-		final YahooFileStockStorage yfss = new YahooFileStockStorage("./test_data/data", "./test_data/filtered_data");
-		yfss.waitForLoad();
 		final FromToPeriod period = new FromToPeriod("01-01-1990", "31-12-2015");
 
-		final Optional<Stock> stockPtr = yfss.getStock("aapl");
+		final Optional<Stock> stockPtr = stockStorage.getStock("aapl");
 		if (!stockPtr.isPresent()) {
-			return;
+			throw new Exception("aapl stock not available test should fail");
 		}
 		final Stock aapl = stockPtr.get();
+
 		{
-			final TradeProcessorInit init = new TradeProcessorInit(yfss, period,
-					"EodExecutions = a1\na1.loadLine = OpenWhileSignalAlgorithm( Level( f = 0.75d, Diff(Input(e=close), Input(e=open)) ) )\n");
+			final TradeProcessorInit init = new TradeProcessorInit(stockStorage, period,
+					"EodExecutions = a1\na1.loadLine = OpenWhileSignalAlgorithm( .Level( f = 0.75d, Diff(.Input(e=close), .Input(e=open)) ) )\n");
 			final List<String> executionsName = init.generateOutForStocks();
 			final SimulatorSettings settings = new SimulatorSettings(0, init);
 
@@ -41,29 +44,31 @@ public class VisualTestCurvesViewPane extends Application {
 			final Simulator simulator = new Simulator(settings, stockNames);
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
 
-			final Dialog dialog = new Dialog(parent, "ForOnStockAlgorithm");
-			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(parent, aapl, period, executionsName,
-					signalsStorage);
-			dialog.setContent(stockViewPane.getMainPane());
-			dialog.show();
+			final Alert dialog = new Alert(AlertType.NONE, null, ButtonType.CLOSE);
+			dialog.setTitle("createPaneForOnStockAlgorithm");
+			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(parent, aapl, period, executionsName, signalsStorage);
+			dialog.getDialogPane().setContent(stockViewPane.getMainPane());
+			dialog.showAndWait();
 		}
 		{
-			final Dialog dialog = new Dialog(parent, "ForAdjectiveClose");
+			final Alert dialog = new Alert(AlertType.NONE, null, ButtonType.CLOSE);
+			dialog.setTitle("createPaneForAdjectiveClose");
 			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForAdjectiveClose(parent, aapl, period);
-			dialog.setContent(stockViewPane.getMainPane());
-			dialog.show();
+			dialog.getDialogPane().setContent(stockViewPane.getMainPane());
+			dialog.showAndWait();
 		}
 		{
-			final TradeProcessorInit init = new TradeProcessorInit(yfss, period, "EodExecutions = a1\na1.loadLine = AdlAdl()\n");
+			final TradeProcessorInit init = new TradeProcessorInit(stockStorage, period, "EodExecutions = a1\na1.loadLine = .AdlAdl()\n");
 			final List<String> executionsName = init.generateOutForEods();
 			final SimulatorSettings settings = new SimulatorSettings(0, init);
 			final Simulator simulator = new Simulator(settings);
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
 
-			final Dialog dialog = new Dialog(parent, "ForOnEodAlgorithm");
+			final Alert dialog = new Alert(AlertType.NONE, null, ButtonType.CLOSE);
+			dialog.setTitle("createPaneForOnEodAlgorithm");
 			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnEodAlgorithm(parent, period, executionsName, signalsStorage);
-			dialog.setContent(stockViewPane.getMainPane());
-			dialog.show();
+			dialog.getDialogPane().setContent(stockViewPane.getMainPane());
+			dialog.showAndWait();
 		}
 	}
 

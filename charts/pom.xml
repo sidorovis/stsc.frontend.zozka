@@ -112,6 +112,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>stsc</groupId>
+			<artifactId>stsc.general</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
 		</dependency>
