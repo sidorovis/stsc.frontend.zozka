@@ -62,7 +62,7 @@ public final class CurvesViewPane {
 	public static CurvesViewPane createPaneForAdjectiveClose(Stage owner, Stock stock) throws IOException {
 		final CandleSticksChartDataset chartDataset = new CandleSticksChartDataset(new DatasetForStock(stock));
 		final CurvesViewPane result = new CurvesViewPane(owner, stock, chartDataset);
-		result.getTableModel().add(new CurveTimeSerieSetting(true, "Adjective Close", stock, 1));
+		result.getTableModel().add(new CurveTimeSerieSetting("Adjective Close", stock, 1));
 		result.addChartForStock(chartDataset.getTimeSeriesCollection());
 		return result;
 	}
@@ -70,7 +70,7 @@ public final class CurvesViewPane {
 	public static CurvesViewPane createPaneForAdjectiveClose(Stage owner, Stock stock, FromToPeriod period) throws IOException {
 		final CandleSticksChartDataset chartDataset = new CandleSticksChartDataset(new DatasetForStock(stock));
 		final CurvesViewPane result = new CurvesViewPane(owner, stock, chartDataset, period);
-		result.getTableModel().add(new CurveTimeSerieSetting(true, "Adjective Close", stock, 1, period));
+		result.getTableModel().add(new CurveTimeSerieSetting("Adjective Close", stock, 1, period));
 		result.addChartForStock(chartDataset.getTimeSeriesCollection());
 		return result;
 	}
@@ -137,7 +137,7 @@ public final class CurvesViewPane {
 	private void loadTableModel(final String stockName, final List<String> executionsName, SignalsStorage signalsStorage) {
 		int index = 1;
 		for (String executionName : executionsName) {
-			tableModel.add(new CurveTimeSerieSetting(true, executionName, stockName, index, signalsStorage));
+			tableModel.add(new CurveTimeSerieSetting(executionName, stockName, index, signalsStorage));
 			index += 1;
 		}
 	}

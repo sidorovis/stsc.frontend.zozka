@@ -28,12 +28,20 @@ public final class CurveTimeSerieSetting extends CurveChartSetting {
 	private final TimeSeriesCollection timeSeriesCollection;
 	private final XYItemRenderer seriesRenderer;
 
-	public CurveTimeSerieSetting(boolean showAlgo, String title, Stock stock, int index) {
-		this(showAlgo, title, stock, index, 0, stock.getDays().size());
+	/**
+	 * This constructor used for adjective-close serie chart with no period
+	 * initialization. Will use full stock period.
+	 */
+	public CurveTimeSerieSetting(String title, Stock stock, int index) {
+		this(true, title, stock, index, 0, stock.getDays().size());
 	}
 
-	public CurveTimeSerieSetting(boolean showAlgo, String title, Stock stock, int index, FromToPeriod period) {
-		this(showAlgo, title, stock, index, stock.findDayIndex(period.getFrom()), stock.findDayIndex(period.getTo()) - 1);
+	/**
+	 * This constructor used for adjective-close serie chart with period
+	 * initialization.
+	 */
+	public CurveTimeSerieSetting(String title, Stock stock, int index, FromToPeriod period) {
+		this(true, title, stock, index, stock.findDayIndex(period.getFrom()), stock.findDayIndex(period.getTo()) - 1);
 	}
 
 	private CurveTimeSerieSetting(boolean showAlgo, String title, Stock stock, int index, int fromIndex, int toIndex) {
@@ -46,49 +54,48 @@ public final class CurveTimeSerieSetting extends CurveChartSetting {
 			stsc.common.Day day = stock.getDays().get(i);
 			timeSeries.addOrUpdate(new Day(day.getDate()), day.getAdjClose());
 		}
-
 		timeSeriesCollection.addSeries(timeSeries);
-		this.seriesRenderer = new StandardXYItemRenderer(StandardXYItemRenderer.LINES, new SerieXYToolTipGenerator(title));
-		addListenerToShowAlgorithm(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				seriesRenderer.setSeriesVisible(0, newValue);
-			}
-		});
-
+		this.seriesRenderer = constructRenderer(title);
 	}
 
+	/**
+	 * This constructor used for on eod-of-day series with selected by title
+	 * algorithm serie (generates out algorithm automatically and require
+	 * existence of such algorithm at {@link SignalsStorage} parameter.
+	 */
 	public CurveTimeSerieSetting(boolean showAlgo, String title, int index, SignalsStorage signalsStorage) {
-		super(showAlgo, title);
+		this(true, title, index, signalsStorage, createOnEodTimeSeries(title, signalsStorage));
+	}
+
+	/**
+	 * This constructor used for on stock series with selected by title
+	 * algorithm serie (generates out algorithm automatically and require
+	 * existence of such algorithm at {@link SignalsStorage} parameter.
+	 */
+	public CurveTimeSerieSetting(String title, String stockName, int index, SignalsStorage signalsStorage) {
+		this(true, title, index, signalsStorage, createOnStockTimeSeries(title, stockName, signalsStorage));
+	}
+
+	private CurveTimeSerieSetting(boolean showAlgo, String title, int index, SignalsStorage signalsStorage, TimeSeries timeSeries) {
+		super(true, title);
 		this.index = index;
 		this.timeSeriesCollection = new TimeSeriesCollection();
-		final TimeSeries timeSeries = createOnEodTimeSeries(title, signalsStorage);
 		timeSeriesCollection.addSeries(timeSeries);
-		this.seriesRenderer = new StandardXYItemRenderer(StandardXYItemRenderer.LINES, new SerieXYToolTipGenerator(title));
+		this.seriesRenderer = constructRenderer(title);
+	}
+
+	private StandardXYItemRenderer constructRenderer(final String title) {
+		final StandardXYItemRenderer result = new StandardXYItemRenderer(StandardXYItemRenderer.LINES, new SerieXYToolTipGenerator(title));
 		addListenerToShowAlgorithm(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				seriesRenderer.setSeriesVisible(0, newValue);
 			}
 		});
+		return result;
 	}
 
-	public CurveTimeSerieSetting(boolean showAlgo, String title, String stockName, int index, SignalsStorage signalsStorage) {
-		super(showAlgo, title);
-		this.index = index;
-		this.timeSeriesCollection = new TimeSeriesCollection();
-		final TimeSeries timeSeries = createOnStockTimeSeries(title, stockName, signalsStorage);
-		timeSeriesCollection.addSeries(timeSeries);
-		this.seriesRenderer = new StandardXYItemRenderer(StandardXYItemRenderer.LINES, new SerieXYToolTipGenerator(title));
-		addListenerToShowAlgorithm(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				seriesRenderer.setSeriesVisible(0, newValue);
-			}
-		});
-	}
-
-	private TimeSeries createOnEodTimeSeries(String title, SignalsStorage signalsStorage) {
+	private static TimeSeries createOnEodTimeSeries(String title, SignalsStorage signalsStorage) {
 		final TimeSeries timeSeries = new TimeSeries(title);
 		final String outName = AlgorithmNameGenerator.generateOutAlgorithmName(title);
 		final int size = signalsStorage.getIndexSize(outName);
@@ -101,7 +108,7 @@ public final class CurveTimeSerieSetting extends CurveChartSetting {
 		return timeSeries;
 	}
 
-	private TimeSeries createOnStockTimeSeries(String title, String stockName, SignalsStorage signalsStorage) {
+	private static TimeSeries createOnStockTimeSeries(String title, String stockName, SignalsStorage signalsStorage) {
 		final TimeSeries timeSeries = new TimeSeries(title);
 		final String outName = AlgorithmNameGenerator.generateOutAlgorithmName(title);
 		final int size = signalsStorage.getIndexSize(stockName, outName);

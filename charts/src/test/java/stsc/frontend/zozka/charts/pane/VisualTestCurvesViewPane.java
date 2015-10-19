@@ -59,7 +59,7 @@ public class VisualTestCurvesViewPane extends Application {
 			dialog.showAndWait();
 		}
 		{
-			final TradeProcessorInit init = new TradeProcessorInit(stockStorage, period, "EodExecutions = a1\na1.loadLine = .AdlAdl()\n");
+			final TradeProcessorInit init = new TradeProcessorInit(stockStorage, period, "EodExecutions = a1\na1.loadLine = eod.AdlAdl()\n");
 			final List<String> executionsName = init.generateOutForEods();
 			final SimulatorSettings settings = new SimulatorSettings(0, init);
 			final Simulator simulator = new Simulator(settings);
