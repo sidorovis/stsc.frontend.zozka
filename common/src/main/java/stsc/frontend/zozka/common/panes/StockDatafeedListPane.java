@@ -31,7 +31,11 @@ import stsc.frontend.zozka.common.models.StockDescription;
 import stsc.yahoo.YahooDatafeedSettings;
 import stsc.yahoo.YahooFileStockStorage;
 
-public class StockDatafeedListPane extends BorderPane {
+/**
+ * GUI Pane with Stock Datafeed List and {@link YahooFileStockStorage} (loader
+ * for Yahoo stock datafeed).
+ */
+public final class StockDatafeedListPane extends BorderPane {
 
 	private YahooFileStockStorage stockStorage;
 
@@ -90,6 +94,7 @@ public class StockDatafeedListPane extends BorderPane {
 		try {
 			setBottom(progressWithStopPane);
 			final YahooFileStockStorage ss = new YahooFileStockStorage(new YahooDatafeedSettings(datafeedPath), false);
+			// TODO
 			// final Queue<String> tasks = ss.amountToProcess();
 			// applySizeFilter(tasks, filter);
 			// result.addAll(tasks);
@@ -99,7 +104,7 @@ public class StockDatafeedListPane extends BorderPane {
 		}
 		return result;
 	}
-	//
+	// TODO
 	// private void applySizeFilter(Queue<String> tasks,
 	// Optional<Predicate<String>> filter) {
 	// if (filter.isPresent()) {
