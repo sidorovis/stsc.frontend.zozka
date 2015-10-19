@@ -1,8 +1,5 @@
 package stsc.frontend.zozka.common.models;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -15,10 +12,6 @@ import stsc.common.FromToPeriod;
 import stsc.common.Settings;
 import stsc.common.algorithms.AlgorithmSettings;
 import stsc.common.algorithms.AlgorithmType;
-import stsc.frontend.zozka.common.models.ExecutionDescription;
-import stsc.frontend.zozka.common.models.NumberAlgorithmParameter;
-import stsc.frontend.zozka.common.models.ParameterType;
-import stsc.frontend.zozka.common.models.TextAlgorithmParameter;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.genetic.GeneticExecutionInitializer;
 
@@ -87,10 +80,4 @@ public class ExecutionDescriptionTest {
 		}
 	}
 
-	@Test
-	public void testExecutionDescriptionWithFiles() throws ClassNotFoundException, IOException {
-		try (ObjectInputStream is = new ObjectInputStream(getClass().getResourceAsStream("strategy_selector/size_2280"))) {
-			final ExecutionDescription from = ExecutionDescription.loadFromFile(is);
-		}
-	}
 }

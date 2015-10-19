@@ -17,8 +17,8 @@ public class StockDatafeedListPaneTest {
 	@Test
 	public void testStockDatafeedListPane() throws IOException, URISyntaxException, InterruptedException {
 		final JFXPanel jfxPanel = new JFXPanel();
-		Lock lock = new ReentrantLock();
-		StockDatafeedListPane pane = new VisualTestStockDatafeedListPane().downloadDatafeedOnInterface(f -> {
+		final Lock lock = new ReentrantLock();
+		final StockDatafeedListPane pane = new VisualTestStockDatafeedListPane().downloadDatafeedOnInterface(f -> {
 			synchronized (lock) {
 				lock.notify();
 			}

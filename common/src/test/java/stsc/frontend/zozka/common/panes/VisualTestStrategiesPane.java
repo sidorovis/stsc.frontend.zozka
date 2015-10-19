@@ -1,24 +1,20 @@
 package stsc.frontend.zozka.common.panes;
 
-import java.io.File;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
-import stsc.common.FromToPeriod;
-import stsc.common.storage.StockStorage;
-import stsc.frontend.zozka.common.models.SimulationType;
-import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
-import stsc.frontend.zozka.common.panes.StrategiesPane;
-import stsc.storage.mocks.StockStorageMock;
-import stsc.yahoo.YahooFileStockStorage;
 import javafx.application.Application;
 import javafx.embed.swing.SwingNode;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
+import stsc.common.FromToPeriod;
+import stsc.common.storage.StockStorage;
+import stsc.frontend.zozka.common.models.SimulationType;
+import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
+import stsc.storage.mocks.StockStorageMock;
 
 public class VisualTestStrategiesPane extends Application {
 
