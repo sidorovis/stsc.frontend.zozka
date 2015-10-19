@@ -1,8 +1,6 @@
 package stsc.frontend.zozka.components;
 
 import java.io.IOException;
-import java.io.PipedOutputStream;
-import java.io.PrintWriter;
 import java.nio.file.Path;
 
 import javafx.application.Platform;
@@ -49,10 +47,7 @@ public final class DatafeedLoader {
 			try {
 				yahooFileStockStorage.waitForBackgroundProcess();
 			} catch (Exception e) {
-				final PipedOutputStream pis = new PipedOutputStream();
-				final PrintWriter pw = new PrintWriter(pis);
-				e.printStackTrace(pw);
-				new TextAreaDialog("Exception arrived while loading yahoo file stock storage datafeed.", pis.toString()).showAndWait();
+				new TextAreaDialog("Exception", e).showAndWait();
 			}
 			successHandler.handle(eh);
 		}));
