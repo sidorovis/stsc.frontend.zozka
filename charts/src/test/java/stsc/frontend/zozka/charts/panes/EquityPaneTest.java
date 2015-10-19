@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.charts.pane;
+package stsc.frontend.zozka.charts.panes;
 
 import java.text.ParseException;
 

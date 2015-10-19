@@ -121,10 +121,12 @@ public final class CurveTimeSerieSetting extends CurveChartSetting {
 		return timeSeries;
 	}
 
+	@Override
 	public TimeSeriesCollection getTimeSeriesCollection() {
 		return timeSeriesCollection;
 	}
 
+	@Override
 	public int getIndex() {
 		return index;
 	}
