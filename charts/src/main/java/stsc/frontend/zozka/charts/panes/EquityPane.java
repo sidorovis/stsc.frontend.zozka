@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.panes;
+package stsc.frontend.zozka.charts.panes;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,13 +29,20 @@ import stsc.general.statistic.EquityCurve;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
 
-public class EquityPane {
+/**
+ * {@link EquityPane} is a pane that contain two parts: <br/>
+ * 1. chart for trading strategy equity on
+ * {@link Metrics#getEquityCurveInMoney()}. <br/>
+ * 2. table with {@link Metrics} (mapped metric name - metric value).
+ */
+public final class EquityPane {
 
-	private static class StatisticElement {
+	private final static class MetricsElement {
+
 		private final StringProperty name;
 		private final StringProperty value;
 
-		public StatisticElement(String name, String value) {
+		public MetricsElement(final String name, final String value) {
 			this.name = new SimpleStringProperty(name);
 			this.value = new SimpleStringProperty(value);
 		}
@@ -49,22 +56,20 @@ public class EquityPane {
 		}
 	}
 
-	private JFreeChart chart;
-
 	private final Parent gui;
 	@FXML
 	private BorderPane chartPane;
 
-	private final ObservableList<StatisticElement> statisticsTableModel = FXCollections.observableArrayList();
+	private final ObservableList<MetricsElement> metricsTableModel = FXCollections.observableArrayList();
 	@FXML
-	private TableView<StatisticElement> statisticsTable;
+	private TableView<MetricsElement> metricsTable;
 	@FXML
-	private TableColumn<StatisticElement, String> statisticName;
+	private TableColumn<MetricsElement, String> metricsName;
 	@FXML
-	private TableColumn<StatisticElement, String> statisticValue;
+	private TableColumn<MetricsElement, String> metricsValue;
 
 	public EquityPane(final Stage owner, Metrics metrics, FromToPeriod period) throws IOException {
-		final URL location = EquityPane.class.getResource("04_equity_pane.fxml");
+		final URL location = EquityPane.class.getResource("equity_pane.fxml");
 		final FXMLLoader loader = new FXMLLoader(location);
 		loader.setController(this);
 		this.gui = loader.load();
@@ -76,28 +81,28 @@ public class EquityPane {
 
 	private void initialize() {
 		validateGui();
-		statisticsTable.setItems(statisticsTableModel);
-		statisticName.setCellValueFactory(cellData -> cellData.getValue().propertyName());
-		statisticValue.setCellValueFactory(cellData -> cellData.getValue().propertyValue());
+		metricsTable.setItems(metricsTableModel);
+		metricsName.setCellValueFactory(cellData -> cellData.getValue().propertyName());
+		metricsValue.setCellValueFactory(cellData -> cellData.getValue().propertyValue());
 	}
 
 	private void loadStatisticsTableModel(Metrics metrics) {
 		for (Map.Entry<MetricType, Integer> e : metrics.getIntegerMetrics().entrySet()) {
-			statisticsTableModel.add(new StatisticElement(e.getKey().name(), e.getValue().toString()));
+			metricsTableModel.add(new MetricsElement(e.getKey().name(), e.getValue().toString()));
 		}
 		for (Map.Entry<MetricType, Double> e : metrics.getDoubleMetrics().entrySet()) {
-			statisticsTableModel.add(new StatisticElement(e.getKey().name(), e.getValue().toString()));
+			metricsTableModel.add(new MetricsElement(e.getKey().name(), e.getValue().toString()));
 		}
 	}
 
 	private void validateGui() {
 		assert chartPane != null : "fx:id=\"chartPane\" was not injected: check your FXML file.";
-		assert statisticsTable != null : "fx:id=\"statisticsTable\" was not injected: check your FXML file.";
-		assert statisticName != null : "fx:id=\"statisticName\" was not injected: check your FXML file.";
-		assert statisticValue != null : "fx:id=\"statisticValue\" was not injected: check your FXML file.";
+		assert metricsTable != null : "fx:id=\"metricsTable\" was not injected: check your FXML file.";
+		assert metricsName != null : "fx:id=\"metricsName\" was not injected: check your FXML file.";
+		assert metricsValue != null : "fx:id=\"metricsValue\" was not injected: check your FXML file.";
 	}
 
-	private void setChartPane(Metrics metrics) {
+	private JFreeChart setChartPane(Metrics metrics) {
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 		final TimeSeries ts = new TimeSeries("Equity Curve");
 
@@ -109,7 +114,7 @@ public class EquityPane {
 		}
 		dataset.addSeries(ts);
 
-		this.chart = ChartFactory.createTimeSeriesChart("", "Time", "Value", dataset, false, false, false);
+		final JFreeChart chart = ChartFactory.createTimeSeriesChart("", "Time", "Value", dataset, false, false, false);
 		final ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setMouseWheelEnabled(true);
 		chartPanel.setFillZoomRectangle(false);
@@ -117,6 +122,8 @@ public class EquityPane {
 		SwingNode sn = new SwingNode();
 		sn.setContent(chartPanel);
 		chartPane.setCenter(sn);
+
+		return chart;
 	}
 
 	public Parent getMainPane() {

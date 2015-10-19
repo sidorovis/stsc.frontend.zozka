@@ -116,6 +116,11 @@
 			<artifactId>stsc.general</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>stsc</groupId>
+			<artifactId>stsc.stocks.yahoo.core</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.jfree</groupId>
