@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.dialogs;
+package stsc.frontend.zozka.common.dialogs;
 
 import java.util.Optional;
 

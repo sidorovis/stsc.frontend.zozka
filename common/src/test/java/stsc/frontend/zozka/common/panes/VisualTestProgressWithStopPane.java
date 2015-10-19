@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.panes;
+package stsc.frontend.zozka.common.panes;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

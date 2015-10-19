@@ -1,8 +1,4 @@
-package stsc.frontend.zozka.dialogs;
-
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.PrintWriter;
+package stsc.frontend.zozka.common.dialogs;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -24,14 +20,7 @@ public final class VisualTestTextAreaDialog extends Application {
 		try {
 			throw new Exception("Test Reason");
 		} catch (Exception e) {
-			final PipedInputStream pis = new PipedInputStream(4096);
-			final PipedOutputStream pos = new PipedOutputStream(pis);
-			final PrintWriter pw = new PrintWriter(pos);
-			e.printStackTrace(pw);
-			int size = pis.available();
-			byte[] b = new byte[size];
-			pis.read(b, 0, size);
-			new TextAreaDialog("Exception arrived while loading yahoo file stock storage datafeed.", b.toString()).showAndWait();
+			new TextAreaDialog("Exception arrived while loading yahoo file stock storage datafeed.", e).showAndWait();
 		}
 	}
 

@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.models;
+package stsc.frontend.zozka.common.models;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,5 +1,7 @@
 package stsc.frontend.zozka.common.dialogs;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
@@ -34,6 +36,10 @@ public final class TextAreaDialog extends Alert {
 		getButtonTypes().add(ButtonType.CLOSE);
 		setResizable(true);
 		getDialogPane().setPrefSize(600, 600);
+	}
+
+	public TextAreaDialog(String title, Throwable e) {
+		this(title, ExceptionUtils.getStackTrace(e));
 	}
 
 }
