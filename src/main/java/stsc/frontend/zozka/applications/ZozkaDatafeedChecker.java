@@ -25,9 +25,9 @@ import org.controlsfx.dialog.Dialogs;
 
 import stsc.common.stocks.Stock;
 import stsc.common.storage.StockStorage;
+import stsc.frontend.zozka.common.panes.StockDatafeedListPane;
 import stsc.frontend.zozka.dialogs.StockListDialog;
 import stsc.frontend.zozka.models.StockDescription;
-import stsc.frontend.zozka.panes.StockDatafeedListPane;
 import stsc.frontend.zozka.settings.ControllerHelper;
 import stsc.frontend.zozka.settings.ZozkaDatafeedCheckerHelper;
 import stsc.yahoo.YahooFileStockStorage;

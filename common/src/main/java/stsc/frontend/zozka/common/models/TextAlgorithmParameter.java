@@ -1,11 +1,17 @@
-package stsc.frontend.zozka.gui.models;
+package stsc.frontend.zozka.common.models;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import stsc.general.simulator.multistarter.MpString;
+import stsc.general.simulator.multistarter.MpSubExecution;
 
+/**
+ * GUI representation for {@link MpString}, {@link MpSubExecution} algorithm
+ * parameters.
+ */
 public final class TextAlgorithmParameter {
 
 	private final StringProperty parameterName;

@@ -1,12 +1,11 @@
-package stsc.frontend.zozka.models;
+package stsc.frontend.zozka.common.models;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import stsc.common.FromToPeriod;
 import stsc.common.storage.StockStorage;
-import stsc.frontend.zozka.gui.models.ExecutionDescription;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.genetic.GeneticExecutionInitializer;
@@ -54,11 +52,11 @@ public final class SimulatorSettingsModel {
 		model.add(ed);
 	}
 
-	public void saveToFile(File f) throws FileNotFoundException, IOException {
-		try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(f))) {
-			os.writeInt(model.size());
+	public void saveToFile(OutputStream os) throws FileNotFoundException, IOException {
+		try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
+			oos.writeInt(model.size());
 			for (ExecutionDescription executionDescription : model) {
-				executionDescription.writeExternal(os);
+				executionDescription.writeExternal(oos);
 			}
 		}
 	}
@@ -67,15 +65,16 @@ public final class SimulatorSettingsModel {
 		model.set(index, newEd);
 	}
 
-	public void loadFromFile(File f) throws FileNotFoundException, IOException, ClassNotFoundException {
-		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(f))) {
-			final int size = is.readInt();
+	public SimulatorSettingsModel loadFromFile(final InputStream is) throws FileNotFoundException, IOException, ClassNotFoundException {
+		try (ObjectInputStream ois = new ObjectInputStream(is)) {
+			final int size = ois.readInt();
 			model.clear();
 			for (int i = 0; i < size; ++i) {
-				final ExecutionDescription ed = ExecutionDescription.loadFromFile(is);
+				final ExecutionDescription ed = ExecutionDescription.loadFromFile(ois);
 				model.add(ed);
 			}
 		}
+		return this;
 	}
 
 	public SimulatorSettingsGridList generateGridSettings(StockStorage stockStorage, FromToPeriod period) throws BadParameterException {

@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.gui.models;
+package stsc.frontend.zozka.common.chart.helpers;
 
 import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.data.xy.XYDataset;

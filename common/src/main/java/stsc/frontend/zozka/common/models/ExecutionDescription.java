@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.gui.models;
+package stsc.frontend.zozka.common.models;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -24,7 +24,8 @@ import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 
 /**
  * {@link ExecutionDescription} is a GUI version of {@link AlgorithmParameters}
- * with {@link AlgorithmType}, {@link #executionName}, {@link #algorithmName} .<br/>
+ * with {@link AlgorithmType}, {@link #executionName}, {@link #algorithmName} .
+ * <br/>
  */
 public final class ExecutionDescription implements Externalizable {
 
@@ -37,7 +38,7 @@ public final class ExecutionDescription implements Externalizable {
 	private final ObservableList<NumberAlgorithmParameter> numberAlgorithms;
 	private final ObservableList<TextAlgorithmParameter> textAlgorithms;
 
-	public static ExecutionDescription loadFromFile(ObjectInputStream is) throws ClassNotFoundException, IOException {
+	static ExecutionDescription loadFromFile(ObjectInputStream is) throws ClassNotFoundException, IOException {
 		final ExecutionDescription ed = new ExecutionDescription();
 		ed.readExternal(is);
 		return ed;
@@ -201,8 +202,7 @@ public final class ExecutionDescription implements Externalizable {
 			String parameterName = in.readUTF();
 			String type = in.readUTF();
 			String domen = in.readUTF();
-			textAlgorithms.add(new TextAlgorithmParameter(parameterName, ParameterType.findByName(type), TextAlgorithmParameter
-					.createDomenRepresentation(domen)));
+			textAlgorithms.add(new TextAlgorithmParameter(parameterName, ParameterType.findByName(type), TextAlgorithmParameter.createDomenRepresentation(domen)));
 		}
 	}
 

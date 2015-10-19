@@ -14,7 +14,7 @@ import stsc.common.signals.SignalContainer;
 import stsc.common.signals.SerieSignal;
 import stsc.common.stocks.Stock;
 import stsc.common.storage.SignalsStorage;
-import stsc.frontend.zozka.gui.models.SerieXYToolTipGenerator;
+import stsc.frontend.zozka.common.chart.helpers.SerieXYToolTipGenerator;
 import stsc.signals.DoubleSignal;
 import stsc.storage.ExecutionsStorage;
 

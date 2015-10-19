@@ -9,8 +9,8 @@ import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
-import stsc.frontend.zozka.gui.models.ExecutionDescription;
-import stsc.frontend.zozka.models.SimulatorSettingsModel;
+import stsc.frontend.zozka.common.models.ExecutionDescription;
+import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
 import stsc.frontend.zozka.settings.ControllerHelper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;

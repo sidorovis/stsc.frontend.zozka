@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.gui.models;
+package stsc.frontend.zozka.common.models;
 
 import java.util.List;
 

@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import stsc.frontend.zozka.gui.models.ExecutionDescription;
+import stsc.frontend.zozka.common.models.ExecutionDescription;
 
 public class VisualTestCreateAlgorithmControllerApplication extends Application {
 

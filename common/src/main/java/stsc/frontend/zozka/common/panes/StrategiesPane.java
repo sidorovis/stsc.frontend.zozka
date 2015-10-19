@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.panes;
+package stsc.frontend.zozka.common.panes;
 
 import java.awt.Color;
 import java.rmi.UnexpectedException;
@@ -7,6 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.DatasetRenderingOrder;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -19,26 +27,14 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-
-import org.controlsfx.dialog.Dialogs;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.DatasetRenderingOrder;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-
 import stsc.common.FromToPeriod;
 import stsc.common.algorithms.BadAlgorithmException;
 import stsc.common.storage.StockStorage;
-import stsc.frontend.zozka.dialogs.TextAreaDialog;
-import stsc.frontend.zozka.gui.models.ObservableStrategySelector;
-import stsc.frontend.zozka.gui.models.SerieXYToolTipGenerator;
-import stsc.frontend.zozka.gui.models.SimulationType;
-import stsc.frontend.zozka.models.SimulatorSettingsModel;
-import stsc.frontend.zozka.panes.internal.ProgressWithStopPane;
+import stsc.frontend.zozka.common.chart.helpers.SerieXYToolTipGenerator;
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
+import stsc.frontend.zozka.common.models.ObservableStrategySelector;
+import stsc.frontend.zozka.common.models.SimulationType;
+import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.StrategySearcher;
 import stsc.general.simulator.multistarter.StrategySearcher.IndicatorProgressListener;
@@ -85,15 +81,14 @@ public class StrategiesPane extends BorderPane {
 		}
 	}
 
-	private final Stage owner;
 	private final ObservableList<StatisticsDescription> model = FXCollections.observableArrayList();
 	private final ProgressWithStopPane controlPane;
 	private final TableView<StatisticsDescription> table = new TableView<>();
+	// TODO throw out this pane to stsc.frontend.zozka.charts project
 	private final JFreeChart chart;
 
-	public StrategiesPane(Stage owner, FromToPeriod period, SimulatorSettingsModel model, StockStorage stockStorage, JFreeChart chart,
-			SimulationType simulationType) throws BadAlgorithmException, UnexpectedException, InterruptedException {
-		this.owner = owner;
+	public StrategiesPane(FromToPeriod period, SimulatorSettingsModel model, StockStorage stockStorage, JFreeChart chart, SimulationType simulationType)
+			throws BadAlgorithmException, UnexpectedException, InterruptedException {
 		this.chart = chart;
 		this.controlPane = new ProgressWithStopPane();
 		createTopElements();
@@ -184,7 +179,7 @@ public class StrategiesPane extends BorderPane {
 		final StatisticsDescription sd = table.getSelectionModel().getSelectedItem();
 		if (sd != null) {
 			final long id = sd.getId();
-			new TextAreaDialog(owner, "Strategy: " + String.valueOf(id), sd.toString()).show();
+			new TextAreaDialog("Strategy: " + String.valueOf(id), sd.toString()).showAndWait();
 		}
 	}
 
@@ -207,8 +202,8 @@ public class StrategiesPane extends BorderPane {
 		chart.getXYPlot().setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 	}
 
-	private Optional<StrategySearcher> startCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage,
-			SimulationType simulationType) throws BadAlgorithmException, InterruptedException {
+	private Optional<StrategySearcher> startCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage, SimulationType simulationType)
+			throws BadAlgorithmException, InterruptedException {
 		if (simulationType.equals(SimulationType.GRID)) {
 			return startGridCalculation(period, settingsModel, stockStorage);
 		} else {
@@ -216,8 +211,7 @@ public class StrategiesPane extends BorderPane {
 		}
 	}
 
-	private Optional<StrategySearcher> startGridCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage)
-			throws BadAlgorithmException {
+	private Optional<StrategySearcher> startGridCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage) throws BadAlgorithmException {
 		try {
 			final SimulatorSettingsGridList list = settingsModel.generateGridSettings(stockStorage, period);
 			checkThatMaxPossibleSizeCorrect(list.size());
@@ -226,7 +220,7 @@ public class StrategiesPane extends BorderPane {
 			addListenerOnChanged(selector.getObservableStrategyList());
 			return Optional.of(new StrategyGridSearcher(list, selector, 4));
 		} catch (BadParameterException e1) {
-			Dialogs.create().owner(owner).showException(e1);
+			new TextAreaDialog("Exception", e1).showAndWait();
 		}
 		return Optional.empty();
 	}
@@ -249,13 +243,13 @@ public class StrategiesPane extends BorderPane {
 					sgs.waitAndGetSelector();
 				} catch (Exception e) {
 					Platform.runLater(() -> {
-						Dialogs.create().owner(owner).showException(e);
+						new TextAreaDialog("Exception", e).showAndWait();
 					});
 				}
 			}).start();
 			return Optional.of(sgs);
 		} catch (BadParameterException badParameterException) {
-			Dialogs.create().owner(owner).showException(badParameterException);
+			new TextAreaDialog("Exception", badParameterException).showAndWait();
 		}
 		return Optional.empty();
 	}

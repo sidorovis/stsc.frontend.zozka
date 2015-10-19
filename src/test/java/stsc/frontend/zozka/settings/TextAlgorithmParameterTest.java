@@ -3,7 +3,7 @@ package stsc.frontend.zozka.settings;
 import org.junit.Assert;
 import org.junit.Test;
 
-import stsc.frontend.zozka.gui.models.TextAlgorithmParameter;
+import stsc.frontend.zozka.common.models.TextAlgorithmParameter;
 
 public class TextAlgorithmParameterTest {
 

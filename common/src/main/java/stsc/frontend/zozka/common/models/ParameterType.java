@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.gui.models;
+package stsc.frontend.zozka.common.models;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,12 +9,16 @@ import stsc.general.simulator.multistarter.MpIterator;
 import stsc.general.simulator.multistarter.MpString;
 import stsc.general.simulator.multistarter.MpSubExecution;
 
+/**
+ * Type of algorithm parameter. Created as part of GUI Zozka representation
+ * models.
+ */
 public enum ParameterType {
 
-	INTEGER("Integer", Integer.class, MpInteger.class), 
-	DOUBLE("Double", Double.class, MpDouble.class), 
-	STRING("String", String.class, MpString.class), 
-	SUB_EXECUTION("Sub Execution", String.class, MpSubExecution.class);
+	INTEGER("Integer", Integer.class, MpInteger.class), //
+	DOUBLE("Double", Double.class, MpDouble.class), //
+	STRING("String", String.class, MpString.class), //
+	SUB_EXECUTION("Sub Execution", String.class, MpSubExecution.class); //
 
 	private static class NameToParameterType {
 		public static final Map<String, ParameterType> values = new HashMap<>();

@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.panes;
+package stsc.frontend.zozka.common.panes;
 
 import java.io.File;
 
@@ -7,8 +7,11 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
 import stsc.common.FromToPeriod;
-import stsc.frontend.zozka.gui.models.SimulationType;
-import stsc.frontend.zozka.models.SimulatorSettingsModel;
+import stsc.common.storage.StockStorage;
+import stsc.frontend.zozka.common.models.SimulationType;
+import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
+import stsc.frontend.zozka.common.panes.StrategiesPane;
+import stsc.storage.mocks.StockStorageMock;
 import stsc.yahoo.YahooFileStockStorage;
 import javafx.application.Application;
 import javafx.embed.swing.SwingNode;
@@ -40,14 +43,13 @@ public class VisualTestStrategiesPane extends Application {
 		final JFreeChart chart = addChartPane();
 		final Scene scene = new Scene(chartPane);
 
-		final YahooFileStockStorage yfss = new YahooFileStockStorage("./test_data/data", "./test_data/filtered_data");
-		yfss.waitForLoad();
+		final StockStorage yfss = StockStorageMock.getStockStorage();
 
 		SimulatorSettingsModel model = new SimulatorSettingsModel();
 		final FromToPeriod period = new FromToPeriod("01-01-1990", "31-12-2010");
-		model.loadFromFile(new File("./test_data/strategy_selector/size_2280"));
+		model.loadFromFile(getClass().getResourceAsStream("strategy_selector/size_2280"));
 
-		final StrategiesPane sp = new StrategiesPane(parent, period, model, yfss, chart, SimulationType.GENETIC);
+		final StrategiesPane sp = new StrategiesPane(period, model, yfss, chart, SimulationType.GENETIC);
 		chartPane.getItems().add(sp);
 		parent.setScene(scene);
 		parent.setMinHeight(800);

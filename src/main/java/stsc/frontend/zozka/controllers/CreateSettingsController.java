@@ -11,9 +11,9 @@ import java.util.ResourceBundle;
 
 import org.controlsfx.dialog.Dialogs;
 
+import stsc.frontend.zozka.common.models.ExecutionDescription;
+import stsc.frontend.zozka.common.models.SimulationType;
 import stsc.frontend.zozka.components.ProgressBarTask;
-import stsc.frontend.zozka.gui.models.ExecutionDescription;
-import stsc.frontend.zozka.gui.models.SimulationType;
 import stsc.frontend.zozka.gui.models.SimulationsDescription;
 import stsc.frontend.zozka.settings.ControllerHelper;
 import stsc.yahoo.YahooFileStockStorage;

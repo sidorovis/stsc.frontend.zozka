@@ -13,10 +13,10 @@ import org.controlsfx.dialog.Dialogs;
 
 import stsc.common.algorithms.AlgorithmType;
 import stsc.common.algorithms.BadAlgorithmException;
-import stsc.frontend.zozka.gui.models.ExecutionDescription;
-import stsc.frontend.zozka.gui.models.NumberAlgorithmParameter;
-import stsc.frontend.zozka.gui.models.ParameterType;
-import stsc.frontend.zozka.gui.models.TextAlgorithmParameter;
+import stsc.frontend.zozka.common.models.ExecutionDescription;
+import stsc.frontend.zozka.common.models.NumberAlgorithmParameter;
+import stsc.frontend.zozka.common.models.ParameterType;
+import stsc.frontend.zozka.common.models.TextAlgorithmParameter;
 import stsc.frontend.zozka.settings.ControllerHelper;
 import stsc.storage.AlgorithmsStorage;
 import javafx.beans.property.SimpleStringProperty;

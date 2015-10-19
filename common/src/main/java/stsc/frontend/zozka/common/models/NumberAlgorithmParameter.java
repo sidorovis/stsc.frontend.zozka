@@ -1,11 +1,17 @@
-package stsc.frontend.zozka.gui.models;
+package stsc.frontend.zozka.common.models;
 
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import stsc.general.simulator.multistarter.MpDouble;
+import stsc.general.simulator.multistarter.MpInteger;
 
+/**
+ * GUI Zozka representation for {@link MpInteger}, {@link MpDouble} algorithm
+ * parameters.
+ */
 public final class NumberAlgorithmParameter implements Function<Void, Boolean> {
 
 	public static final Pattern integerParPattern = Pattern.compile("^-?(\\d)+$");

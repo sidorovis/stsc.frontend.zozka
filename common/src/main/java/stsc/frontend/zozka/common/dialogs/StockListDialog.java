@@ -16,11 +16,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import stsc.frontend.zozka.common.models.StockDescription;
+import stsc.frontend.zozka.common.panes.StockDatafeedListPane;
 
 /**
  * {@link StockListDialog} is GUI dialog with stock list placed into table order
  * with {@link StockDescription} table model. <br/>
- * Used for processing / updating / fixing yahoo datafeed state.
+ * Used for processing / updating / fixing yahoo datafeed state. TODO probably
+ * should be deleted (we have {@link StockDatafeedListPane})
  */
 public final class StockListDialog extends Alert {
 

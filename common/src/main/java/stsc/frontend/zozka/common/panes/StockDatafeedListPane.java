@@ -33,7 +33,7 @@ import stsc.yahoo.YahooFileStockStorage;
 
 /**
  * GUI Pane with Stock Datafeed List and {@link YahooFileStockStorage} (loader
- * for Yahoo stock datafeed).
+ * for Yahoo stock datafeed). Load stocks in foreground.
  */
 public final class StockDatafeedListPane extends BorderPane {
 

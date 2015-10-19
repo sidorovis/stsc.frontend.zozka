@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Test;
 
+import stsc.frontend.zozka.common.models.NumberAlgorithmParameter;
+
 public class NumberAlgorithmParameterTest {
 
 	@Test

@@ -11,11 +11,11 @@ import javafx.collections.ObservableList;
 import org.junit.Test;
 
 import stsc.common.algorithms.AlgorithmType;
-import stsc.frontend.zozka.gui.models.ExecutionDescription;
-import stsc.frontend.zozka.gui.models.NumberAlgorithmParameter;
-import stsc.frontend.zozka.gui.models.ParameterType;
-import stsc.frontend.zozka.gui.models.TextAlgorithmParameter;
-import stsc.frontend.zozka.models.SimulatorSettingsModel;
+import stsc.frontend.zozka.common.models.ExecutionDescription;
+import stsc.frontend.zozka.common.models.NumberAlgorithmParameter;
+import stsc.frontend.zozka.common.models.ParameterType;
+import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
+import stsc.frontend.zozka.common.models.TextAlgorithmParameter;
 
 public class TestSimulatorSettingsModel {
 
