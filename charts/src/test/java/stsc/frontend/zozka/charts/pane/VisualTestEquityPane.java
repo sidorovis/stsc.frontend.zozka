@@ -1,29 +1,21 @@
 package stsc.frontend.zozka.charts.pane;
 
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import stsc.common.FromToPeriod;
+import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.charts.panes.EquityPane;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.trading.TradeProcessorInit;
-import stsc.yahoo.YahooDatafeedSettings;
-import stsc.yahoo.YahooFileStockStorage;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import stsc.storage.mocks.StockStorageMock;
 
 public class VisualTestEquityPane extends Application {
 
 	@Override
 	public void start(Stage parent) throws Exception {
-		final Path testDataPath = Paths.get(new File(getClass().getResource("./").toURI()).getAbsolutePath());
-
-		final YahooFileStockStorage yfss = new YahooFileStockStorage(new YahooDatafeedSettings(testDataPath), true);
-		yfss.waitForBackgroundProcess();
+		final StockStorage yfss = StockStorageMock.getStockStorage();
 		final FromToPeriod period = new FromToPeriod("01-01-1990", "31-12-2010");
 		final TradeProcessorInit init = new TradeProcessorInit(yfss, period,
 				"EodExecutions = a1\na1.loadLine = OpenWhileSignalAlgorithm( .Level( f = 0.75d, Diff(.Input(e=close), .Input(e=open)) ) )\n");
