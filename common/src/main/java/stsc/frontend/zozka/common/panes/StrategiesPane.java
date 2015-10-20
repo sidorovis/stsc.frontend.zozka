@@ -86,16 +86,16 @@ public final class StrategiesPane extends BorderPane {
 		}
 	}
 
-	private void setupControlPane(Optional<StrategySearcher> ss) throws UnexpectedException {
-		if (!ss.isPresent()) {
+	private void setupControlPane(Optional<StrategySearcher> strategySearcher) throws UnexpectedException {
+		if (!strategySearcher.isPresent()) {
 			throw new UnexpectedException("Calculations are not started, problem on StrategySearch creation phaze.");
 		}
 		controlPane.setOnStopButtonAction(() -> {
-			if (ss.isPresent()) {
-				ss.get().stopSearch();
+			if (strategySearcher.isPresent()) {
+				strategySearcher.get().stopSearch();
 			}
 		});
-		ss.get().addIndicatorProgress(new IndicatorProgressListener() {
+		strategySearcher.get().addIndicatorProgress(new IndicatorProgressListener() {
 			@Override
 			public void processed(double percent) {
 				Platform.runLater(() -> {
