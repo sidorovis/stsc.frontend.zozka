@@ -107,15 +107,15 @@
 			<artifactId>stsc.stocks.yahoo.liquidator</artifactId>
 		</dependency>
 
-		<dependency> <!-- should be deleted when StrategiesPane will delete JFreeChart -->
+		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
+			<scope>test</scope>
 		</dependency>
-
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

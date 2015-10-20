@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.common.panes;
+package stsc.frontend.zozka.common.panes.strategies;
 
 import java.awt.Color;
 
@@ -28,6 +28,7 @@ import stsc.frontend.zozka.common.models.ObservableStrategySelector;
 import stsc.frontend.zozka.common.models.SimulationType;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModelTest;
+import stsc.frontend.zozka.common.panes.strategies.StrategiesPane;
 import stsc.general.statistic.EquityCurve;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;

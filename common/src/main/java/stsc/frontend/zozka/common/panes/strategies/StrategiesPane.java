@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.common.panes;
+package stsc.frontend.zozka.common.panes.strategies;
 
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
@@ -24,6 +24,7 @@ import stsc.frontend.zozka.common.models.ObservableStrategySelector;
 import stsc.frontend.zozka.common.models.SimulationType;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
 import stsc.frontend.zozka.common.models.StatisticsDescription;
+import stsc.frontend.zozka.common.panes.ProgressWithStopPane;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.StrategySearcher;
 import stsc.general.simulator.multistarter.StrategySearcher.IndicatorProgressListener;

@@ -1,6 +1,6 @@
 package stsc.frontend.zozka.common.models;
 
-import stsc.frontend.zozka.common.panes.StrategiesPane;
+import stsc.frontend.zozka.common.panes.strategies.StrategiesPane;
 import stsc.general.statistic.Metrics;
 
 /**

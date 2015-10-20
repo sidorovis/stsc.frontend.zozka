@@ -1,7 +1,7 @@
 package stsc.frontend.zozka.common.models;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import stsc.frontend.zozka.common.panes.StrategiesPane;
+import stsc.frontend.zozka.common.panes.strategies.StrategiesPane;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
 import stsc.general.strategy.TradingStrategy;

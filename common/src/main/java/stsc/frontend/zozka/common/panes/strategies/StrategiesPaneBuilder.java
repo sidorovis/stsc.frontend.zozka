@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.common.panes;
+package stsc.frontend.zozka.common.panes.strategies;
 
 import java.rmi.UnexpectedException;
 
