@@ -2,7 +2,6 @@ package stsc.frontend.zozka.common.panes;
 
 import java.awt.Color;
 import java.rmi.UnexpectedException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -35,6 +33,7 @@ import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 import stsc.frontend.zozka.common.models.ObservableStrategySelector;
 import stsc.frontend.zozka.common.models.SimulationType;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
+import stsc.frontend.zozka.common.models.StatisticsDescription;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.StrategySearcher;
 import stsc.general.simulator.multistarter.StrategySearcher.IndicatorProgressListener;
@@ -47,53 +46,44 @@ import stsc.general.statistic.EquityCurve;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
 import stsc.general.statistic.cost.function.CostWeightedProductFunction;
-import stsc.general.statistic.cost.function.CostWeightedSumFunction;
 import stsc.general.strategy.TradingStrategy;
-import stsc.general.strategy.selector.StatisticsWithDistanceSelector;
-import stsc.general.strategy.selector.StrategyFilteringSelector;
 
-public class StrategiesPane extends BorderPane {
+public final class StrategiesPane extends BorderPane {
 
 	private static Metrics METRICS = new Metrics(Metrics.getBuilder());
 
-	public static class StatisticsDescription {
-		private static DecimalFormat df = new DecimalFormat("0.0000");
-
-		private final TradingStrategy tradingStrategy;
-
-		public StatisticsDescription(TradingStrategy tradingStrategy) {
-			this.tradingStrategy = tradingStrategy;
-		}
-
-		public long getId() {
-			return tradingStrategy.getSettings().getId();
-		}
-
-		public SimpleDoubleProperty getProperty(MetricType metricType) {
-			final Double value = tradingStrategy.getMetrics().getMetric(metricType);
-			df.format(value);
-			return new SimpleDoubleProperty(Double.valueOf(df.format(value)));
-		}
-
-		@Override
-		public String toString() {
-			return tradingStrategy.getSettings().toString();
-		}
-	}
+	private final ObservableStrategySelector selector;
+	// TODO throw out this pane to stsc.frontend.zozka.charts project
+	private final JFreeChart chart;
 
 	private final ObservableList<StatisticsDescription> model = FXCollections.observableArrayList();
 	private final ProgressWithStopPane controlPane;
 	private final TableView<StatisticsDescription> table = new TableView<>();
-	// TODO throw out this pane to stsc.frontend.zozka.charts project
-	private final JFreeChart chart;
 
-	public StrategiesPane(FromToPeriod period, SimulatorSettingsModel model, StockStorage stockStorage, JFreeChart chart, SimulationType simulationType)
-			throws BadAlgorithmException, UnexpectedException, InterruptedException {
-		this.chart = chart;
+	public static StrategiesPaneBuilder getBuilder() {
+		return new StrategiesPaneBuilder();
+	}
+
+	StrategiesPane(final StrategiesPaneBuilder spb) throws BadAlgorithmException, UnexpectedException, InterruptedException {
+		this.selector = spb.getObservableStrategySelector();
+		this.chart = spb.getjFreeChart();
 		this.controlPane = new ProgressWithStopPane();
 		createTopElements();
 		createEmptyTable();
-		setupControlPane(startCalculation(period, model, stockStorage, simulationType));
+		setupControlPane(startCalculation(spb));
+	}
+
+	private Optional<StrategySearcher> startCalculation(StrategiesPaneBuilder spb) throws BadAlgorithmException, InterruptedException {
+		return startCalculation(spb.getPeriod(), spb.getSimulatorSettingsModel(), spb.getStockStorage(), spb.getSimulationType());
+	}
+
+	private Optional<StrategySearcher> startCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage, SimulationType simulationType)
+			throws BadAlgorithmException, InterruptedException {
+		if (simulationType.equals(SimulationType.GRID)) {
+			return startGridCalculation(period, settingsModel, stockStorage);
+		} else {
+			return startGeneticCalculation(period, settingsModel, stockStorage);
+		}
 	}
 
 	private void setupControlPane(Optional<StrategySearcher> ss) throws UnexpectedException {
@@ -170,7 +160,7 @@ public class StrategiesPane extends BorderPane {
 		synchronized (model) {
 			if (selected >= 0 && selected < model.size()) {
 				final StatisticsDescription sd = model.get(selected);
-				drawStatistics(sd.tradingStrategy.getSettings().getId(), sd.tradingStrategy.getMetrics());
+				drawStatistics(sd.getId(), sd.getMetrics());
 			}
 		}
 	}
@@ -202,21 +192,10 @@ public class StrategiesPane extends BorderPane {
 		chart.getXYPlot().setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 	}
 
-	private Optional<StrategySearcher> startCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage, SimulationType simulationType)
-			throws BadAlgorithmException, InterruptedException {
-		if (simulationType.equals(SimulationType.GRID)) {
-			return startGridCalculation(period, settingsModel, stockStorage);
-		} else {
-			return startGeneticCalculation(period, settingsModel, stockStorage);
-		}
-	}
-
 	private Optional<StrategySearcher> startGridCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage) throws BadAlgorithmException {
 		try {
 			final SimulatorSettingsGridList list = settingsModel.generateGridSettings(stockStorage, period);
 			checkThatMaxPossibleSizeCorrect(list.size());
-			final ObservableStrategySelector selector = createSelector();
-
 			addListenerOnChanged(selector.getObservableStrategyList());
 			return Optional.of(new StrategyGridSearcher(list, selector, 4));
 		} catch (BadParameterException e1) {
@@ -229,9 +208,7 @@ public class StrategiesPane extends BorderPane {
 			throws BadAlgorithmException, InterruptedException {
 		try {
 			final SimulatorSettingsGeneticList list = settingsModel.generateGeneticSettings(stockStorage, period);
-			final ObservableStrategySelector selector = createSelector();
 			checkThatMaxPossibleSizeCorrect(selector.maxPossibleAmount());
-
 			addListenerOnChanged(selector.getObservableStrategyList());
 
 			final StrategyGeneticSearcher sgs = createStrategyGeneticSearcher(list, selector);
@@ -263,29 +240,6 @@ public class StrategiesPane extends BorderPane {
 		return builder.build();
 	}
 
-	private ObservableStrategySelector createSelector() {
-		final CostWeightedSumFunction costFunction = new CostWeightedSumFunction();
-		costFunction.withParameter(MetricType.winProb, 4.0);
-		costFunction.withParameter(MetricType.ddValueAvGain, -1.0);
-		costFunction.withParameter(MetricType.avGain, 1.0);
-		costFunction.withParameter(MetricType.kelly, 1.0);
-		costFunction.withParameter(MetricType.avWin, 1.0);
-		costFunction.withParameter(MetricType.avLoss, -1.0);
-		costFunction.withParameter(MetricType.freq, 1.0);
-		costFunction.withParameter(MetricType.maxLoss, -1.0);
-		final StatisticsWithDistanceSelector selectorBase = new StatisticsWithDistanceSelector(100, 3, costFunction);
-		selectorBase.withDistanceParameter(MetricType.winProb, 0.75);
-		selectorBase.withDistanceParameter(MetricType.avGain, 0.075);
-		selectorBase.withDistanceParameter(MetricType.avWin, 0.075);
-		selectorBase.withDistanceParameter(MetricType.startMonthMax, 0.45);
-		selectorBase.withDistanceParameter(MetricType.avLoss, 0.7);
-		final StrategyFilteringSelector filteringSelector = new StrategyFilteringSelector(selectorBase);
-		filteringSelector.withDoubleMinFilter(MetricType.freq, 0.01);
-		filteringSelector.withDoubleMinFilter(MetricType.winProb, 0.2);
-		final ObservableStrategySelector selector = new ObservableStrategySelector(filteringSelector);
-		return selector;
-	}
-
 	private void addListenerOnChanged(ObservableList<TradingStrategy> strategyList) {
 		strategyList.addListener(new ListChangeListener<TradingStrategy>() {
 			@Override
@@ -302,8 +256,8 @@ public class StrategiesPane extends BorderPane {
 	}
 
 	protected void processOnChanged(ListChangeListener.Change<? extends TradingStrategy> listChange) {
-		final ListChangeListener.Change<? extends TradingStrategy> change = listChange;
 		synchronized (model) {
+			final ListChangeListener.Change<? extends TradingStrategy> change = listChange;
 			while (change.next()) {
 				if (change.wasAdded()) {
 					for (TradingStrategy ts : change.getAddedSubList()) {

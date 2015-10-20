@@ -11,7 +11,7 @@ import stsc.general.strategy.selector.StrategySelector;
  * This class provide adapter for {@link StrategySelector} to JavaFx
  * {@link ObservableList}.
  */
-public class ObservableStrategySelector implements StrategySelector {
+public final class ObservableStrategySelector implements StrategySelector {
 
 	final private StrategySelector selector;
 	final private ObservableList<TradingStrategy> strategyList = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
