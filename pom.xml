@@ -153,7 +153,7 @@
 	<modules>
 		<module>common</module>
 		<module>charts</module>
-		<module>components</module>
+		<module>applications</module>
 	</modules>
 
 	<description>Stsc frontend zozka is a simple tool that show settings, datafeed, signals, equity curve, statistics.</description>

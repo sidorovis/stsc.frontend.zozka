@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>stsc</groupId>
+	<artifactId>stsc.frontend.zozka.applications</artifactId>
+	<version>0.0.19-BOM</version>
+	<packaging>jar</packaging>
+
+	<name>stsc.frontend.zozka.applications</name>
+	<url>https://github.com/sidorovis/stsc</url>
+
+	<properties>
+		<project.build.sourceEncoding>Cp1251</project.build.sourceEncoding>
+	</properties>
+
+	<modules>
+		<module>datafeed.checker</module>
+	</modules>
+
+	<description>Stsc frontend zozka applications is a module with stsc applications.</description>
+</project>

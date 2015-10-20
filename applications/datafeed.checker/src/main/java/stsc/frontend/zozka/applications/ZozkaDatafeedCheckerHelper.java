@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.settings;
+package stsc.frontend.zozka.applications;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -7,40 +7,38 @@ import java.util.Set;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.Dialogs;
-
 import stsc.common.stocks.Stock;
+import stsc.common.stocks.UnitedFormatHelper;
 import stsc.common.stocks.UnitedFormatStock;
 import stsc.common.storage.StockStorage;
-import stsc.frontend.zozka.charts.panels.CurvesViewPane;
+import stsc.frontend.zozka.charts.panes.CurvesViewPane;
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
+import stsc.frontend.zozka.common.models.StockDescription;
 import stsc.frontend.zozka.common.panes.StockDatafeedListPane;
-import stsc.frontend.zozka.models.StockDescription;
-import stsc.yahoo.YahooFileStockStorage;
+import stsc.yahoo.YahooDatafeedSettings;
 import stsc.yahoo.downloader.YahooDownloadHelper;
 import stsc.yahoo.liquiditator.StockFilter;
 
 public class ZozkaDatafeedCheckerHelper {
 
+	private static final YahooDownloadHelper YAHOO_DOWNLOAD_HELPER = new YahooDownloadHelper();
 	private static final StockFilter stockFilter = new StockFilter();
 
-	private final String datafeedPath;
+	private final YahooDatafeedSettings yahooDatafeedSettings;
 	private final StockDatafeedListPane dataStockList;
 	private final StockDatafeedListPane filteredStockDataList;
 
 	private ObservableList<StockDescription> dialogModel;
 
-	public ZozkaDatafeedCheckerHelper(String datafeedPath, StockDatafeedListPane dataStockList,
-			StockDatafeedListPane filteredStockDataList, ObservableList<StockDescription> dialogModel) {
-		this.datafeedPath = datafeedPath;
+	public ZozkaDatafeedCheckerHelper(YahooDatafeedSettings yahooDatafeedSettings, StockDatafeedListPane dataStockList, StockDatafeedListPane filteredStockDataList,
+			ObservableList<StockDescription> dialogModel) {
+		this.yahooDatafeedSettings = yahooDatafeedSettings;
 		this.dataStockList = dataStockList;
 		this.filteredStockDataList = filteredStockDataList;
 		this.dialogModel = dialogModel;
@@ -57,43 +55,34 @@ public class ZozkaDatafeedCheckerHelper {
 	private boolean showStockRepresentation(Stage owner, Stock data, Stock filtered, boolean askForSave) {
 		try {
 			final String stockRepresentationTitle = generateRepresentationTitle(askForSave);
-			final Dialog dialog = new Dialog(owner, stockRepresentationTitle);
-			final BorderPane borderPane = new BorderPane();
+			final Alert alert = new Alert(AlertType.INFORMATION, stockRepresentationTitle, ButtonType.CLOSE);
+			final DialogPane borderPane = new DialogPane();
 			SplitPane splitPane = new SplitPane();
 			splitPane.setOrientation(Orientation.VERTICAL);
 
 			if (data != null) {
-				final CurvesViewPane dataStockViewPane = CurvesViewPane.createPaneForAdjectiveClose(owner, data);
+				final CurvesViewPane dataStockViewPane = CurvesViewPane.createPaneForAdjectiveClose(data);
 				splitPane.getItems().add(dataStockViewPane.getMainPane());
 			}
 			if (filtered != null) {
-				final CurvesViewPane filteredDataStockViewPane = CurvesViewPane.createPaneForAdjectiveClose(owner, filtered);
+				final CurvesViewPane filteredDataStockViewPane = CurvesViewPane.createPaneForAdjectiveClose(filtered);
 				splitPane.getItems().add(filteredDataStockViewPane.getMainPane());
 			}
-			borderPane.setCenter(splitPane);
-			dialog.setContent(borderPane);
+			borderPane.setContent(splitPane);
+			alert.setDialogPane(borderPane);
 			if (askForSave) {
 				final String error = createErrorMessage(data);
-				Dialogs.create().owner(owner).masthead(null).message(error).showInformation();
-				final HBox hbox = new HBox();
-				final Button saveButton = new Button("Save");
-				final Button exitButton = new Button("Exit");
-				hbox.setAlignment(Pos.CENTER);
-				saveButton.setDefaultButton(true);
-				hbox.getChildren().add(saveButton);
-				hbox.getChildren().add(exitButton);
-				borderPane.setBottom(hbox);
-				saveButton.setOnAction(e -> {
-					dialog.setResult(Dialog.Actions.YES);
-					dialog.hide();
-				});
-				exitButton.setOnAction(e -> dialog.hide());
+				final Alert confirmationAlert = new Alert(AlertType.CONFIRMATION, error, ButtonType.YES, ButtonType.NO);
+				final Optional<ButtonType> result = confirmationAlert.showAndWait();
+				if (result.isPresent() && result.get().equals(ButtonType.YES)) {
+					return true;
+				}
 			}
-			dialog.getWindow().setHeight(700);
-			final Action a = dialog.show();
-			return a == Dialog.Actions.YES;
+			alert.getDialogPane().setPrefHeight(640);
+			alert.getDialogPane().setPrefWidth(800);
+			return false;
 		} catch (IOException e) {
-			Dialogs.create().owner(owner).showException(e);
+			new TextAreaDialog("Exception", e).showAndWait();
 		}
 		return false;
 	}
@@ -166,9 +155,11 @@ public class ZozkaDatafeedCheckerHelper {
 	}
 
 	private boolean isUserAgreeForAction(Stage owner, Stock stock, String title, String errorString, String mastheadPostfix) {
-		final Action response = Dialogs.create().owner(owner).title(title).masthead("Stock " + stock.getInstrumentName() + mastheadPostfix)
-				.message(errorString).showConfirm();
-		return response == Dialog.Actions.YES;
+		final Alert alert = new Alert(AlertType.CONFIRMATION, errorString, ButtonType.YES, ButtonType.NO);
+		alert.setTitle(title);
+		alert.setHeaderText("Stock " + stock.getInstrumentName() + mastheadPostfix);
+		final Optional<ButtonType> result = alert.showAndWait();
+		return (result.isPresent() && result.get().equals(ButtonType.YES));
 	}
 
 	/**
@@ -177,7 +168,7 @@ public class ZozkaDatafeedCheckerHelper {
 	 */
 	private boolean redownloadStock(Stage owner, String stockName) {
 		try {
-			final Optional<UnitedFormatStock> sPtr = YahooDownloadHelper.download(stockName);
+			final Optional<UnitedFormatStock> sPtr = YAHOO_DOWNLOAD_HELPER.download(stockName);
 			final Optional<Stock> stockPtr = dataStockList.getStockStorage().getStock(stockName);
 			if (!sPtr.isPresent() || !stockPtr.isPresent()) {
 				return false;
@@ -185,13 +176,13 @@ public class ZozkaDatafeedCheckerHelper {
 			final UnitedFormatStock s = sPtr.get();
 			final boolean isSave = showStockRepresentation(owner, s, stockPtr.get(), true);
 			if (isSave) {
-				s.storeUniteFormatToFolder(datafeedPath + YahooFileStockStorage.DATA_FOLDER);
+				s.storeUniteFormatToFolder(yahooDatafeedSettings.getDataFolder());
 				dataStockList.updateStock(s);
 				if (isLiquid(s) && isValid(s) || filteredStockDataList.getStockStorage().getStock(s.getInstrumentName()) != null) {
-					s.storeUniteFormatToFolder(datafeedPath + YahooFileStockStorage.FILTER_DATA_FOLDER);
+					s.storeUniteFormatToFolder(yahooDatafeedSettings.getFilteredDataFolder());
 					filteredStockDataList.updateStock(s);
 				} else {
-					YahooDownloadHelper.deleteFilteredFile(true, datafeedPath + YahooFileStockStorage.FILTER_DATA_FOLDER, stockName);
+					YAHOO_DOWNLOAD_HELPER.deleteFilteredFile(true, yahooDatafeedSettings.getFilteredDataFolder(), UnitedFormatHelper.toFilesystem(stockName));
 				}
 				updateDialogModel(s);
 				return false;
@@ -199,7 +190,7 @@ public class ZozkaDatafeedCheckerHelper {
 				return true;
 			}
 		} catch (InterruptedException | IOException e) {
-			Dialogs.create().owner(owner).showException(e);
+			new TextAreaDialog("Exception", e);
 		}
 		return true;
 	}
@@ -210,8 +201,8 @@ public class ZozkaDatafeedCheckerHelper {
 		}
 	}
 
-	public static Set<String> findDifferenceByDaysSizeAndStockFilter(final StockStorage dataStockStorage,
-			final StockStorage filteredDataStockStorage, final Set<String> allList, final Set<String> filteredList) {
+	public static Set<String> findDifferenceByDaysSizeAndStockFilter(final StockStorage dataStockStorage, final StockStorage filteredDataStockStorage, final Set<String> allList,
+			final Set<String> filteredList) {
 		final Set<String> notEqualStockList = new HashSet<>();
 		for (String stockName : allList) {
 			if (filteredList.contains(stockName)) {
@@ -222,11 +213,9 @@ public class ZozkaDatafeedCheckerHelper {
 				}
 				if (dataStockPtr.get().getDays().size() != filteredDataStockPtr.get().getDays().size()) {
 					notEqualStockList.add(stockName);
-				} else if (ZozkaDatafeedCheckerHelper.isLiquid(dataStockPtr.get()) != ZozkaDatafeedCheckerHelper
-						.isLiquid(filteredDataStockPtr.get())) {
+				} else if (ZozkaDatafeedCheckerHelper.isLiquid(dataStockPtr.get()) != ZozkaDatafeedCheckerHelper.isLiquid(filteredDataStockPtr.get())) {
 					notEqualStockList.add(stockName);
-				} else if (ZozkaDatafeedCheckerHelper.isValid(dataStockPtr.get()) != ZozkaDatafeedCheckerHelper
-						.isValid(filteredDataStockPtr.get())) {
+				} else if (ZozkaDatafeedCheckerHelper.isValid(dataStockPtr.get()) != ZozkaDatafeedCheckerHelper.isValid(filteredDataStockPtr.get())) {
 					notEqualStockList.add(stockName);
 				}
 			}
