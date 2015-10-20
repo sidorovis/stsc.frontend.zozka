@@ -2,12 +2,9 @@ package stsc.frontend.zozka.components.simulation.dialogs;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -19,15 +16,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Modality;
@@ -37,7 +30,6 @@ import stsc.common.algorithms.BadAlgorithmException;
 import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 import stsc.frontend.zozka.common.models.ExecutionDescription;
 import stsc.frontend.zozka.common.models.NumberAlgorithmParameter;
-import stsc.frontend.zozka.common.models.ParameterType;
 import stsc.frontend.zozka.common.models.TextAlgorithmParameter;
 import stsc.frontend.zozka.components.simulation.helpers.ZozkaJavaFxHelper;
 import stsc.storage.AlgorithmsStorage;
@@ -49,8 +41,6 @@ public final class CreateExecutionDescriptionDialog implements Initializable {
 	private final Stage stage;
 	private boolean valid;
 	private ExecutionDescription model;
-
-	public static final Pattern parameterNamePattern = Pattern.compile("^([\\w_])([\\w_\\d])*$");
 
 	@FXML
 	private ComboBox<AlgorithmType> algorithmType;
@@ -253,129 +243,8 @@ public final class CreateExecutionDescriptionDialog implements Initializable {
 
 	private void connectAddParameter() {
 		addParameter.setOnAction(e -> {
-			final Optional<String> parameterName = getParameterName();
-			if (!parameterName.isPresent()) {
-				return;
-			}
-			final Optional<ParameterType> parameterType = getParameterType();
-			if (!parameterType.isPresent()) {
-				return;
-			}
-			switch (parameterType.get()) {
-			case DOUBLE:
-				addDoubleParameter(parameterName.get(), "0.0", "1.0", "22.0");
-				break;
-			case INTEGER:
-				addIntegerParameter(parameterName.get(), "0", "1", "22");
-				break;
-			case STRING:
-				addStringParameter(parameterName.get());
-				break;
-			case SUB_EXECUTION:
-				addSubExecutionParameter(parameterName.get());
-				break;
-			default:
-				break;
-			}
+			helper.processAddParameterAction(model);
 		});
-	}
-
-	private Optional<String> getParameterName() {
-		final TextInputDialog dialog = new TextInputDialog();
-		dialog.setTitle("Enter Parameter Name");
-		dialog.setHeaderText("Parameter name:");
-		dialog.setContentText("Enter: ");
-		final Optional<String> parameterName = dialog.showAndWait();
-
-		if (parameterName.isPresent()) {
-			if (!parameterNamePattern.matcher(parameterName.get()).matches()) {
-				new TextAreaDialog("Parameter name does not match pattern", "Parameter name should contain only letters, numbers and '_' symbol.").showAndWait();
-				return Optional.empty();
-			}
-			if (model.parameterNameExists(parameterName.get())) {
-				new TextAreaDialog("Parameter name does not match pattern", "You could add only one parameter (one for both for number or test tables).").showAndWait();
-				return Optional.empty();
-			}
-		}
-		return parameterName;
-	}
-
-	private Optional<ParameterType> getParameterType() {
-		final Alert alert = new Alert(AlertType.NONE, "Choose type for parameter");
-		for (ParameterType pt : ParameterType.values()) {
-			final ButtonType buttonType = new ButtonType(pt.getName());
-			alert.getButtonTypes().add(buttonType);
-		}
-		final Optional<ButtonType> result = alert.showAndWait();
-		if (result.isPresent()) {
-			return Optional.ofNullable(ParameterType.findByName(result.get().getText()));
-		}
-		return Optional.empty();
-	}
-
-	private void addIntegerParameter(String parameterName, String defaultFrom, String defaultStep, String defaultTo) {
-		final String errorMessage = "Integer is a number (-)?([0-9])+";
-		final Optional<String> from = readIntegerParameter(defaultFrom, "Enter From", "From: ", errorMessage);
-		if (!from.isPresent()) {
-			return;
-		}
-		final Optional<String> step = readIntegerParameter(defaultStep, "Enter Step", "Step: ", errorMessage);
-		if (!step.isPresent()) {
-			return;
-		}
-		final Optional<String> to = readIntegerParameter(defaultTo, "Enter To", "To: ", errorMessage);
-		if (!to.isPresent()) {
-			return;
-		}
-		model.addNumberAlgorithm(new NumberAlgorithmParameter(parameterName, ParameterType.INTEGER, from.get(), step.get(), to.get()));
-	}
-
-	private void addDoubleParameter(String parameterName, String defaultFrom, String defaultStep, String defaultTo) {
-		CreateExecutionDescriptionDialogHelper.NumberParameters numberParameters = helper.readAllDoubleParameters();
-		if (numberParameters.isValid()) {
-			model.addNumberAlgorithm(
-					new NumberAlgorithmParameter(parameterName, ParameterType.DOUBLE, numberParameters.from.get(), numberParameters.step.get(), numberParameters.to.get()));
-		}
-	}
-
-	private Optional<String> readIntegerParameter(final String defaultValue, String masthead, String message, String errorMessage) {
-		final TextInputDialog dialog = new TextInputDialog(defaultValue);
-		dialog.setTitle("Integer Parameter");
-		dialog.setHeaderText(masthead);
-		dialog.setContentText(message);
-		final Optional<String> integerParameter = dialog.showAndWait();
-		if (integerParameter.isPresent() && !NumberAlgorithmParameter.integerParPattern.matcher(integerParameter.get()).matches()) {
-			new TextAreaDialog("Integer value is incorrect", errorMessage).showAndWait();
-			return Optional.empty();
-		}
-		return Optional.of(integerParameter.get());
-	}
-
-	private void addStringParameter(String parameterName) {
-		final List<String> values = getStringDomen("String Parameter");
-		final String domen = TextAlgorithmParameter.createStringRepresentation(values);
-		model.getTextAlgorithms().add(new TextAlgorithmParameter(parameterName, ParameterType.STRING, domen));
-	}
-
-	private void addSubExecutionParameter(String parameterName) {
-		final List<String> values = getStringDomen("SubExecution Parameter");
-		final String domen = TextAlgorithmParameter.createStringRepresentation(values);
-		model.getTextAlgorithms().add(new TextAlgorithmParameter(parameterName, ParameterType.SUB_EXECUTION, domen));
-	}
-
-	private List<String> getStringDomen(String title) {
-		final ArrayList<String> values = new ArrayList<>();
-		while (true) {
-			final TextInputDialog dialog = new TextInputDialog("Enter domen value: ");
-			dialog.setContentText("Hack: add several divided by ','.\nPress 'Cancel' to finish enter.");
-			final Optional<String> stringValue = dialog.showAndWait();
-			if (stringValue.isPresent()) {
-				values.add(stringValue.get());
-			} else {
-				break;
-			}
-		}
-		return values;
 	}
 
 	private void connectSaveExecution() {
