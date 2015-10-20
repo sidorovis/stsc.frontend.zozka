@@ -1,15 +1,17 @@
-package stsc.frontend.zozka.controllers;
+package stsc.frontend.zozka.components.panes;
 
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import stsc.frontend.zozka.components.simulation.dialogs.CreateExecutionDescriptionDialog;
+
 public class TestCreateAlgorithmController {
 
 	@Test
 	public void testParameterNamePatternCreateAlgorithmController() {
-		final Pattern p = CreateAlgorithmController.parameterNamePattern;
+		final Pattern p = CreateExecutionDescriptionDialog.parameterNamePattern;
 		Assert.assertTrue(p.matcher("asd_gre_htr34_her_y5hdg_ge57_gerg").matches());
 		Assert.assertTrue(p.matcher("JH38fsUJf3_fhwiub__efw2G34575SFEwegwg_wegE_EGE_EWH").matches());
 		Assert.assertFalse(p.matcher("asd!").matches());

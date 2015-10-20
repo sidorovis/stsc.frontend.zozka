@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.controllers;
+package stsc.frontend.zozka.components.simulation.dialogs;
 
 import java.io.IOException;
 import java.net.URL;
@@ -9,16 +9,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.controlsfx.dialog.Dialogs;
-
-import stsc.common.algorithms.AlgorithmType;
-import stsc.common.algorithms.BadAlgorithmException;
-import stsc.frontend.zozka.common.models.ExecutionDescription;
-import stsc.frontend.zozka.common.models.NumberAlgorithmParameter;
-import stsc.frontend.zozka.common.models.ParameterType;
-import stsc.frontend.zozka.common.models.TextAlgorithmParameter;
-import stsc.frontend.zozka.settings.ControllerHelper;
-import stsc.storage.AlgorithmsStorage;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -29,23 +19,38 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import stsc.common.algorithms.AlgorithmType;
+import stsc.common.algorithms.BadAlgorithmException;
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
+import stsc.frontend.zozka.common.models.ExecutionDescription;
+import stsc.frontend.zozka.common.models.NumberAlgorithmParameter;
+import stsc.frontend.zozka.common.models.ParameterType;
+import stsc.frontend.zozka.common.models.TextAlgorithmParameter;
+import stsc.frontend.zozka.components.simulation.helpers.ZozkaJavaFxHelper;
+import stsc.storage.AlgorithmsStorage;
 
-public class CreateAlgorithmController implements Initializable {
+public final class CreateExecutionDescriptionDialog implements Initializable {
+
+	private static final CreateExecutionDescriptionDialogHelper helper = new CreateExecutionDescriptionDialogHelper();
 
 	private final Stage stage;
 	private boolean valid;
 	private ExecutionDescription model;
 
-	public static final Pattern parameterNamePattern = Pattern.compile("^([\\w_\\d])+$");
+	public static final Pattern parameterNamePattern = Pattern.compile("^([\\w_])([\\w_\\d])*$");
 
 	@FXML
 	private ComboBox<AlgorithmType> algorithmType;
@@ -83,13 +88,13 @@ public class CreateAlgorithmController implements Initializable {
 	@FXML
 	private Button saveExecution;
 
-	public CreateAlgorithmController(final Stage owner) throws IOException {
+	public CreateExecutionDescriptionDialog(final Stage owner) throws IOException {
 		stage = new Stage();
 		valid = false;
 		initialize(owner);
 	}
 
-	public CreateAlgorithmController(final Stage owner, final ExecutionDescription executionDescription) throws IOException {
+	public CreateExecutionDescriptionDialog(final Stage owner, final ExecutionDescription executionDescription) throws IOException {
 		stage = new Stage();
 		valid = false;
 		setExecutionDescription(executionDescription);
@@ -97,14 +102,14 @@ public class CreateAlgorithmController implements Initializable {
 	}
 
 	private void initialize(Stage owner) throws IOException {
-		final URL location = getClass().getResource("01_create_algorithm.fxml");
+		final URL location = getClass().getResource("create_execution_description_dialog.fxml");
 		final FXMLLoader loader = new FXMLLoader(location);
 		loader.setController(this);
 		final Parent gui = loader.load();
 		stage.initOwner(owner);
 		stage.initModality(Modality.WINDOW_MODAL);
 		final Scene scene = new Scene(gui);
-		scene.getStylesheets().add(getClass().getResource("01_create_algorithm.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("create_execution_description_dialog.css").toExternalForm());
 		stage.setScene(scene);
 		stage.setMinHeight(480);
 		stage.setMinWidth(640);
@@ -171,7 +176,7 @@ public class CreateAlgorithmController implements Initializable {
 				try {
 					populateAlgorithmClassWith(newValue);
 				} catch (BadAlgorithmException e) {
-					Dialogs.create().showException(e);
+					new TextAreaDialog("Exception", e);
 					stage.close();
 				}
 			}
@@ -182,15 +187,14 @@ public class CreateAlgorithmController implements Initializable {
 		try {
 			populateAlgorithmClassWith(algorithmType.getSelectionModel().getSelectedItem());
 		} catch (BadAlgorithmException e) {
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e.getMessage(), e);
 		}
 		algorithmClass.getSelectionModel().select(0);
 	}
 
 	private void connectQuestionButton() {
 		questionButton.setOnAction(e -> {
-			Dialogs.create().owner(stage).title("Information").masthead(null)
-					.message("To understand what is happening\nhere than please ask developer and then\nchange this text. Thanks!").showInformation();
+			new TextAreaDialog("Information", "To understand what is happening\nhere than please ask developer and then\nchange this text. Thanks!").showAndWait();
 		});
 	}
 
@@ -212,7 +216,7 @@ public class CreateAlgorithmController implements Initializable {
 	}
 
 	private void connectTableForNumber() {
-		ControllerHelper.connectDeleteAction(stage, numberTable, model.getNumberAlgorithms());
+		ZozkaJavaFxHelper.connectDeleteAction(stage, numberTable, model.getNumberAlgorithms());
 
 		numberParName.setCellValueFactory(new PropertyValueFactory<NumberAlgorithmParameter, String>("parameterName"));
 		numberParName.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -233,7 +237,7 @@ public class CreateAlgorithmController implements Initializable {
 	}
 
 	private void connectTableForText() {
-		ControllerHelper.connectDeleteAction(stage, textTable, model.getTextAlgorithms());
+		ZozkaJavaFxHelper.connectDeleteAction(stage, textTable, model.getTextAlgorithms());
 
 		textParName.setCellValueFactory(new PropertyValueFactory<TextAlgorithmParameter, String>("parameterName"));
 		textParName.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -277,17 +281,19 @@ public class CreateAlgorithmController implements Initializable {
 	}
 
 	private Optional<String> getParameterName() {
-		final Optional<String> parameterName = Dialogs.create().owner(stage).title("Enter Parameter Name").masthead("Parameter name:").message("Enter: ")
-				.showTextInput("ParameterName");
+		final TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("Enter Parameter Name");
+		dialog.setHeaderText("Parameter name:");
+		dialog.setContentText("Enter: ");
+		final Optional<String> parameterName = dialog.showAndWait();
+
 		if (parameterName.isPresent()) {
 			if (!parameterNamePattern.matcher(parameterName.get()).matches()) {
-				Dialogs.create().owner(stage).title("Bad Parameter Name").masthead("Parameter name not match pattern.")
-						.message("Parameter name should contain only letters, numbers and '_' symbol.").showError();
+				new TextAreaDialog("Parameter name does not match pattern", "Parameter name should contain only letters, numbers and '_' symbol.").showAndWait();
 				return Optional.empty();
 			}
 			if (model.parameterNameExists(parameterName.get())) {
-				Dialogs.create().owner(stage).title("Bad Parameter Name").masthead("Parameter name already exists.")
-						.message("You could add only one parameter (one for both for number or test tables).").showError();
+				new TextAreaDialog("Parameter name does not match pattern", "You could add only one parameter (one for both for number or test tables).").showAndWait();
 				return Optional.empty();
 			}
 		}
@@ -295,8 +301,16 @@ public class CreateAlgorithmController implements Initializable {
 	}
 
 	private Optional<ParameterType> getParameterType() {
-		return Dialogs.create().owner(stage).title("Choose type for parameter").masthead(null).message("Type define parameter domen: ")
-				.showChoices(ParameterType.values());
+		final Alert alert = new Alert(AlertType.NONE, "Choose type for parameter");
+		for (ParameterType pt : ParameterType.values()) {
+			final ButtonType buttonType = new ButtonType(pt.getName());
+			alert.getButtonTypes().add(buttonType);
+		}
+		final Optional<ButtonType> result = alert.showAndWait();
+		if (result.isPresent()) {
+			return Optional.ofNullable(ParameterType.findByName(result.get().getText()));
+		}
+		return Optional.empty();
 	}
 
 	private void addIntegerParameter(String parameterName, String defaultFrom, String defaultStep, String defaultTo) {
@@ -317,39 +331,24 @@ public class CreateAlgorithmController implements Initializable {
 	}
 
 	private void addDoubleParameter(String parameterName, String defaultFrom, String defaultStep, String defaultTo) {
-		final String errorMessage = "Double is a number (-)?([0-9])+(.[0-9]+)?";
-		final Optional<String> from = readDoubleParameter(defaultFrom, "Double Parameter", "Enter From", "From: ", errorMessage);
-		if (!from.isPresent()) {
-			return;
+		CreateExecutionDescriptionDialogHelper.NumberParameters numberParameters = helper.readAllDoubleParameters();
+		if (numberParameters.isValid()) {
+			model.addNumberAlgorithm(
+					new NumberAlgorithmParameter(parameterName, ParameterType.DOUBLE, numberParameters.from.get(), numberParameters.step.get(), numberParameters.to.get()));
 		}
-		final Optional<String> step = readDoubleParameter(defaultStep, "Double Parameter", "Enter Step", "Step: ", errorMessage);
-		if (!step.isPresent()) {
-			return;
-		}
-		final Optional<String> to = readDoubleParameter(defaultTo, "Double Parameter", "Enter To", "To: ", errorMessage);
-		if (!to.isPresent()) {
-			return;
-		}
-		model.addNumberAlgorithm(new NumberAlgorithmParameter(parameterName, ParameterType.DOUBLE, from.get(), step.get(), to.get()));
 	}
 
 	private Optional<String> readIntegerParameter(final String defaultValue, String masthead, String message, String errorMessage) {
-		final Optional<String> integerParameter = Dialogs.create().owner(stage).title("Integer Parameter").masthead(masthead).message(message)
-				.showTextInput(defaultValue);
+		final TextInputDialog dialog = new TextInputDialog(defaultValue);
+		dialog.setTitle("Integer Parameter");
+		dialog.setHeaderText(masthead);
+		dialog.setContentText(message);
+		final Optional<String> integerParameter = dialog.showAndWait();
 		if (integerParameter.isPresent() && !NumberAlgorithmParameter.integerParPattern.matcher(integerParameter.get()).matches()) {
-			Dialogs.create().owner(stage).title("Integer Parameter").masthead("Please insert integer").message(errorMessage).showError();
+			new TextAreaDialog("Integer value is incorrect", errorMessage).showAndWait();
 			return Optional.empty();
 		}
 		return Optional.of(integerParameter.get());
-	}
-
-	private Optional<String> readDoubleParameter(final String defaultValue, String title, String masthead, String message, String errorMessage) {
-		final Optional<String> doubleParameter = Dialogs.create().owner(stage).title(title).masthead(masthead).message(message).showTextInput(defaultValue);
-		if (doubleParameter.isPresent() && !NumberAlgorithmParameter.doubleParPattern.matcher(doubleParameter.get()).matches()) {
-			Dialogs.create().owner(stage).title(title).masthead("Please insert double").message(errorMessage).showError();
-			return Optional.empty();
-		}
-		return Optional.of(doubleParameter.get());
 	}
 
 	private void addStringParameter(String parameterName) {
@@ -367,8 +366,9 @@ public class CreateAlgorithmController implements Initializable {
 	private List<String> getStringDomen(String title) {
 		final ArrayList<String> values = new ArrayList<>();
 		while (true) {
-			final Optional<String> stringValue = Dialogs.create().owner(stage).title(title)
-					.masthead("Hack: add several divided by ','.\nPress 'Cancel' to finish enter.").message("Enter domen value: ").showTextInput("");
+			final TextInputDialog dialog = new TextInputDialog("Enter domen value: ");
+			dialog.setContentText("Hack: add several divided by ','.\nPress 'Cancel' to finish enter.");
+			final Optional<String> stringValue = dialog.showAndWait();
 			if (stringValue.isPresent()) {
 				values.add(stringValue.get());
 			} else {
