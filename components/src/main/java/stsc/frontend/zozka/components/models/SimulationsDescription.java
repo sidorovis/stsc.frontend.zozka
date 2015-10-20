@@ -1,5 +1,7 @@
-package stsc.frontend.zozka.gui.models;
+package stsc.frontend.zozka.components.models;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
 import javafx.collections.FXCollections;
@@ -15,9 +17,9 @@ import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridFactory;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 
-public class SimulationsDescription {
+public final class SimulationsDescription {
 
-	private String datafeedPath = "./";
+	private Path datafeedPath = Paths.get("./");
 	private StockStorage stockStorage;
 	private FromToPeriod period;
 
@@ -27,11 +29,11 @@ public class SimulationsDescription {
 		return executionDescriptions;
 	}
 
-	public String getDatafeedPath() {
+	public Path getDatafeedPath() {
 		return datafeedPath;
 	}
 
-	public void setDatafeedPath(String datafeed) {
+	public void setDatafeedPath(Path datafeed) {
 		datafeedPath = datafeed;
 	}
 
