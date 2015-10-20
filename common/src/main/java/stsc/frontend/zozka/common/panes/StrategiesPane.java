@@ -1,19 +1,9 @@
 package stsc.frontend.zozka.common.panes;
 
-import java.awt.Color;
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.DatasetRenderingOrder;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -28,8 +18,8 @@ import javafx.scene.layout.BorderPane;
 import stsc.common.FromToPeriod;
 import stsc.common.algorithms.BadAlgorithmException;
 import stsc.common.storage.StockStorage;
-import stsc.frontend.zozka.common.chart.helpers.SerieXYToolTipGenerator;
 import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
+import stsc.frontend.zozka.common.models.MetricsDrawer;
 import stsc.frontend.zozka.common.models.ObservableStrategySelector;
 import stsc.frontend.zozka.common.models.SimulationType;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
@@ -42,7 +32,6 @@ import stsc.general.simulator.multistarter.genetic.StrategyGeneticSearcher;
 import stsc.general.simulator.multistarter.genetic.StrategyGeneticSearcherBuilder;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 import stsc.general.simulator.multistarter.grid.StrategyGridSearcher;
-import stsc.general.statistic.EquityCurve;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
 import stsc.general.statistic.cost.function.CostWeightedProductFunction;
@@ -53,8 +42,7 @@ public final class StrategiesPane extends BorderPane {
 	private static Metrics METRICS = new Metrics(Metrics.getBuilder());
 
 	private final ObservableStrategySelector selector;
-	// TODO throw out this pane to stsc.frontend.zozka.charts project
-	private final JFreeChart chart;
+	private final MetricsDrawer metricsDrawer;
 
 	private final ObservableList<StatisticsDescription> model = FXCollections.observableArrayList();
 	private final ProgressWithStopPane controlPane;
@@ -64,38 +52,35 @@ public final class StrategiesPane extends BorderPane {
 		return new StrategiesPaneBuilder();
 	}
 
-	StrategiesPane(final StrategiesPaneBuilder spb) throws BadAlgorithmException, UnexpectedException, InterruptedException {
+	StrategiesPane(final StrategiesPaneBuilder spb) throws BadAlgorithmException, UnexpectedException, InterruptedException, BadParameterException {
 		this.selector = spb.getObservableStrategySelector();
-		this.chart = spb.getjFreeChart();
+		this.metricsDrawer = spb.getMetricsDrawer();
 		this.controlPane = new ProgressWithStopPane();
 		createTopElements();
 		createEmptyTable();
 		setupControlPane(startCalculation(spb));
 	}
 
-	private Optional<StrategySearcher> startCalculation(StrategiesPaneBuilder spb) throws BadAlgorithmException, InterruptedException {
+	private StrategySearcher startCalculation(StrategiesPaneBuilder spb) throws BadAlgorithmException, InterruptedException, BadParameterException {
 		return startCalculation(spb.getPeriod(), spb.getSimulatorSettingsModel(), spb.getStockStorage(), spb.getSimulationType());
 	}
 
-	private Optional<StrategySearcher> startCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage, SimulationType simulationType)
-			throws BadAlgorithmException, InterruptedException {
-		if (simulationType.equals(SimulationType.GRID)) {
-			return startGridCalculation(period, settingsModel, stockStorage);
-		} else {
+	private StrategySearcher startCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage, SimulationType simulationType)
+			throws BadAlgorithmException, InterruptedException, BadParameterException {
+		switch (simulationType) {
+		case GENETIC:
 			return startGeneticCalculation(period, settingsModel, stockStorage);
+		default:
 		}
+		return startGridCalculation(period, settingsModel, stockStorage);
 	}
 
-	private void setupControlPane(Optional<StrategySearcher> strategySearcher) throws UnexpectedException {
-		if (!strategySearcher.isPresent()) {
-			throw new UnexpectedException("Calculations are not started, problem on StrategySearch creation phaze.");
-		}
+	private void setupControlPane(final StrategySearcher strategySearcher) throws UnexpectedException {
+
 		controlPane.setOnStopButtonAction(() -> {
-			if (strategySearcher.isPresent()) {
-				strategySearcher.get().stopSearch();
-			}
+			strategySearcher.stopSearch();
 		});
-		strategySearcher.get().addIndicatorProgress(new IndicatorProgressListener() {
+		strategySearcher.addIndicatorProgress(new IndicatorProgressListener() {
 			@Override
 			public void processed(double percent) {
 				Platform.runLater(() -> {
@@ -159,8 +144,8 @@ public final class StrategiesPane extends BorderPane {
 		final int selected = table.getSelectionModel().getSelectedIndex();
 		synchronized (model) {
 			if (selected >= 0 && selected < model.size()) {
-				final StatisticsDescription sd = model.get(selected);
-				drawStatistics(sd.getId(), sd.getMetrics());
+				final StatisticsDescription statisticsDescription = model.get(selected);
+				metricsDrawer.drawMetric(statisticsDescription.getId(), statisticsDescription.getMetrics());
 			}
 		}
 	}
@@ -173,62 +158,34 @@ public final class StrategiesPane extends BorderPane {
 		}
 	}
 
-	private void drawStatistics(long id, Metrics metrics) {
-		final TimeSeriesCollection dataset = new TimeSeriesCollection();
-		final TimeSeries ts = new TimeSeries("Equity Curve:" + String.valueOf(id));
-
-		final EquityCurve equityCurveInMoney = metrics.getEquityCurveInMoney();
-
-		for (int i = 0; i < equityCurveInMoney.size(); ++i) {
-			final EquityCurve.Element e = equityCurveInMoney.get(i);
-			ts.add(new Day(e.date), e.value);
-		}
-		dataset.addSeries(ts);
-
-		chart.getXYPlot().setDataset(dataset);
-		final XYItemRenderer renderer = new StandardXYItemRenderer(StandardXYItemRenderer.LINES, new SerieXYToolTipGenerator(String.valueOf(id)));
-		renderer.setSeriesPaint(0, Color.RED);
-		chart.getXYPlot().setRenderer(renderer);
-		chart.getXYPlot().setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+	private StrategySearcher startGridCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage)
+			throws BadAlgorithmException, BadParameterException {
+		final SimulatorSettingsGridList list = settingsModel.generateGridSettings(stockStorage, period);
+		checkThatMaxPossibleSizeCorrect(list.size());
+		addListenerOnChanged(selector.getObservableStrategyList());
+		return new StrategyGridSearcher(list, selector, 4);
 	}
 
-	private Optional<StrategySearcher> startGridCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage) throws BadAlgorithmException {
-		try {
-			final SimulatorSettingsGridList list = settingsModel.generateGridSettings(stockStorage, period);
-			checkThatMaxPossibleSizeCorrect(list.size());
-			addListenerOnChanged(selector.getObservableStrategyList());
-			return Optional.of(new StrategyGridSearcher(list, selector, 4));
-		} catch (BadParameterException e1) {
-			new TextAreaDialog("Exception", e1).showAndWait();
-		}
-		return Optional.empty();
-	}
+	private StrategySearcher startGeneticCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage)
+			throws BadAlgorithmException, InterruptedException, BadParameterException {
+		final SimulatorSettingsGeneticList list = settingsModel.generateGeneticSettings(stockStorage, period);
+		checkThatMaxPossibleSizeCorrect(selector.maxPossibleAmount());
+		addListenerOnChanged(selector.getObservableStrategyList());
 
-	private Optional<StrategySearcher> startGeneticCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage)
-			throws BadAlgorithmException, InterruptedException {
-		try {
-			final SimulatorSettingsGeneticList list = settingsModel.generateGeneticSettings(stockStorage, period);
-			checkThatMaxPossibleSizeCorrect(selector.maxPossibleAmount());
-			addListenerOnChanged(selector.getObservableStrategyList());
+		final StrategyGeneticSearcher sgs = createStrategyGeneticSearcher(list, selector);
 
-			final StrategyGeneticSearcher sgs = createStrategyGeneticSearcher(list, selector);
-
-			// TODO fix this thread creating process, it is very unstable (but
-			// OK for now).
-			new Thread(() -> {
-				try {
-					sgs.waitAndGetSelector();
-				} catch (Exception e) {
-					Platform.runLater(() -> {
-						new TextAreaDialog("Exception", e).showAndWait();
-					});
-				}
-			}).start();
-			return Optional.of(sgs);
-		} catch (BadParameterException badParameterException) {
-			new TextAreaDialog("Exception", badParameterException).showAndWait();
-		}
-		return Optional.empty();
+		// TODO fix this thread creating process, it is very unstable (but
+		// OK for now).
+		new Thread(() -> {
+			try {
+				sgs.waitAndGetSelector();
+			} catch (Exception e) {
+				Platform.runLater(() -> {
+					new TextAreaDialog("Exception", e).showAndWait();
+				});
+			}
+		}).start();
+		return sgs;
 	}
 
 	private StrategyGeneticSearcher createStrategyGeneticSearcher(SimulatorSettingsGeneticList list, ObservableStrategySelector selector) {

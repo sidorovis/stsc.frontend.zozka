@@ -2,14 +2,14 @@ package stsc.frontend.zozka.common.panes;
 
 import java.rmi.UnexpectedException;
 
-import org.jfree.chart.JFreeChart;
-
 import stsc.common.FromToPeriod;
 import stsc.common.algorithms.BadAlgorithmException;
 import stsc.common.storage.StockStorage;
+import stsc.frontend.zozka.common.models.MetricsDrawer;
 import stsc.frontend.zozka.common.models.ObservableStrategySelector;
 import stsc.frontend.zozka.common.models.SimulationType;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
+import stsc.general.simulator.multistarter.BadParameterException;
 
 /**
  * Builder class for {@link StrategiesPane}. <br/>
@@ -21,8 +21,7 @@ public final class StrategiesPaneBuilder {
 	private FromToPeriod period;
 	private SimulatorSettingsModel simulatorSettingsModel;
 	private StockStorage stockStorage;
-	// TODO should be changed on some interface for chart displaying
-	private JFreeChart jFreeChart;
+	private MetricsDrawer metricsDrawer;
 	private SimulationType simulationType;
 
 	private ObservableStrategySelector observableStrategySelector;
@@ -37,7 +36,7 @@ public final class StrategiesPaneBuilder {
 		return period;
 	}
 
-	public StrategiesPane build() throws UnexpectedException, BadAlgorithmException, InterruptedException {
+	public StrategiesPane build() throws UnexpectedException, BadAlgorithmException, InterruptedException, BadParameterException {
 		return new StrategiesPane(this);
 	}
 
@@ -64,15 +63,6 @@ public final class StrategiesPaneBuilder {
 		return this;
 	}
 
-	JFreeChart getjFreeChart() {
-		return jFreeChart;
-	}
-
-	public StrategiesPaneBuilder setjFreeChart(JFreeChart jFreeChart) {
-		this.jFreeChart = jFreeChart;
-		return this;
-	}
-
 	SimulationType getSimulationType() {
 		return simulationType;
 	}
@@ -88,6 +78,15 @@ public final class StrategiesPaneBuilder {
 
 	public StrategiesPaneBuilder setObservableStrategySelector(ObservableStrategySelector observableStrategySelector) {
 		this.observableStrategySelector = observableStrategySelector;
+		return this;
+	}
+
+	MetricsDrawer getMetricsDrawer() {
+		return metricsDrawer;
+	}
+
+	public StrategiesPaneBuilder setMetricsDrawer(MetricsDrawer metricsDrawer) {
+		this.metricsDrawer = metricsDrawer;
 		return this;
 	}
 
