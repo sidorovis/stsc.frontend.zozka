@@ -7,9 +7,9 @@ import javafx.stage.Stage;
 import stsc.frontend.zozka.common.models.ExecutionDescription;
 import stsc.frontend.zozka.components.simulation.dialogs.CreateExecutionDescriptionDialog;
 
-public class VisualTestCreateAlgorithmDialogApplication extends Application {
+public class VisualTestCreateExecutionDescriptionDialog extends Application {
 
-	public VisualTestCreateAlgorithmDialogApplication() {
+	public VisualTestCreateExecutionDescriptionDialog() {
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class VisualTestCreateAlgorithmDialogApplication extends Application {
 	}
 
 	public static void main(String[] args) {
-		Application.launch(VisualTestCreateAlgorithmDialogApplication.class, (java.lang.String[]) null);
+		Application.launch(VisualTestCreateExecutionDescriptionDialog.class, (java.lang.String[]) null);
 
 	}
 }

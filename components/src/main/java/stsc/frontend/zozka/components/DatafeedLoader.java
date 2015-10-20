@@ -24,7 +24,7 @@ public final class DatafeedLoader {
 	private Thread loadThread;
 	private final YahooFileStockStorage yahooFileStockStorage;
 
-	public DatafeedLoader(final Path datafeed) throws Exception {
+	public DatafeedLoader(final Path datafeed) throws IOException, ClassNotFoundException {
 		final YahooDatafeedSettings yahooDatafeedSettings = new YahooDatafeedSettings(datafeed);
 		this.yahooFileStockStorage = new YahooFileStockStorage(yahooDatafeedSettings, false);
 	}
@@ -56,7 +56,7 @@ public final class DatafeedLoader {
 		yahooFileStockStorage.startInBackground();
 	}
 
-	public StockStorage getStockStorage() throws InterruptedException {
+	public StockStorage getStockStorage() {
 		return yahooFileStockStorage;
 	}
 
