@@ -1,16 +1,17 @@
-package stsc.frontend.zozka.controllers;
+package stsc.frontend.zozka.components.simulation.dialogs;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import stsc.frontend.zozka.components.simulation.dialogs.CreateSimulatorSettingsDialog;
 
-public class VisualTestSimulatorSettingsController extends Application {
+public class VisualTestCreateSimulatorSettingsDialog extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		final SimulatorSettingsController controller = new SimulatorSettingsController(stage);
+		final CreateSimulatorSettingsDialog controller = new CreateSimulatorSettingsDialog(stage);
 		BorderPane pane = new BorderPane();
 		pane.setCenter(controller.getGui());
 		pane.setBottom(new Button("Test Save"));
@@ -20,6 +21,6 @@ public class VisualTestSimulatorSettingsController extends Application {
 	}
 
 	public static void main(String[] args) {
-		Application.launch(VisualTestSimulatorSettingsController.class, args);
+		Application.launch(VisualTestCreateSimulatorSettingsDialog.class, args);
 	}
 }

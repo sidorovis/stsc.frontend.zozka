@@ -1,21 +1,25 @@
-package stsc.frontend.zozka.controllers;
+package stsc.frontend.zozka.components.simulation.dialogs;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.Optional;
 
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.Dialogs;
-
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 import stsc.frontend.zozka.common.models.ExecutionDescription;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
-import stsc.frontend.zozka.settings.ControllerHelper;
+import stsc.frontend.zozka.components.simulation.helpers.ZozkaJavaFxHelper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
@@ -24,7 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public final class SimulatorSettingsController {
+public final class CreateSimulatorSettingsDialog {
 
 	private final Stage owner;
 	private final Parent gui;
@@ -40,10 +44,10 @@ public final class SimulatorSettingsController {
 	@FXML
 	private TableColumn<ExecutionDescription, String> algorithmsNameColumn;
 
-	public SimulatorSettingsController(Stage owner) throws IOException {
+	public CreateSimulatorSettingsDialog(Stage owner) throws IOException {
 		this.owner = owner;
 		this.model = new SimulatorSettingsModel();
-		final URL location = SimulatorSettingsController.class.getResource("03_simulation_settings_pane.fxml");
+		final URL location = getClass().getResource("simulation_settings_dialog.fxml");
 		final FXMLLoader loader = new FXMLLoader(location);
 		loader.setController(this);
 		this.gui = loader.load();
@@ -53,7 +57,7 @@ public final class SimulatorSettingsController {
 	private void initialize() {
 		validateGui();
 		executionsTable.setItems(model.getModel());
-		ControllerHelper.connectDeleteAction(owner, executionsTable, model.getModel());
+		ZozkaJavaFxHelper.connectDeleteAction(owner, executionsTable, model.getModel());
 		executionsNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getExecutionName()));
 		algorithmsNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAlgorithmName()));
 	}
@@ -72,10 +76,9 @@ public final class SimulatorSettingsController {
 	@FXML
 	private void loadFromFile() {
 		if (!model.isEmpty()) {
-			final Action response = Dialogs.create().owner(owner).title("Are you sure?")
-					.masthead("Model have " + model.size() + " execution descriptions")
-					.message("Do you want to erase them and load from file?").showConfirm();
-			if (response != Dialog.Actions.YES) {
+			final Alert alert = new Alert(AlertType.CONFIRMATION, "Do you want to erase exist model?", ButtonType.YES, ButtonType.NO);
+			final Optional<ButtonType> result = alert.showAndWait();
+			if (!result.isPresent() || !result.equals(ButtonType.YES)) {
 				return;
 			}
 		}
@@ -85,15 +88,15 @@ public final class SimulatorSettingsController {
 		try {
 			if (f != null) {
 				if (!(f.exists() && f.isFile())) {
-					Dialogs.create().owner(owner).title("Simulator Settings Load Error")
-							.masthead("File can't be loaded (" + f.getAbsolutePath() + ")").message("Please choose another one")
-							.showError();
-
+					new TextAreaDialog("Simulator Settings Load Error", "File can't be loaded (" + f.getAbsolutePath() + ")").showAndWait();
+					return;
 				}
-				model.loadFromFile(f);
+				try (InputStream is = new FileInputStream(f)) {
+					model.loadFromFile(is);
+				}
 			}
 		} catch (Exception e) {
-			Dialogs.create().owner(owner).showException(e);
+			new TextAreaDialog("Exception", e);
 		}
 	}
 
@@ -105,51 +108,50 @@ public final class SimulatorSettingsController {
 		try {
 			if (f != null) {
 				if (f.exists() && !f.canWrite()) {
-					Dialogs.create().owner(owner).title("Simulator Settings Save Error")
-							.masthead("File can't be writen (" + f.getAbsolutePath() + ")").message("Please choose another one")
-							.showError();
+					new TextAreaDialog("Simulator Settings Save Error", "File can't be writen (" + f.getAbsolutePath() + ")").showAndWait();
 					return;
 				}
-				model.saveToFile(f);
+				try (OutputStream os = new FileOutputStream(f)) {
+					model.saveToFile(os);
+				}
 			}
 		} catch (IOException e) {
-			Dialogs.create().owner(owner).showException(e);
+			new TextAreaDialog("Exception", e);
 		}
 	}
 
 	@FXML
 	private void mouseClicked(MouseEvent e) {
-		if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2
-				&& !executionsTable.getSelectionModel().getSelectedItems().isEmpty()) {
+		if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2 && !executionsTable.getSelectionModel().getSelectedItems().isEmpty()) {
 			editExecution();
 		}
 	}
 
 	@FXML
 	private void addNewExecution() {
-		Optional<ExecutionDescription> ed = Optional.empty();
+		Optional<ExecutionDescription> executionDescription = Optional.empty();
 		try {
-			final CreateAlgorithmController controller = new CreateAlgorithmController(owner);
-			ed = controller.getExecutionDescription();
+			final CreateExecutionDescriptionDialog createExecutionDescriptionDialog = new CreateExecutionDescriptionDialog(owner);
+			executionDescription = createExecutionDescriptionDialog.getExecutionDescription();
 		} catch (IOException e) {
-			Dialogs.create().showException(e);
+			new TextAreaDialog("Exception", e);
 		}
-		if (ed.isPresent()) {
-			model.add(ed.get());
+		if (executionDescription.isPresent()) {
+			model.add(executionDescription.get());
 		}
 	}
 
 	private void editExecution() {
 		final int index = executionsTable.getSelectionModel().getSelectedIndex();
-		final ExecutionDescription ed = executionsTable.getSelectionModel().getSelectedItem();
+		final ExecutionDescription executionDescription = executionsTable.getSelectionModel().getSelectedItem();
 		try {
-			final CreateAlgorithmController controller = new CreateAlgorithmController(owner, ed);
-			final Optional<ExecutionDescription> newEd = controller.getExecutionDescription();
-			if (newEd.isPresent()) {
-				model.set(index, newEd.get());
+			final CreateExecutionDescriptionDialog controller = new CreateExecutionDescriptionDialog(owner, executionDescription);
+			final Optional<ExecutionDescription> newExecutionDescription = controller.getExecutionDescription();
+			if (newExecutionDescription.isPresent()) {
+				model.set(index, newExecutionDescription.get());
 			}
-		} catch (IOException exception) {
-			Dialogs.create().showException(exception);
+		} catch (IOException e) {
+			new TextAreaDialog("Exception", e);
 		}
 	}
 

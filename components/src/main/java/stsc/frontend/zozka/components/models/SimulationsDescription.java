@@ -17,6 +17,7 @@ import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridFactory;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 
+@Deprecated
 public final class SimulationsDescription {
 
 	private Path datafeedPath = Paths.get("./");
