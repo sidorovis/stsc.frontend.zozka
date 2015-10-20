@@ -93,7 +93,7 @@ public final class StockDatafeedListPane extends BorderPane {
 		final Set<String> result = new HashSet<>();
 		try {
 			setBottom(progressWithStopPane);
-			final YahooFileStockStorage ss = new YahooFileStockStorage(new YahooDatafeedSettings(datafeedPath), false);
+			final YahooFileStockStorage ss = new YahooFileStockStorage(new YahooDatafeedSettings(datafeedPath, datafeedPath), false);
 			// TODO
 			// final Queue<String> tasks = ss.amountToProcess();
 			// applySizeFilter(tasks, filter);
@@ -112,7 +112,8 @@ public final class StockDatafeedListPane extends BorderPane {
 	// }
 	// }
 
-	private void postLoadDatafeedActions(Function<Set<String>, Optional<Void>> onFinish, final YahooFileStockStorage ss) throws ClassNotFoundException, IOException {
+	private void postLoadDatafeedActions(Function<Set<String>, Optional<Void>> onFinish, final YahooFileStockStorage ss)
+			throws ClassNotFoundException, IOException {
 		setStockStorage(ss);
 		setUpdateModel(ss);
 		startLoadIndicatorUpdates(ss, onFinish);

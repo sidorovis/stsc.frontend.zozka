@@ -5,7 +5,7 @@
 	<groupId>stsc</groupId>
 	<artifactId>stsc.frontend.zozka</artifactId>
 	<version>0.0.19-BOM</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>stsc.frontend.zozka</name>
 	<url>https://github.com/sidorovis/stsc</url>

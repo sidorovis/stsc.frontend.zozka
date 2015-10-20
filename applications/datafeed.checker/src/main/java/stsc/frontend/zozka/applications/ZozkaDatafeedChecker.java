@@ -13,6 +13,9 @@ import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
@@ -20,15 +23,14 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
 import stsc.common.stocks.Stock;
 import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.common.dialogs.StockListDialog;
 import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 import stsc.frontend.zozka.common.models.StockDescription;
 import stsc.frontend.zozka.common.panes.StockDatafeedListPane;
+import stsc.frontend.zozka.components.simulation.helpers.ZozkaJavaFxHelper;
 import stsc.yahoo.YahooDatafeedSettings;
-import stsc.yahoo.YahooFileStockStorage;
 
 public class ZozkaDatafeedChecker extends Application {
 
@@ -55,13 +57,17 @@ public class ZozkaDatafeedChecker extends Application {
 	@Override
 	public void start(final Stage owner) throws Exception {
 		this.owner = owner;
-		final Action result = Dialogs.create().owner(owner).title("Do you want to load all data?").masthead(null).message("Click Yes and we will download ./data/ folder also.")
-				.showConfirm();
-		loadDataFolder = (result == Dialog.Actions.YES);
-		if (result == Dialog.Actions.CANCEL) {
+		final ButtonType allData = new ButtonType("All Data");
+		final ButtonType filteredData = new ButtonType("Filtered Data");
+		final Alert alert = new Alert(AlertType.INFORMATION, "Choose load options", allData, filteredData);
+		final Optional<ButtonType> result = alert.showAndWait();
+		if (!result.isPresent()) {
 			owner.close();
 			this.stop();
 			return;
+		}
+		if (result.isPresent() && result.get().equals(allData)) {
+			loadDataFolder = true;
 		}
 		owner.setScene(initializeGui());
 		owner.setMinHeight(500);
@@ -134,7 +140,7 @@ public class ZozkaDatafeedChecker extends Application {
 	}
 
 	private void chooseFolder() {
-		if (ControllerHelper.chooseFolder(owner, datafeedPathLabel)) {
+		if (ZozkaJavaFxHelper.chooseFolder(owner, datafeedPathLabel)) {
 			try {
 				loadDatafeed();
 			} catch (IOException e) {
@@ -182,14 +188,6 @@ public class ZozkaDatafeedChecker extends Application {
 				} , predicate);
 	}
 
-	private String getDataDatafeed() {
-		if (loadDataFolder) {
-			return YahooFileStockStorage.DATA_FOLDER;
-		} else {
-			return YahooFileStockStorage.FILTER_DATA_FOLDER;
-		}
-	}
-
 	private void checkLists() {
 		checkThatStocksAreEqual();
 	}
@@ -200,7 +198,8 @@ public class ZozkaDatafeedChecker extends Application {
 
 		final Set<String> allList = dataStockStorage.getStockNames();
 		final Set<String> filteredList = filteredDataStockStorage.getStockNames();
-		final Set<String> notEqualStockList = ZozkaDatafeedCheckerHelper.findDifferenceByDaysSizeAndStockFilter(dataStockStorage, filteredDataStockStorage, allList, filteredList);
+		final Set<String> notEqualStockList = ZozkaDatafeedCheckerHelper.findDifferenceByDaysSizeAndStockFilter(dataStockStorage, filteredDataStockStorage,
+				allList, filteredList);
 		if (!notEqualStockList.isEmpty()) {
 			runShowListDialog(dataStockStorage, filteredDataStockStorage, notEqualStockList);
 		}
@@ -214,8 +213,8 @@ public class ZozkaDatafeedChecker extends Application {
 			final Optional<Stock> filtered = filteredDataStockStorage.getStock(stockName);
 
 			try {
-				final ZozkaDatafeedCheckerHelper helper = new ZozkaDatafeedCheckerHelper(new YahooDatafeedSettings(Paths.get(datafeedPath)), dataStockList, filteredStockDataList,
-						stockListDialog.getModel());
+				final ZozkaDatafeedCheckerHelper helper = new ZozkaDatafeedCheckerHelper(new YahooDatafeedSettings(Paths.get(datafeedPath)), dataStockList,
+						filteredStockDataList, stockListDialog.getModel());
 				if (data.isPresent() && filtered.isPresent()) {
 					helper.checkStockAndAskForUser(sd.getStock(), data.get(), filtered.get(), owner);
 				}

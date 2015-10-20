@@ -36,8 +36,8 @@ public class ZozkaDatafeedCheckerHelper {
 
 	private ObservableList<StockDescription> dialogModel;
 
-	public ZozkaDatafeedCheckerHelper(YahooDatafeedSettings yahooDatafeedSettings, StockDatafeedListPane dataStockList, StockDatafeedListPane filteredStockDataList,
-			ObservableList<StockDescription> dialogModel) {
+	public ZozkaDatafeedCheckerHelper(YahooDatafeedSettings yahooDatafeedSettings, StockDatafeedListPane dataStockList,
+			StockDatafeedListPane filteredStockDataList, ObservableList<StockDescription> dialogModel) {
 		this.yahooDatafeedSettings = yahooDatafeedSettings;
 		this.dataStockList = dataStockList;
 		this.filteredStockDataList = filteredStockDataList;
@@ -201,8 +201,8 @@ public class ZozkaDatafeedCheckerHelper {
 		}
 	}
 
-	public static Set<String> findDifferenceByDaysSizeAndStockFilter(final StockStorage dataStockStorage, final StockStorage filteredDataStockStorage, final Set<String> allList,
-			final Set<String> filteredList) {
+	public static Set<String> findDifferenceByDaysSizeAndStockFilter(final StockStorage dataStockStorage, final StockStorage filteredDataStockStorage,
+			final Set<String> allList, final Set<String> filteredList) {
 		final Set<String> notEqualStockList = new HashSet<>();
 		for (String stockName : allList) {
 			if (filteredList.contains(stockName)) {
