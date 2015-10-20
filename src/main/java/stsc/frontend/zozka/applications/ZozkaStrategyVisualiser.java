@@ -32,7 +32,7 @@ import stsc.common.storage.SignalsStorage;
 import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.charts.panels.CurvesViewPane;
 import stsc.frontend.zozka.charts.panes.EquityPane;
-import stsc.frontend.zozka.controllers.PeriodAndDatafeedController;
+import stsc.frontend.zozka.components.controllers.PeriodAndDatafeedController;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.statistic.MetricType;
