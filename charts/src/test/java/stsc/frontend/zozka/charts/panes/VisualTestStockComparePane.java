@@ -16,9 +16,9 @@ public class VisualTestStockComparePane extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		final Alert dialog = new Alert(AlertType.NONE, null, ButtonType.CLOSE);
 		final StockComparePane stockComparePane = new StockComparePane();
-		stockComparePane.addStockToCompare(STOCK_STORAGE.getStock("aapl").get());
-		stockComparePane.addStockToCompare(STOCK_STORAGE.getStock("spy").get());
-		stockComparePane.addStockToCompare(STOCK_STORAGE.getStock("adm").get());
+		stockComparePane.addStockToCompare("Aapl", STOCK_STORAGE.getStock("aapl").get());
+		stockComparePane.addStockToCompare("Spy", STOCK_STORAGE.getStock("spy").get());
+		stockComparePane.addStockToCompare("Adm", STOCK_STORAGE.getStock("adm").get());
 		dialog.getDialogPane().setContent(stockComparePane);
 		dialog.setResizable(true);
 		dialog.showAndWait();
