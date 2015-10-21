@@ -51,6 +51,7 @@ public class VisualTestCurvesViewPane extends Application {
 		dialog.setTitle("createPaneForAdjectiveClose");
 		final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForAdjectiveClose(getStock());
 		dialog.getDialogPane().setContent(stockViewPane.getMainPane());
+		dialog.setResizable(true);
 		dialog.showAndWait();
 	}
 
@@ -59,6 +60,7 @@ public class VisualTestCurvesViewPane extends Application {
 		dialog.setTitle("createPaneForAdjectiveClose");
 		final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForAdjectiveClose(getStock(), getPeriod());
 		dialog.getDialogPane().setContent(stockViewPane.getMainPane());
+		dialog.setResizable(true);
 		dialog.showAndWait();
 	}
 
@@ -91,6 +93,7 @@ public class VisualTestCurvesViewPane extends Application {
 		dialog.setTitle("createPaneForOnStockAlgorithm");
 		final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(getStock(), getPeriod(), executionsName, signalsStorage);
 		dialog.getDialogPane().setContent(stockViewPane.getMainPane());
+		dialog.setResizable(true);
 		dialog.showAndWait();
 	}
 
@@ -110,6 +113,7 @@ public class VisualTestCurvesViewPane extends Application {
 		dialog.setTitle("createPaneForOnEodAlgorithm");
 		final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnEodAlgorithm(getPeriod(), executionsName, signalsStorage);
 		dialog.getDialogPane().setContent(stockViewPane.getMainPane());
+		dialog.setResizable(true);
 		dialog.showAndWait();
 	}
 

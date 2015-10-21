@@ -188,6 +188,9 @@ public final class StockDatafeedListPane extends BorderPane {
 		});
 	}
 
+	/**
+	 * @return loaded {@link StockStorage} or null otherwise.
+	 */
 	public StockStorage getStockStorage() {
 		return stockStorage;
 	}

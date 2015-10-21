@@ -57,7 +57,7 @@ public final class CurvesViewPane {
 	@FXML
 	private BorderPane chartPane;
 
-	public static CurvesViewPane createPaneForAdjectiveClose(Stock stock) throws IOException {
+	public static CurvesViewPane createPaneForAdjectiveClose(final Stock stock) throws IOException {
 		final CandleSticksChartDataset chartDataset = new CandleSticksChartDataset(new DatasetForStock(stock));
 		final CurvesViewPane result = new CurvesViewPane(stock, chartDataset);
 		result.getTableModel().add(new CurveTimeSerieSetting("Adjective Close", stock, 1));
@@ -65,7 +65,7 @@ public final class CurvesViewPane {
 		return result;
 	}
 
-	public static CurvesViewPane createPaneForAdjectiveClose(Stock stock, FromToPeriod period) throws IOException {
+	public static CurvesViewPane createPaneForAdjectiveClose(final Stock stock, final FromToPeriod period) throws IOException {
 		final CandleSticksChartDataset chartDataset = new CandleSticksChartDataset(new DatasetForStock(stock, period));
 		final CurvesViewPane result = new CurvesViewPane(stock, chartDataset);
 		result.getTableModel().add(new CurveTimeSerieSetting("Adjective Close", stock, 1, period));
@@ -73,7 +73,8 @@ public final class CurvesViewPane {
 		return result;
 	}
 
-	public static CurvesViewPane createPaneForOnStockAlgorithm(Stock stock, FromToPeriod period, List<String> executionsName, SignalsStorage signalsStorage) throws IOException {
+	public static CurvesViewPane createPaneForOnStockAlgorithm(final Stock stock, final FromToPeriod period, final List<String> executionsName, final SignalsStorage signalsStorage)
+			throws IOException {
 		final CandleSticksChartDataset chartDataset = new CandleSticksChartDataset(new DatasetForStock(stock, period));
 		final CurvesViewPane result = new CurvesViewPane(stock, chartDataset, period);
 		result.loadTableModel(stock.getInstrumentName(), executionsName, signalsStorage);
@@ -81,25 +82,25 @@ public final class CurvesViewPane {
 		return result;
 	}
 
-	public static CurvesViewPane createPaneForOnEodAlgorithm(FromToPeriod period, List<String> executionsName, SignalsStorage signalsStorage) throws IOException {
+	public static CurvesViewPane createPaneForOnEodAlgorithm(final FromToPeriod period, final List<String> executionsName, final SignalsStorage signalsStorage) throws IOException {
 		final CurvesViewPane result = new CurvesViewPane(period, signalsStorage);
 		result.loadTableModel(executionsName, signalsStorage);
 		result.addChartForEod();
 		return result;
 	}
 
-	private CurvesViewPane(Stock stock, CandleSticksChartDataset chartDataset) throws IOException {
+	private CurvesViewPane(final Stock stock, final CandleSticksChartDataset chartDataset) throws IOException {
 		this.chartDataset = chartDataset;
 		this.gui = getGui();
 		getTableModel().add(chartDataset);
 	}
 
-	private CurvesViewPane(Stock stock, CandleSticksChartDataset chartDataset, FromToPeriod period) throws IOException {
+	private CurvesViewPane(final Stock stock, final CandleSticksChartDataset chartDataset, final FromToPeriod period) throws IOException {
 		this.chartDataset = chartDataset;
 		this.gui = getGui();
 	}
 
-	private CurvesViewPane(FromToPeriod period, SignalsStorage signalsStorage) throws IOException {
+	private CurvesViewPane(final FromToPeriod period, final SignalsStorage signalsStorage) throws IOException {
 		this.chartDataset = new CurveTimeSerieSetting(false, "", 0, signalsStorage);
 		this.gui = getGui();
 	}
@@ -131,7 +132,7 @@ public final class CurvesViewPane {
 		assert chartPane != null : "fx:id=\"chartPane\" was not injected: check your FXML file.";
 	}
 
-	private void loadTableModel(final String stockName, final List<String> executionsName, SignalsStorage signalsStorage) {
+	private void loadTableModel(final String stockName, final List<String> executionsName, final SignalsStorage signalsStorage) {
 		int index = 1;
 		for (String executionName : executionsName) {
 			getTableModel().add(new CurveTimeSerieSetting(executionName, stockName, index, signalsStorage));
@@ -139,7 +140,7 @@ public final class CurvesViewPane {
 		}
 	}
 
-	private void loadTableModel(final List<String> executionsName, SignalsStorage signalsStorage) {
+	private void loadTableModel(final List<String> executionsName, final SignalsStorage signalsStorage) {
 		int index = 1;
 		for (String executionName : executionsName) {
 			getTableModel().add(new CurveTimeSerieSetting(true, executionName, index, signalsStorage));
@@ -147,7 +148,7 @@ public final class CurvesViewPane {
 		}
 	}
 
-	private void addChartForStock(OHLCDataset ohlcDataset) {
+	private void addChartForStock(final OHLCDataset ohlcDataset) {
 		final JFreeChart chart = ChartFactory.createCandlestickChart("Price", "", "", ohlcDataset, true);
 		chart.getXYPlot().setRenderer(0, getChartDataset().getRenderer());
 		for (CurveChartSetting serie : getTableModel()) {
