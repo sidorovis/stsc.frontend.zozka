@@ -33,13 +33,14 @@ final class ZozkaDatafeedCheckerStockCorrectnessHelper {
 	 * @param stock
 	 * @return true if user selected yes
 	 */
-	public boolean makeUserSelectEitherHeLikeCurrentStockState(final Stage owner, Stock data, Stock filtered, boolean askForSave) {
+	public boolean makeUserSelectEitherHeLikeCurrentStockState(final Stage owner, final Optional<? extends Stock> data,
+			final Optional<? extends Stock> filtered) {
 		try {
-			final Alert alert = generateAlert(data, filtered, askForSave);
-			alert.setTitle(generateRepresentationTitle(askForSave));
+			final Alert alert = generateStockComparePane(data, filtered, true);
+			alert.setTitle("Do you want to download stock from scratch?");
 			final Optional<ButtonType> result = alert.showAndWait();
 			if (result.isPresent() && result.get().equals(ButtonType.YES)) {
-				return makeUserSelectEitherHeWantsToSaveNewStockData(data);
+				return makeUserSelectEitherHeWantsToSaveNewStockData(data.get());
 			}
 		} catch (IOException e) {
 			new TextAreaDialog("Exception", e).showAndWait();
@@ -47,31 +48,44 @@ final class ZozkaDatafeedCheckerStockCorrectnessHelper {
 		return false;
 	}
 
-	private Alert generateAlert(Stock data, Stock filtered, boolean askForSave) throws IOException {
+	/**
+	 * Create Chart
+	 * 
+	 * @param owner
+	 * @param data
+	 * @param filtered
+	 */
+	public void chartCurrentStockState(final Stage owner, final Optional<Stock> data, final Optional<Stock> filtered) {
+		try {
+			final Alert alert = generateStockComparePane(data, filtered, false);
+			alert.setTitle("Stock Chart Representation");
+			alert.showAndWait();
+		} catch (IOException e) {
+			new TextAreaDialog("Exception", e).showAndWait();
+		}
+	}
+
+	private Alert generateStockComparePane(final Optional<? extends Stock> data, final Optional<? extends Stock> filtered, final boolean askForSave)
+			throws IOException {
 		Alert alert;
 		if (askForSave) {
 			alert = new Alert(AlertType.CONFIRMATION, null, ButtonType.YES, ButtonType.NO);
 		} else {
 			alert = new Alert(AlertType.INFORMATION, null, ButtonType.CLOSE);
 		}
-		alert.setTitle(generateRepresentationTitle(askForSave));
 		alert.setHeaderText(null);
 		alert.setResizable(true);
 		final StockComparePane stockComparePane = new StockComparePane();
-		stockComparePane.addStockToCompare(data);
-		stockComparePane.addStockToCompare(filtered);
+		if (data.isPresent()) {
+			stockComparePane.addStockToCompare("Data", data.get());
+		}
+		if (filtered.isPresent()) {
+			stockComparePane.addStockToCompare("Filtered", filtered.get());
+		}
 		alert.getDialogPane().setContent(stockComparePane);
 		alert.getDialogPane().setPrefHeight(640);
 		alert.getDialogPane().setPrefWidth(800);
 		return alert;
-	}
-
-	private String generateRepresentationTitle(boolean askForSave) {
-		if (askForSave) {
-			return "ForAdjectiveClose - do you want to save it?";
-		} else {
-			return "ForAdjectiveClose";
-		}
 	}
 
 	/**

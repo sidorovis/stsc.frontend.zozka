@@ -2,12 +2,12 @@ package stsc.frontend.zozka.applications.datafeed.checker;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -98,18 +98,17 @@ public final class ZozkaDatafeedChecker extends Application {
 
 	private void setOnDoubleClickTableAction(final StockDatafeedListPane listPane) {
 		listPane.setOnMouseDoubleClick(sd -> {
-			processStockDescription(sd);
+			chartSelectedStock(sd);
 			return Optional.empty();
 		});
 	}
 
-	// TODO delete it or not
-	// private void datafeedEdit(final MouseEvent mouseEvent) {
-	// if (mouseEvent.getButton() == MouseButton.PRIMARY &&
-	// mouseEvent.getClickCount() == 2) {
-	// chooseFolder();
-	// }
-	// }
+	private void chartSelectedStock(final StockDescription sd) {
+		final String stockName = sd.getStock().getInstrumentName();
+		final Optional<Stock> data = dataStockList.getStockStorage().getStock(stockName);
+		final Optional<Stock> filtered = filteredStockDataList.getStockStorage().getStock(stockName);
+		stockCorrectnessHelper.chartCurrentStockState(owner, data, filtered);
+	}
 
 	private void loadDatafeed() throws IOException {
 		final Optional<String> selectedPrefix = datafeedLoaderHelper.makeUserChooseStockNamePrefix();
@@ -151,7 +150,7 @@ public final class ZozkaDatafeedChecker extends Application {
 	private void runShowListDialog(final StockStorage dataStockStorage, final StockStorage filteredDataStockStorage, final Set<String> notEqualStockList) {
 		final StockListDialog stockListDialog = new StockListDialog(owner, "List of Stocks which have different days size at data and filtered data.");
 		stockListDialog.setOnMouseDoubleClicked(sd -> {
-			processStockDescription(sd, dataStockStorage, filteredDataStockStorage, stockListDialog.getModel());
+			processStockDescription(sd);
 			return Optional.empty();
 		});
 		int index = 0;
@@ -170,9 +169,13 @@ public final class ZozkaDatafeedChecker extends Application {
 			final Optional<Stock> data = dataStockList.getStockStorage().getStock(stockName);
 			final Optional<Stock> filtered = filteredStockDataList.getStockStorage().getStock(stockName);
 
-			final ZozkaDatafeedCheckerTempHelper helper = new ZozkaDatafeedCheckerTempHelper(new YahooDatafeedSettings(Paths.get(datafeedPath)), dataStockList,
-					filteredStockDataList, model);
 			if (data.isPresent() && filtered.isPresent()) {
+
+			}
+
+			if (data.isPresent() && filtered.isPresent()) {
+				final ZozkaDatafeedCheckerTempHelper helper = new ZozkaDatafeedCheckerTempHelper(new YahooDatafeedSettings(Paths.get(datafeedPath)),
+						dataStockList, filteredStockDataList, Arrays.asList());
 				helper.checkStockAndAskForUser(sd.getStock(), data.get(), filtered.get(), owner);
 			}
 		} catch (Exception e) {

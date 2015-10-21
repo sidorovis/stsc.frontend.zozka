@@ -1,7 +1,7 @@
 package stsc.frontend.zozka.applications.datafeed.checker;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,12 +32,12 @@ final class ZozkaDatafeedCheckerTempHelper {
 
 	private List<ObservableList<StockDescription>> modelsToUpdate;
 
-	public ZozkaDatafeedCheckerTempHelper(YahooDatafeedSettings yahooDatafeedSettings, StockDatafeedListPane dataStockList, StockDatafeedListPane filteredStockDataList,
-			final ObservableList<StockDescription>... dialogModels) {
+	public ZozkaDatafeedCheckerTempHelper(YahooDatafeedSettings yahooDatafeedSettings, StockDatafeedListPane dataStockList,
+			StockDatafeedListPane filteredStockDataList, final List<ObservableList<StockDescription>> dialogModels) {
 		this.yahooDatafeedSettings = yahooDatafeedSettings;
 		this.dataStockList = dataStockList;
 		this.filteredStockDataList = filteredStockDataList;
-		this.modelsToUpdate = Arrays.asList(dialogModels);
+		this.modelsToUpdate = new ArrayList<>(dialogModels);
 	}
 
 	public void checkStockAndAskForUser(Stock toTest, Stock data, Stock filtered, Stage owner) {
@@ -106,9 +106,9 @@ final class ZozkaDatafeedCheckerTempHelper {
 			if (!sPtr.isPresent() || !stockPtr.isPresent()) {
 				return false;
 			}
-			final UnitedFormatStock s = sPtr.get();
-			final boolean isSave = stockCorrectnessHelper.makeUserSelectEitherHeLikeCurrentStockState(owner, s, stockPtr.get(), true);
+			final boolean isSave = stockCorrectnessHelper.makeUserSelectEitherHeLikeCurrentStockState(owner, sPtr, stockPtr);
 			if (isSave) {
+				final UnitedFormatStock s = sPtr.get();
 				s.storeUniteFormatToFolder(yahooDatafeedSettings.getDataFolder());
 				dataStockList.updateStock(s);
 				if (stockFilter.isLiquid(s) && stockFilter.isValid(s) || filteredStockDataList.getStockStorage().getStock(s.getInstrumentName()) != null) {
