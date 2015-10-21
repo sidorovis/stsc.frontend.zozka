@@ -3,7 +3,6 @@ package stsc.frontend.zozka.common.panes;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -88,37 +87,26 @@ public final class StockDatafeedListPane extends BorderPane {
 		assert validColumn != null : "fx:id=\"validColumn\" was not injected: check your FXML file.";
 	}
 
-	public Set<String> loadDatafeed(final Path datafeedPath, Function<Set<String>, Optional<Void>> onFinish, Optional<Predicate<String>> filter) {
+	public void loadDatafeed(final Path datafeedPath, Function<Set<String>, Optional<Void>> onFinish, Optional<Predicate<String>> filter) {
 		model.clear();
-		final Set<String> result = new HashSet<>();
 		try {
 			setBottom(progressWithStopPane);
 			final YahooFileStockStorage ss = new YahooFileStockStorage(new YahooDatafeedSettings(datafeedPath, datafeedPath), false);
-			// TODO
-			// final Queue<String> tasks = ss.amountToProcess();
-			// applySizeFilter(tasks, filter);
-			// result.addAll(tasks);
+			if (filter.isPresent()) {
+				ss.removeIf(filter.get());
+			}
 			postLoadDatafeedActions(onFinish, ss);
-		} catch (ClassNotFoundException | IOException e) {
+		} catch (IOException e) {
 			new TextAreaDialog("Exception", e).showAndWait();
 		}
-		return result;
 	}
-	// TODO
-	// private void applySizeFilter(Queue<String> tasks,
-	// Optional<Predicate<String>> filter) {
-	// if (filter.isPresent()) {
-	// tasks.removeIf(filter.get());
-	// }
-	// }
 
-	private void postLoadDatafeedActions(Function<Set<String>, Optional<Void>> onFinish, final YahooFileStockStorage ss)
-			throws ClassNotFoundException, IOException {
-		setStockStorage(ss);
-		setUpdateModel(ss);
-		startLoadIndicatorUpdates(ss, onFinish);
-		setProgressStopButton(ss);
-		ss.startInBackground();
+	private void postLoadDatafeedActions(Function<Set<String>, Optional<Void>> onFinish, final YahooFileStockStorage stoskStorage) throws IOException {
+		setStockStorage(stoskStorage);
+		setUpdateModel(stoskStorage);
+		startLoadIndicatorUpdates(stoskStorage, onFinish);
+		setProgressStopButton(stoskStorage);
+		stoskStorage.startInBackground();
 	}
 
 	private void setUpdateModel(final YahooFileStockStorage ss) {
@@ -130,10 +118,10 @@ public final class StockDatafeedListPane extends BorderPane {
 		}));
 	}
 
-	private void startLoadIndicatorUpdates(final YahooFileStockStorage ss, Function<Set<String>, Optional<Void>> onFinish) {
+	private void startLoadIndicatorUpdates(final YahooFileStockStorage stockStorage, final Function<Set<String>, Optional<Void>> onFinish) {
 		final Thread t = new Thread(() -> {
 			try {
-				updateIndicatorValue(ss);
+				updateIndicatorValue(stockStorage);
 				Platform.runLater(() -> {
 					progressWithStopPane.setIndicatorProgress(100.0);
 					setBottom(null);
@@ -148,7 +136,7 @@ public final class StockDatafeedListPane extends BorderPane {
 		t.start();
 	}
 
-	private void updateIndicatorValue(BackgroundProcess<?> bp) throws InterruptedException {
+	private void updateIndicatorValue(BackgroundProcess<?, ?> bp) throws InterruptedException {
 		final int allSize = bp.amountToProcess();
 		int currentSize = bp.amountToProcess();
 		while (currentSize != 0) {
@@ -161,7 +149,7 @@ public final class StockDatafeedListPane extends BorderPane {
 		}
 	}
 
-	private void setProgressStopButton(final BackgroundProcess<?> ss) {
+	private void setProgressStopButton(final BackgroundProcess<?, ?> ss) {
 		progressWithStopPane.setOnStopButtonAction(() -> {
 			try {
 				ss.stopBackgroundProcess();

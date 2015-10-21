@@ -12,7 +12,7 @@ import stsc.common.system.BackgroundProcess;
 public final class ProgressBarTask extends Task<Integer> {
 
 	private final int sleepTimeBetweenUpdates;
-	private final BackgroundProcess<?> backgroundProcess;
+	private final BackgroundProcess<?, ?> backgroundProcess;
 	private final ProgressBar progressBar;
 	private final int initialSize;
 
@@ -50,7 +50,7 @@ public final class ProgressBarTask extends Task<Integer> {
 	public static class Builder {
 
 		private int sleepTimeBetweenUpdates = 300;
-		private BackgroundProcess<?> backgroundProcess;
+		private BackgroundProcess<?, ?> backgroundProcess;
 		private ProgressBar progressBar;
 
 		public Builder() {
@@ -66,7 +66,7 @@ public final class ProgressBarTask extends Task<Integer> {
 			return this;
 		}
 
-		Builder setBackgroundProcess(final BackgroundProcess<?> backgroundProcess) {
+		Builder setBackgroundProcess(final BackgroundProcess<?, ?> backgroundProcess) {
 			this.backgroundProcess = backgroundProcess;
 			return this;
 		}
