@@ -67,6 +67,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>stsc</groupId>
+			<artifactId>stsc.frontend.zozka.common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>stsc</groupId>
 			<artifactId>stsc.frontend.zozka.components</artifactId>
 		</dependency>
 		<dependency>

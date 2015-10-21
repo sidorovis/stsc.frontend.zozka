@@ -4,7 +4,7 @@
 
 	<groupId>stsc</groupId>
 	<artifactId>stsc.frontend.zozka.applications</artifactId>
-	<version>0.0.19-BOM</version>
+	<version>0.0.20-NOCONTROLFX</version>
 	<packaging>pom</packaging>
 
 	<name>stsc.frontend.zozka.applications</name>
@@ -12,11 +12,23 @@
 
 	<properties>
 		<project.build.sourceEncoding>Cp1251</project.build.sourceEncoding>
+		<github.global.server>github</github.global.server>
 	</properties>
+
+	<build>
+		<defaultGoal>compile</defaultGoal>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.8</version>
+			</plugin>
+		</plugins>
+	</build>
 
 	<modules>
 		<module>datafeed.checker</module>
 	</modules>
 
-	<description>Stsc frontend zozka applications is a module with stsc applications.</description>
+	<description>Stsc frontend zozka applications is a module with stsc frontend zozka applications (javafx based GUI).</description>
 </project>
