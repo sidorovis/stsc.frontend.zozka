@@ -69,7 +69,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>stsc.frontend.zozka.applications.No</mainClass>
+							<mainClass>stsc.frontend.zozka.applications.strategy.visualiser.ZozkaStrategyVisualiser</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
