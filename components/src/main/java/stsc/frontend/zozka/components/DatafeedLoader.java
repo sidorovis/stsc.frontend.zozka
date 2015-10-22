@@ -39,6 +39,8 @@ public final class DatafeedLoader {
 		this.loadThread.start();
 
 		final Alert loadDialog = new Alert(AlertType.INFORMATION, "Wait for datafeed load...", ButtonType.CLOSE);
+		loadDialog.setTitle("Datafeed loading process");
+		loadDialog.setHeaderText(null);
 		loadDialog.getDialogPane().setContent(progressBar);
 		loadDialog.show();
 		task.setOnSucceeded(eh -> Platform.runLater(() -> {

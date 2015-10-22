@@ -2,18 +2,19 @@ package stsc.frontend.zozka.applications;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -21,57 +22,65 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
-import org.controlsfx.dialog.Dialogs;
-
+import stsc.algorithms.Output;
 import stsc.common.BadSignalException;
 import stsc.common.FromToPeriod;
 import stsc.common.algorithms.BadAlgorithmException;
 import stsc.common.stocks.Stock;
 import stsc.common.storage.SignalsStorage;
 import stsc.common.storage.StockStorage;
-import stsc.frontend.zozka.charts.panels.CurvesViewPane;
+import stsc.frontend.zozka.charts.panes.CurvesViewPane;
 import stsc.frontend.zozka.charts.panes.EquityPane;
-import stsc.frontend.zozka.components.controllers.PeriodAndDatafeedController;
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
+import stsc.frontend.zozka.components.panes.PeriodAndDatafeedPane;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
 import stsc.general.trading.TradeProcessorInit;
 
-public class ZozkaStrategyVisualiser extends Application {
+/**
+ * Strategy visualiser is an application that helps debug trading strategy.
+ * <br/>
+ * Provide access to next trading strategy debug information: <br/>
+ * 1. on stock algorithms dependencies and their series (for supported by
+ * {@link Output} algorithm type); <br/>
+ * 2. eod algorithms with dependencies with output series (for supported by
+ * {@link Output} algorithm type); <br/>
+ * 3. eod algorithms equity curve result with statistic table.
+ */
+public final class ZozkaStrategyVisualiser extends Application {
 
 	private Stage owner;
 	private final SplitPane splitPane = new SplitPane();
 	private final TabPane tabPane = new TabPane();
 
-	private PeriodAndDatafeedController periodAndDatafeedController;
-	private TextArea textArea = new TextArea();
+	private PeriodAndDatafeedPane periodAndDatafeedController;
+	private final TextArea textArea = new TextArea();
 
 	private void fillTopPart() throws IOException {
 		final BorderPane pane = new BorderPane();
-		periodAndDatafeedController = new PeriodAndDatafeedController(owner);
+		periodAndDatafeedController = new PeriodAndDatafeedPane(owner);
 		pane.setTop(periodAndDatafeedController.getGui());
 		pane.setCenter(textArea);
 		textArea.setText("StockExecutions = a1\na1.loadLine=Input()\n");
 
 		final HBox hbox = new HBox();
-
 		final Button calculateSeries = new Button("Calculate Series");
 		calculateSeries.setOnAction(e -> {
 			try {
 				calculateSeries();
-			} catch (Exception exc) {
-				Dialogs.create().showException(exc);
+			} catch (InterruptedException exc) {
+				new TextAreaDialog(exc);
 			}
 		});
 
 		final Button calculateOnEodSeries = new Button("Calculate On Eod Series");
-		calculateOnEodSeries.setOnAction(e -> {
+		calculateOnEodSeries.setOnAction((buttonAction) -> {
 			try {
 				calculateOnEodSeries();
-			} catch (Exception exc) {
-				Dialogs.create().showException(exc);
+			} catch (Exception e) {
+				new TextAreaDialog(e);
 			}
 		});
 
@@ -111,7 +120,14 @@ public class ZozkaStrategyVisualiser extends Application {
 		final ArrayList<String> stockNamesList = new ArrayList<>();
 		stockNamesList.addAll(stockNames);
 		Collections.sort(stockNamesList);
-		return Dialogs.create().owner(owner).title("Choose Stock Name").masthead("Stock name").message(null).showChoices(stockNamesList);
+		if (stockNamesList.isEmpty()) {
+			new TextAreaDialog("No stocks at StockStorage", "For some reason there is no stocks at stock storage. \nPlease check another one.");
+			return Optional.empty();
+		}
+		final ChoiceDialog<String> dialog = new ChoiceDialog<String>(stockNamesList.get(0), stockNamesList);
+		dialog.setTitle("Select Prefix for StockStorage");
+		dialog.setHeaderText(null);
+		return dialog.showAndWait();
 	}
 
 	private void calculateSeries(final StockStorage stockStorage) {
@@ -141,11 +157,10 @@ public class ZozkaStrategyVisualiser extends Application {
 			final List<String> executionsName = init.generateOutForStocks();
 			final SimulatorSettings settings = new SimulatorSettings(0, init);
 
-			final Set<String> stockNames = new HashSet<String>(Arrays.asList(new String[] { stock.getInstrumentName() }));
-			final Simulator simulator = new Simulator(settings, stockNames);
+			final Simulator simulator = new Simulator(settings, Sets.newHashSet(stock.getInstrumentName()));
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
 
-			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(owner, stock, period, executionsName, signalsStorage);
+			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(stock, period, executionsName, signalsStorage);
 			final Tab tab = new Tab();
 			tab.setText(stock.getInstrumentName());
 			tab.setContent(stockViewPane.getMainPane());
@@ -153,7 +168,7 @@ public class ZozkaStrategyVisualiser extends Application {
 			tabPane.getSelectionModel().select(tab);
 
 		} catch (Exception e) {
-			Dialogs.create().showException(e);
+			new TextAreaDialog(e);
 		}
 	}
 
@@ -168,7 +183,7 @@ public class ZozkaStrategyVisualiser extends Application {
 			final Simulator simulator = new Simulator(settings);
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
 
-			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnEodAlgorithm(owner, period, executionsName, signalsStorage);
+			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnEodAlgorithm(period, executionsName, signalsStorage);
 			final Tab tab = new Tab();
 			tab.setText("EC: " + tabPane.getTabs().size());
 			tab.setContent(stockViewPane.getMainPane());
@@ -176,7 +191,7 @@ public class ZozkaStrategyVisualiser extends Application {
 			tabPane.getSelectionModel().select(tab);
 
 		} catch (Exception e) {
-			Dialogs.create().showException(e);
+			new TextAreaDialog(e);
 		}
 	}
 
@@ -200,7 +215,7 @@ public class ZozkaStrategyVisualiser extends Application {
 
 			addEquityPaneTab(simulator, period, simulator.getMetrics());
 		} catch (BadAlgorithmException | BadSignalException | IOException e) {
-			Dialogs.create().showException(e);
+			new TextAreaDialog(e);
 		}
 	}
 

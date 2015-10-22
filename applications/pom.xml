@@ -28,6 +28,7 @@
 
 	<modules>
 		<module>datafeed.checker</module>
+		<module>strategy.visualiser</module>
 	</modules>
 
 	<description>Stsc frontend zozka applications is a module with stsc frontend zozka applications (javafx based GUI).</description>

@@ -83,7 +83,9 @@ public final class PeriodAndDatafeedPane extends Pane {
 			final String path = datafeedPath.getText();
 			final File f = new File(path);
 
-			Alert alert = new Alert(AlertType.CONFIRMATION, "Do you want to change datafeed path?", ButtonType.YES, ButtonType.NO);
+			final Alert alert = new Alert(AlertType.CONFIRMATION, "Do you want to change datafeed path?", ButtonType.YES, ButtonType.NO);
+			alert.setTitle("Datafeed Path");
+			alert.setHeaderText(null);
 			final Optional<ButtonType> result = alert.showAndWait();
 
 			if (result.isPresent() && result.get().equals(ButtonType.YES)) {
