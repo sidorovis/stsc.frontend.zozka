@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -109,6 +108,10 @@ public final class StockDatafeedListPane extends BorderPane {
 		stoskStorage.startInBackground();
 	}
 
+	private void setStockStorage(YahooFileStockStorage stockStorage) {
+		this.stockStorage = stockStorage;
+	}
+
 	private void setUpdateModel(final YahooFileStockStorage ss) {
 		final AtomicInteger index = new AtomicInteger(0);
 		ss.addReceiver(newStock -> Platform.runLater(() -> {
@@ -173,19 +176,12 @@ public final class StockDatafeedListPane extends BorderPane {
 
 	public void updateStock(Stock newStockData) {
 		stockStorage.updateStock(newStockData);
-		updateModel(newStockData, model);
-		table.setItems(model);
-	}
-
-	public static void updateModel(Stock newStockData, ObservableList<StockDescription> model) {
-		model.forEach(new Consumer<StockDescription>() {
-			@Override
-			public void accept(StockDescription sd) {
-				if (sd.getStock().getInstrumentName().equals(newStockData.getInstrumentName())) {
-					sd.setStock(newStockData);
-				}
+		model.forEach((sd) -> {
+			if (sd.getStock().getInstrumentName().equals(newStockData.getInstrumentName())) {
+				sd.setStock(newStockData);
 			}
 		});
+		table.setItems(model);
 	}
 
 	/**
@@ -193,10 +189,6 @@ public final class StockDatafeedListPane extends BorderPane {
 	 */
 	public StockStorage getStockStorage() {
 		return stockStorage;
-	}
-
-	private void setStockStorage(YahooFileStockStorage stockStorage) {
-		this.stockStorage = stockStorage;
 	}
 
 }

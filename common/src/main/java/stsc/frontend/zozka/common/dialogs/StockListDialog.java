@@ -15,14 +15,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import stsc.common.stocks.Stock;
 import stsc.frontend.zozka.common.models.StockDescription;
 import stsc.frontend.zozka.common.panes.StockDatafeedListPane;
 
 /**
  * {@link StockListDialog} is GUI dialog with stock list placed into table order
  * with {@link StockDescription} table model. <br/>
- * Used for processing / updating / fixing yahoo datafeed state. TODO probably
- * should be deleted (we have {@link StockDatafeedListPane})
+ * Used for processing / updating / fixing yahoo datafeed state. <br/>
+ * This class differ from {@link StockDatafeedListPane} because it is just a
+ * list of {@link Stock}'s that should be already loaded.
  */
 public final class StockListDialog extends Alert {
 
@@ -41,6 +43,7 @@ public final class StockListDialog extends Alert {
 
 	public StockListDialog(Stage owner, String title, boolean showLiquidColumn, boolean showValidColumn) {
 		super(AlertType.NONE);
+		setTitle(title);
 		getDialogPane().setPrefSize(800, 600);
 		getDialogPane().setContent(borderPane);
 		borderPane.setCenter(table);
@@ -76,10 +79,6 @@ public final class StockListDialog extends Alert {
 		booleanColumn.setCellFactory(CheckBoxTableCell.forTableColumn(booleanColumn));
 	}
 
-	public ObservableList<StockDescription> getModel() {
-		return model;
-	}
-
 	public void setOnMouseDoubleClicked(final Function<StockDescription, Optional<Void>> function) {
 		table.setOnMouseClicked(eh -> {
 			if (eh.getButton().equals(MouseButton.PRIMARY) && eh.getClickCount() == 2) {
@@ -88,6 +87,25 @@ public final class StockListDialog extends Alert {
 					function.apply(selectedItem);
 				}
 			}
+		});
+	}
+
+	public void addStockDescription(final StockDescription stockDescription) {
+		model.add(stockDescription);
+	}
+
+	public void updateStock(final Stock newStockData) {
+		model.forEach((sd) -> {
+			if (sd.getStock().getInstrumentName().equals(newStockData.getInstrumentName())) {
+				sd.setStock(newStockData);
+			}
+		});
+		table.setItems(model);
+	}
+
+	public void deleteStock(final String stockName) {
+		model.removeIf((p) -> {
+			return p.getStock().getInstrumentName().equals(stockName);
 		});
 	}
 }
