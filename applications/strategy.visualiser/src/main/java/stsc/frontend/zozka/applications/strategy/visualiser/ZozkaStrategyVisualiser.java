@@ -1,4 +1,4 @@
-package stsc.frontend.zozka.applications;
+package stsc.frontend.zozka.applications.strategy.visualiser;
 
 import java.io.IOException;
 import java.util.ArrayList;
