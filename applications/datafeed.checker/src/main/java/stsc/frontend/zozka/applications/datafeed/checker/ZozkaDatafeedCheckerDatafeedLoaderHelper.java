@@ -33,7 +33,7 @@ import stsc.yahoo.liquiditator.StockFilter;
  * filtered folder. <br/>
  * This is required to inspect current datafeed state.
  */
-public final class ZozkaDatafeedCheckerDatafeedLoaderHelper {
+final class ZozkaDatafeedCheckerDatafeedLoaderHelper {
 
 	private static final YahooDownloadHelper yahooDownloadHelper = new YahooDownloadHelper();
 	private final StockFilter stockFilter;
