@@ -2,7 +2,6 @@ package stsc.frontend.zozka.applications.datafeed.checker;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -17,6 +16,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import stsc.common.stocks.Stock;
+import stsc.common.stocks.UnitedFormatStock;
 import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.common.dialogs.StockListDialog;
 import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
@@ -107,7 +107,11 @@ public final class ZozkaDatafeedChecker extends Application {
 		final String stockName = sd.getStock().getInstrumentName();
 		final Optional<Stock> data = dataStockList.getStockStorage().getStock(stockName);
 		final Optional<Stock> filtered = filteredStockDataList.getStockStorage().getStock(stockName);
-		stockCorrectnessHelper.chartCurrentStockState(owner, data, filtered);
+		try {
+			stockCorrectnessHelper.chartCurrentStockState(owner, data, filtered);
+		} catch (Exception e) {
+			new TextAreaDialog("Exception", e).showAndWait();
+		}
 	}
 
 	private void loadDatafeed() throws IOException {
@@ -143,40 +147,54 @@ public final class ZozkaDatafeedChecker extends Application {
 		final StockStorage filteredDataStockStorage = filteredStockDataList.getStockStorage();
 		final Set<String> notEqualStockList = datafeedLoaderHelper.findDifferenceByDaysSizeAndStockFilter(dataStockStorage, filteredDataStockStorage);
 		if (!notEqualStockList.isEmpty()) {
-			runShowListDialog(dataStockStorage, filteredDataStockStorage, notEqualStockList);
+			runShowListDialog(notEqualStockList);
 		}
 	}
 
-	private void runShowListDialog(final StockStorage dataStockStorage, final StockStorage filteredDataStockStorage, final Set<String> notEqualStockList) {
+	private void runShowListDialog(final Set<String> notEqualStockList) {
 		final StockListDialog stockListDialog = new StockListDialog(owner, "List of Stocks which have different days size at data and filtered data.");
 		stockListDialog.setOnMouseDoubleClicked(sd -> {
-			processStockDescription(sd);
+			startInvalidStockProcessingOperation(sd, stockListDialog);
 			return Optional.empty();
 		});
 		int index = 0;
+		final StockStorage dataStockStorage = dataStockList.getStockStorage();
+		final StockStorage filteredDataStockStorage = filteredStockDataList.getStockStorage();
+		String badStockNames = "";
 		for (String stockName : notEqualStockList) {
-			final Optional<Stock> stockPtr = dataStockStorage.getStock(stockName);
-			if (!stockPtr.isPresent()) {
-				stockListDialog.getModel().add(new StockDescription(index++, stockPtr.get()));
+			final Optional<Stock> stockFromData = dataStockStorage.getStock(stockName);
+			if (stockFromData.isPresent()) {
+				stockListDialog.addStockDescription(new StockDescription(index++, stockFromData.get()));
+			} else {
+				final Optional<Stock> stockFromFilteredData = filteredDataStockStorage.getStock(stockName);
+				if (stockFromFilteredData.isPresent()) {
+					stockListDialog.addStockDescription(new StockDescription(index++, stockFromFilteredData.get()));
+				} else {
+					badStockNames += stockName + "\n";
+				}
 			}
 		}
-		stockListDialog.show();
+		if (!badStockNames.isEmpty()) {
+			new TextAreaDialog("Next stocks are totally broken, check datafeed manually in addition", badStockNames).showAndWait();
+		}
+		stockListDialog.showAndWait();
 	}
 
-	private void processStockDescription(final StockDescription sd) {
+	private void startInvalidStockProcessingOperation(final StockDescription sd, StockListDialog stockListDialog) {
 		try {
 			final String stockName = sd.getStock().getInstrumentName();
 			final Optional<Stock> data = dataStockList.getStockStorage().getStock(stockName);
 			final Optional<Stock> filtered = filteredStockDataList.getStockStorage().getStock(stockName);
 
-			if (data.isPresent() && filtered.isPresent()) {
-
+			final boolean redownload = stockCorrectnessHelper.makeUserSelectEitherHeLikeToRedownloadCurrentStockState(owner, data, filtered);
+			if (!redownload) {
+				return;
 			}
-
-			if (data.isPresent() && filtered.isPresent()) {
-				final ZozkaDatafeedCheckerTempHelper helper = new ZozkaDatafeedCheckerTempHelper(new YahooDatafeedSettings(Paths.get(datafeedPath)),
-						dataStockList, filteredStockDataList, Arrays.asList());
-				helper.checkStockAndAskForUser(sd.getStock(), data.get(), filtered.get(), owner);
+			final Optional<UnitedFormatStock> newStockVersion = datafeedLoaderHelper.downloadStock(stockName);
+			final boolean saveNewVersion = stockCorrectnessHelper.makeUserSelectEitherHeLineNewVersion(owner, data, filtered, newStockVersion);
+			if (saveNewVersion) {
+				final YahooDatafeedSettings yahooDatafeedSettings = new YahooDatafeedSettings(Paths.get(datafeedPath));
+				datafeedLoaderHelper.saveNewVersion(newStockVersion.get(), yahooDatafeedSettings, dataStockList, filteredStockDataList, stockListDialog);
 			}
 		} catch (Exception e) {
 			new TextAreaDialog("Exception", e).showAndWait();

@@ -1,6 +1,7 @@
 package stsc.frontend.zozka.applications.datafeed.checker;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,8 +16,14 @@ import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import stsc.common.stocks.Stock;
+import stsc.common.stocks.UnitedFormatStock;
 import stsc.common.storage.StockStorage;
+import stsc.frontend.zozka.common.dialogs.StockListDialog;
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
+import stsc.frontend.zozka.common.panes.StockDatafeedListPane;
+import stsc.yahoo.YahooDatafeedSettings;
 import stsc.yahoo.YahooFileStockStorage;
+import stsc.yahoo.downloader.YahooDownloadHelper;
 import stsc.yahoo.liquiditator.StockFilter;
 
 /**
@@ -28,6 +35,7 @@ import stsc.yahoo.liquiditator.StockFilter;
  */
 public final class ZozkaDatafeedCheckerDatafeedLoaderHelper {
 
+	private static final YahooDownloadHelper yahooDownloadHelper = new YahooDownloadHelper();
 	private final StockFilter stockFilter;
 
 	public ZozkaDatafeedCheckerDatafeedLoaderHelper(final StockFilter stockFilter) {
@@ -133,6 +141,36 @@ public final class ZozkaDatafeedCheckerDatafeedLoaderHelper {
 			}
 		}
 		return notEqualStockList;
+	}
+
+	/**
+	 * will download yahoo stock using {@link YahooDownloadHelper} and show
+	 * necessary error message in case of fail.
+	 */
+	public Optional<UnitedFormatStock> downloadStock(String stockName) throws InterruptedException {
+		final Optional<UnitedFormatStock> downloadedVersion = yahooDownloadHelper.download(stockName);
+		if (downloadedVersion.isPresent()) {
+			return downloadedVersion;
+		}
+		new TextAreaDialog("Download failed", "Download of " + stockName + " was not succesfull.\n You could try again, or check yahoo for exact stock name.").showAndWait();
+		return Optional.empty();
+	}
+
+	/**
+	 * Save new version of {@link Stock} to filesystem (data and filtered data
+	 * if necessary using {@link YahooDatafeedSettings}).
+	 */
+	public void saveNewVersion(final UnitedFormatStock newVersion, YahooDatafeedSettings yahooDatafeedSettings, StockDatafeedListPane dataStockList,
+			StockDatafeedListPane filteredStockDataList, StockListDialog stockListDialog) throws IOException {
+		newVersion.storeUniteFormatToFolder(yahooDatafeedSettings.getDataFolder());
+		dataStockList.updateStock(newVersion);
+		if (stockFilter.isLiquid(newVersion) && stockFilter.isValid(newVersion)) {
+			newVersion.storeUniteFormatToFolder(yahooDatafeedSettings.getFilteredDataFolder());
+			filteredStockDataList.updateStock(newVersion);
+		} else {
+			yahooDownloadHelper.deleteFilteredFile(true, yahooDatafeedSettings.getFilteredDataFolder(), newVersion.getFilesystemName());
+		}
+		stockListDialog.deleteStock(newVersion.getInstrumentName());
 	}
 
 }

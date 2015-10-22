@@ -1,6 +1,9 @@
 package stsc.frontend.zozka.applications.datafeed.checker;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import javafx.scene.control.Alert;
@@ -8,8 +11,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import stsc.common.stocks.Stock;
+import stsc.common.stocks.UnitedFormatStock;
 import stsc.frontend.zozka.charts.panes.StockComparePane;
-import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 import stsc.yahoo.liquiditator.StockFilter;
 
 /**
@@ -33,40 +36,46 @@ final class ZozkaDatafeedCheckerStockCorrectnessHelper {
 	 * @param stock
 	 * @return true if user selected yes
 	 */
-	public boolean makeUserSelectEitherHeLikeCurrentStockState(final Stage owner, final Optional<? extends Stock> data,
-			final Optional<? extends Stock> filtered) {
-		try {
-			final Alert alert = generateStockComparePane(data, filtered, true);
-			alert.setTitle("Do you want to download stock from scratch?");
-			final Optional<ButtonType> result = alert.showAndWait();
-			if (result.isPresent() && result.get().equals(ButtonType.YES)) {
-				return makeUserSelectEitherHeWantsToSaveNewStockData(data.get());
-			}
-		} catch (IOException e) {
-			new TextAreaDialog("Exception", e).showAndWait();
-		}
-		return false;
+	public boolean makeUserSelectEitherHeLikeToRedownloadCurrentStockState(final Stage owner, final Optional<? extends Stock> data, final Optional<? extends Stock> filtered)
+			throws IOException {
+		final Map<String, Optional<? extends Stock>> paneDescriptions = new LinkedHashMap<>();
+		paneDescriptions.put("Data", data);
+		paneDescriptions.put("Filtered", filtered);
+		final Alert alert = generateStockCompareDialog(paneDescriptions, true);
+		alert.setTitle("Do you want to download stock from scratch?");
+		final Optional<ButtonType> result = alert.showAndWait();
+		return (result.isPresent() && result.get().equals(ButtonType.YES));
 	}
 
 	/**
-	 * Create Chart
-	 * 
-	 * @param owner
-	 * @param data
-	 * @param filtered
+	 * Show to user pane with just downloaded version and asks if he like to
+	 * save that to the yahoo file stock storage.
 	 */
-	public void chartCurrentStockState(final Stage owner, final Optional<Stock> data, final Optional<Stock> filtered) {
-		try {
-			final Alert alert = generateStockComparePane(data, filtered, false);
-			alert.setTitle("Stock Chart Representation");
-			alert.showAndWait();
-		} catch (IOException e) {
-			new TextAreaDialog("Exception", e).showAndWait();
-		}
+	public boolean makeUserSelectEitherHeLineNewVersion(final Stage owner, final Optional<? extends Stock> data, final Optional<? extends Stock> filtered,
+			Optional<UnitedFormatStock> newVersion) throws IOException {
+		final Map<String, Optional<? extends Stock>> paneDescriptions = new LinkedHashMap<>();
+		paneDescriptions.put("Data", data);
+		paneDescriptions.put("Filtered", filtered);
+		paneDescriptions.put("Version From Internet", newVersion);
+		final Alert alert = generateStockCompareDialog(paneDescriptions, true);
+		alert.setTitle("Do you want to save new stock data?");
+		final Optional<ButtonType> result = alert.showAndWait();
+		return (result.isPresent() && result.get().equals(ButtonType.YES));
 	}
 
-	private Alert generateStockComparePane(final Optional<? extends Stock> data, final Optional<? extends Stock> filtered, final boolean askForSave)
-			throws IOException {
+	/**
+	 * Create Chart for current stock state.
+	 */
+	public void chartCurrentStockState(final Stage owner, final Optional<Stock> data, final Optional<Stock> filtered) throws IOException {
+		final Map<String, Optional<? extends Stock>> paneDescriptions = new LinkedHashMap<>();
+		paneDescriptions.put("Data", data);
+		paneDescriptions.put("Filtered", filtered);
+		final Alert alert = generateStockCompareDialog(paneDescriptions, false);
+		alert.setTitle("Stock Chart Representation");
+		alert.showAndWait();
+	}
+
+	private Alert generateStockCompareDialog(Map<String, Optional<? extends Stock>> paneDescriptions, final boolean askForSave) throws IOException {
 		Alert alert;
 		if (askForSave) {
 			alert = new Alert(AlertType.CONFIRMATION, null, ButtonType.YES, ButtonType.NO);
@@ -76,11 +85,10 @@ final class ZozkaDatafeedCheckerStockCorrectnessHelper {
 		alert.setHeaderText(null);
 		alert.setResizable(true);
 		final StockComparePane stockComparePane = new StockComparePane();
-		if (data.isPresent()) {
-			stockComparePane.addStockToCompare("Data", data.get());
-		}
-		if (filtered.isPresent()) {
-			stockComparePane.addStockToCompare("Filtered", filtered.get());
+		for (Entry<String, Optional<? extends Stock>> e : paneDescriptions.entrySet()) {
+			if (e.getValue().isPresent()) {
+				stockComparePane.addStockToCompare(e.getKey(), e.getValue().get());
+			}
 		}
 		alert.getDialogPane().setContent(stockComparePane);
 		alert.getDialogPane().setPrefHeight(640);
@@ -101,10 +109,7 @@ final class ZozkaDatafeedCheckerStockCorrectnessHelper {
 		confirmationAlert.setHeaderText("Do you want to save new stock data");
 		confirmationAlert.setTitle("Stock Data Information");
 		final Optional<ButtonType> result = confirmationAlert.showAndWait();
-		if (result.isPresent() && result.get().equals(ButtonType.YES)) {
-			return true;
-		}
-		return false;
+		return (result.isPresent() && result.get().equals(ButtonType.YES));
 	}
 
 	private String createErrorMessage(final Stock s) {
@@ -118,4 +123,5 @@ final class ZozkaDatafeedCheckerStockCorrectnessHelper {
 		}
 		return error;
 	}
+
 }
