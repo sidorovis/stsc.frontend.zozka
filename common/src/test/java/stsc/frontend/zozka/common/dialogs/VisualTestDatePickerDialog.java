@@ -14,7 +14,7 @@ public final class VisualTestDatePickerDialog extends Application {
 		final DatePickerDialog dialog = new DatePickerDialog("Date Choose Title", parent, LocalDate.of(1990, 1, 1));
 		dialog.centerOnScreen();
 		dialog.showAndWait();
-		new TextAreaDialog("Result", String.valueOf(dialog.isOk()) + " for " + dialog.getDate().toString()).showAndWait();
+		new TextAreaDialog("Result", String.valueOf(dialog.isOk()) + " for " + dialog.getDate().toString());
 	}
 
 	public static void main(String[] args) {

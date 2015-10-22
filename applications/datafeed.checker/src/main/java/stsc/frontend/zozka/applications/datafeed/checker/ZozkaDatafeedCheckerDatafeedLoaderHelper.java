@@ -152,7 +152,7 @@ public final class ZozkaDatafeedCheckerDatafeedLoaderHelper {
 		if (downloadedVersion.isPresent()) {
 			return downloadedVersion;
 		}
-		new TextAreaDialog("Download failed", "Download of " + stockName + " was not succesfull.\n You could try again, or check yahoo for exact stock name.").showAndWait();
+		new TextAreaDialog("Download failed", "Download of " + stockName + " was not succesfull.\n You could try again, or check yahoo for exact stock name.");
 		return Optional.empty();
 	}
 

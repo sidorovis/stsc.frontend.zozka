@@ -155,7 +155,7 @@ public final class StrategiesPane extends BorderPane {
 		final StatisticsDescription sd = table.getSelectionModel().getSelectedItem();
 		if (sd != null) {
 			final long id = sd.getId();
-			new TextAreaDialog("Strategy: " + String.valueOf(id), sd.toString()).showAndWait();
+			new TextAreaDialog("Strategy: " + String.valueOf(id), sd.toString());
 		}
 	}
 
@@ -182,7 +182,7 @@ public final class StrategiesPane extends BorderPane {
 				sgs.waitAndGetSelector();
 			} catch (Exception e) {
 				Platform.runLater(() -> {
-					new TextAreaDialog("Exception", e).showAndWait();
+					new TextAreaDialog(e);
 				});
 			}
 		}).start();

@@ -33,7 +33,7 @@ public final class VisualTestStockListDialog extends Application {
 				newStock.getDays().addAll(ss.getStock("aapl").get().getDays());
 				dialog.updateStock(newStock);
 			}
-			new TextAreaDialog("Temp Dialog", stockDescription.toString()).showAndWait();
+			new TextAreaDialog("Temp Dialog", stockDescription.toString());
 			return Optional.empty();
 		});
 		dialog.show();

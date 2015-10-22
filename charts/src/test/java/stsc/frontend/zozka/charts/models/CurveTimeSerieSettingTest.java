@@ -45,10 +45,10 @@ public class CurveTimeSerieSettingTest {
 		final List<String> outEodNames = init.generateOutForEods();
 		final SimulatorSettings settings = new SimulatorSettings(0, init);
 		final Simulator simulator = new Simulator(settings);
-
+		final int signalsSize = simulator.getSignalsStorage().getIndexSize("a1");
 		final CurveTimeSerieSetting curveTimeSerieSetting = new CurveTimeSerieSetting(true, outEodNames.get(0), 2, simulator.getSignalsStorage());
 		Assert.assertEquals(1, curveTimeSerieSetting.getTimeSeriesCollection().getSeries().size());
-		Assert.assertEquals(7447, curveTimeSerieSetting.getTimeSeriesCollection().getItemCount(0));
+		Assert.assertEquals(signalsSize, curveTimeSerieSetting.getTimeSeriesCollection().getItemCount(0));
 	}
 
 	@Test

@@ -72,7 +72,7 @@ public final class ZozkaDatafeedChecker extends Application {
 			try {
 				loadDatafeed();
 			} catch (IOException e) {
-				new TextAreaDialog("Exception", e).showAndWait();
+				new TextAreaDialog(e);
 			}
 		}
 	}
@@ -110,7 +110,7 @@ public final class ZozkaDatafeedChecker extends Application {
 		try {
 			stockCorrectnessHelper.chartCurrentStockState(owner, data, filtered);
 		} catch (Exception e) {
-			new TextAreaDialog("Exception", e).showAndWait();
+			new TextAreaDialog(e);
 		}
 	}
 
@@ -175,7 +175,7 @@ public final class ZozkaDatafeedChecker extends Application {
 			}
 		}
 		if (!badStockNames.isEmpty()) {
-			new TextAreaDialog("Next stocks are totally broken, check datafeed manually in addition", badStockNames).showAndWait();
+			new TextAreaDialog("Next stocks are totally broken, check datafeed manually in addition", badStockNames);
 		}
 		stockListDialog.showAndWait();
 	}
@@ -197,7 +197,7 @@ public final class ZozkaDatafeedChecker extends Application {
 				datafeedLoaderHelper.saveNewVersion(newStockVersion.get(), yahooDatafeedSettings, dataStockList, filteredStockDataList, stockListDialog);
 			}
 		} catch (Exception e) {
-			new TextAreaDialog("Exception", e).showAndWait();
+			new TextAreaDialog(e);
 		}
 	}
 

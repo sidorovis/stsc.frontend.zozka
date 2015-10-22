@@ -75,7 +75,7 @@ final class CreateExecutionDescriptionDialogHelper {
 		final Optional<String> parameterName = getParameterName();
 
 		if (parameterName.isPresent() && model.parameterNameExists(parameterName.get())) {
-			new TextAreaDialog("Parameter name does not match pattern", "You could add only one parameter (one for both for number or test tables).").showAndWait();
+			new TextAreaDialog("Parameter name does not match pattern", "You could add only one parameter (one for both for number or test tables).");
 			return Optional.empty();
 		}
 		return parameterName;
@@ -133,7 +133,7 @@ final class CreateExecutionDescriptionDialogHelper {
 		final Optional<String> parameterName = dialog.showAndWait();
 
 		if (parameterName.isPresent() && !PARAMETER_NAME_PATTERN.matcher(parameterName.get()).matches()) {
-			new TextAreaDialog("Parameter name does not match pattern", "Parameter name should contain only letters, numbers and '_' symbol.").showAndWait();
+			new TextAreaDialog("Parameter name does not match pattern", "Parameter name should contain only letters, numbers and '_' symbol.");
 			return Optional.empty();
 		}
 		return parameterName;
@@ -171,7 +171,7 @@ final class CreateExecutionDescriptionDialogHelper {
 		dialog.setContentText(message);
 		final Optional<String> integerParameter = dialog.showAndWait();
 		if (!integerParameter.isPresent() || !validateInteger(integerParameter.get())) {
-			new TextAreaDialog("Integer value is incorrect", errorMessage).showAndWait();
+			new TextAreaDialog("Integer value is incorrect", errorMessage);
 			return Optional.empty();
 		}
 		return Optional.of(integerParameter.get());
@@ -213,7 +213,7 @@ final class CreateExecutionDescriptionDialogHelper {
 		dialog.setContentText(message);
 		final Optional<String> doubleParameter = dialog.showAndWait();
 		if (!doubleParameter.isPresent() || !validateDouble(doubleParameter.get())) {
-			new TextAreaDialog("Double value is incorrect", errorMessage).showAndWait();
+			new TextAreaDialog("Double value is incorrect", errorMessage);
 			return Optional.empty();
 		}
 		return Optional.of(doubleParameter.get());

@@ -166,7 +166,7 @@ public final class CreateExecutionDescriptionDialog implements Initializable {
 				try {
 					populateAlgorithmClassWith(newValue);
 				} catch (BadAlgorithmException e) {
-					new TextAreaDialog("Exception", e);
+					new TextAreaDialog(e);
 					stage.close();
 				}
 			}
@@ -184,7 +184,7 @@ public final class CreateExecutionDescriptionDialog implements Initializable {
 
 	private void connectQuestionButton() {
 		questionButton.setOnAction(e -> {
-			new TextAreaDialog("Information", "To understand what is happening\nhere than please ask developer and then\nchange this text. Thanks!").showAndWait();
+			new TextAreaDialog("Information", "To understand what is happening\nhere than please ask developer and then\nchange this text. Thanks!");
 		});
 	}
 

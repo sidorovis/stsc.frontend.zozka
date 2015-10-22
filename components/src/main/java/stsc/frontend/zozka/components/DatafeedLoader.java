@@ -46,7 +46,7 @@ public final class DatafeedLoader {
 			try {
 				yahooFileStockStorage.waitForBackgroundProcess();
 			} catch (Exception e) {
-				new TextAreaDialog("Exception", e).showAndWait();
+				new TextAreaDialog(e);
 			}
 			successHandler.handle(eh);
 		}));

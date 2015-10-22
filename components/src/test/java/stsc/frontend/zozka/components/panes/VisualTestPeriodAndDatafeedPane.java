@@ -22,7 +22,7 @@ public class VisualTestPeriodAndDatafeedPane extends Application {
 		save.setOnAction(eh -> {
 			periodAndDatafeedPane.loadStockStorage(loadStockHandler -> {
 				new TextAreaDialog("Load stock storage test results",
-						"Results are: \n" + loadStockHandler.getEventType() + "\n" + periodAndDatafeedPane.getStockStorage().getStockNames().toString()).showAndWait();
+						"Results are: \n" + loadStockHandler.getEventType() + "\n" + periodAndDatafeedPane.getStockStorage().getStockNames().toString());
 			});
 		});
 

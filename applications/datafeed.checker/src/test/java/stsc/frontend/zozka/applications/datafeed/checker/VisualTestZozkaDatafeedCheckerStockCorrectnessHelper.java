@@ -22,13 +22,13 @@ public class VisualTestZozkaDatafeedCheckerStockCorrectnessHelper extends Applic
 
 	private void makeUserSelectEitherHeLikeCurrentStockState(Stage primaryStage) throws IOException {
 		final boolean resave = helper.makeUserSelectEitherHeLikeToRedownloadCurrentStockState(primaryStage, stockStorage.getStock("aapl"), stockStorage.getStock("adm"));
-		new TextAreaDialog("User selected: ", "" + resave).showAndWait();
+		new TextAreaDialog("User selected: ", "" + resave);
 		helper.makeUserSelectEitherHeLikeToRedownloadCurrentStockState(primaryStage, stockStorage.getStock("aapl"), stockStorage.getStock("adm"));
 	}
 
 	private void makeUserSelectEitherHeWantsToSaveNewStockData(Stage primaryStage) {
 		final boolean userWants = helper.makeUserSelectEitherHeWantsToSaveNewStockData(stockStorage.getStock("aapl").get());
-		new TextAreaDialog("User selected: ", "" + userWants).showAndWait();
+		new TextAreaDialog("User selected: ", "" + userWants);
 	}
 
 	public static void main(String[] args) {

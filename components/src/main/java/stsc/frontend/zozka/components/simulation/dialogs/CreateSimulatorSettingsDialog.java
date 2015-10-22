@@ -88,7 +88,7 @@ public final class CreateSimulatorSettingsDialog {
 		try {
 			if (f != null) {
 				if (!(f.exists() && f.isFile())) {
-					new TextAreaDialog("Simulator Settings Load Error", "File can't be loaded (" + f.getAbsolutePath() + ")").showAndWait();
+					new TextAreaDialog("Simulator Settings Load Error", "File can't be loaded (" + f.getAbsolutePath() + ")");
 					return;
 				}
 				try (InputStream is = new FileInputStream(f)) {
@@ -96,7 +96,7 @@ public final class CreateSimulatorSettingsDialog {
 				}
 			}
 		} catch (Exception e) {
-			new TextAreaDialog("Exception", e);
+			new TextAreaDialog(e);
 		}
 	}
 
@@ -108,7 +108,7 @@ public final class CreateSimulatorSettingsDialog {
 		try {
 			if (f != null) {
 				if (f.exists() && !f.canWrite()) {
-					new TextAreaDialog("Simulator Settings Save Error", "File can't be writen (" + f.getAbsolutePath() + ")").showAndWait();
+					new TextAreaDialog("Simulator Settings Save Error", "File can't be writen (" + f.getAbsolutePath() + ")");
 					return;
 				}
 				try (OutputStream os = new FileOutputStream(f)) {
@@ -116,7 +116,7 @@ public final class CreateSimulatorSettingsDialog {
 				}
 			}
 		} catch (IOException e) {
-			new TextAreaDialog("Exception", e);
+			new TextAreaDialog(e);
 		}
 	}
 
@@ -134,7 +134,7 @@ public final class CreateSimulatorSettingsDialog {
 			final CreateExecutionDescriptionDialog createExecutionDescriptionDialog = new CreateExecutionDescriptionDialog(owner);
 			executionDescription = createExecutionDescriptionDialog.getExecutionDescription();
 		} catch (IOException e) {
-			new TextAreaDialog("Exception", e);
+			new TextAreaDialog(e);
 		}
 		if (executionDescription.isPresent()) {
 			model.add(executionDescription.get());
@@ -151,7 +151,7 @@ public final class CreateSimulatorSettingsDialog {
 				model.set(index, newExecutionDescription.get());
 			}
 		} catch (IOException e) {
-			new TextAreaDialog("Exception", e);
+			new TextAreaDialog(e);
 		}
 	}
 

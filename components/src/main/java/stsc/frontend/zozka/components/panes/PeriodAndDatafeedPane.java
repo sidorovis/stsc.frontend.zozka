@@ -115,7 +115,7 @@ public final class PeriodAndDatafeedPane extends Pane {
 				loadStockHandler.handle(new WorkerStateEvent(null, WorkerStateEvent.WORKER_STATE_SUCCEEDED));
 			}
 		} catch (Exception e) {
-			new TextAreaDialog("Exception", e).showAndWait();
+			new TextAreaDialog(e);
 			return false;
 		}
 		return true;
@@ -130,15 +130,15 @@ public final class PeriodAndDatafeedPane extends Pane {
 					stockStorage = loader.getStockStorage();
 					hander.handle(successHandler);
 				} catch (Exception e) {
-					new TextAreaDialog("Exception", e).showAndWait();
+					new TextAreaDialog(e);
 				}
 			} , exitHandler -> {
 				stockStorage = null;
-				new TextAreaDialog("Datafeed load failed", "Error: " + exitHandler.toString()).showAndWait();
+				new TextAreaDialog("Datafeed load failed", "Error: " + exitHandler.toString());
 				hander.handle(exitHandler);
 			});
 		} catch (Exception e) {
-			new TextAreaDialog("Exception", e).showAndWait();
+			new TextAreaDialog(e);
 		}
 	}
 

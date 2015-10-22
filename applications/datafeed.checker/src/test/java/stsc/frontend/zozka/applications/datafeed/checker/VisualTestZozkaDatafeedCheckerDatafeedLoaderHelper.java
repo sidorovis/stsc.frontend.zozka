@@ -21,12 +21,12 @@ public class VisualTestZozkaDatafeedCheckerDatafeedLoaderHelper extends Applicat
 	private void makeUserChooseFolderTest(Stage primaryStage) {
 		final Label label = new Label("__before__");
 		final boolean result = helper.makeUserChooseFolder(primaryStage, label);
-		new TextAreaDialog("New label value is", label.getText() + "\nFolder was changed: " + result).showAndWait();
+		new TextAreaDialog("New label value is", label.getText() + "\nFolder was changed: " + result);
 	}
 
 	private void makeUserChooseStockNamePrefix(Stage primaryStage) {
 		final Optional<String> result = helper.makeUserChooseStockNamePrefix();
-		new TextAreaDialog("Choosed value", (!result.isPresent() ? "VALUE NOT CHOOSED" : "'" + result.get() + "'")).showAndWait();
+		new TextAreaDialog("Choosed value", (!result.isPresent() ? "VALUE NOT CHOOSED" : "'" + result.get() + "'"));
 	}
 
 	public static void main(String[] args) {

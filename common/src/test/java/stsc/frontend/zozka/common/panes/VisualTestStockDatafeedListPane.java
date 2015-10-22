@@ -38,7 +38,7 @@ public class VisualTestStockDatafeedListPane extends Application {
 		mainPane.setOnMouseDoubleClick(new Function<StockDescription, Optional<Void>>() {
 			@Override
 			public Optional<Void> apply(StockDescription sd) {
-				new TextAreaDialog(sd.getStock().getInstrumentName(), sd.toString()).show();
+				new TextAreaDialog(sd.getStock().getInstrumentName(), sd.toString());
 				return Optional.empty();
 			}
 		});

@@ -96,7 +96,7 @@ public final class StockDatafeedListPane extends BorderPane {
 			}
 			postLoadDatafeedActions(onFinish, ss);
 		} catch (IOException e) {
-			new TextAreaDialog("Exception", e).showAndWait();
+			new TextAreaDialog(e);
 		}
 	}
 
@@ -133,7 +133,7 @@ public final class StockDatafeedListPane extends BorderPane {
 					}
 				});
 			} catch (Exception e) {
-				new TextAreaDialog("Exception", e);
+				new TextAreaDialog(e);
 			}
 		});
 		t.start();
@@ -158,7 +158,7 @@ public final class StockDatafeedListPane extends BorderPane {
 				ss.stopBackgroundProcess();
 				ss.waitForBackgroundProcess();
 			} catch (Exception e) {
-				new TextAreaDialog("Exeption", e);
+				new TextAreaDialog(e);
 			}
 		});
 	}
