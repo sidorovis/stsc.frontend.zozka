@@ -1,16 +1,8 @@
 package stsc.frontend.zozka.common.panes.strategies;
 
-import java.awt.Color;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.DatasetRenderingOrder;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -22,16 +14,11 @@ import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
 import stsc.common.FromToPeriod;
 import stsc.common.storage.StockStorage;
-import stsc.frontend.zozka.common.chart.helpers.SerieXYToolTipGenerator;
-import stsc.frontend.zozka.common.models.MetricsDrawer;
 import stsc.frontend.zozka.common.models.ObservableStrategySelector;
 import stsc.frontend.zozka.common.models.SimulationType;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModelTest;
-import stsc.frontend.zozka.common.panes.strategies.StrategiesPane;
-import stsc.general.statistic.EquityCurve;
 import stsc.general.statistic.MetricType;
-import stsc.general.statistic.Metrics;
 import stsc.general.statistic.cost.function.CostWeightedSumFunction;
 import stsc.general.strategy.selector.StatisticsWithDistanceSelector;
 import stsc.general.strategy.selector.StrategyFilteringSelector;
@@ -79,35 +66,6 @@ public class VisualTestStrategiesPane extends Application {
 		return selector;
 	}
 
-	static final class MetricsDrawerStub implements MetricsDrawer {
-
-		private final JFreeChart chart;
-
-		public MetricsDrawerStub(JFreeChart chart) {
-			this.chart = chart;
-		}
-
-		@Override
-		public void drawMetric(long id, Metrics metrics) {
-			final TimeSeriesCollection dataset = new TimeSeriesCollection();
-			final TimeSeries ts = new TimeSeries("Equity Curve:" + String.valueOf(id));
-
-			final EquityCurve equityCurveInMoney = metrics.getEquityCurveInMoney();
-
-			for (int i = 0; i < equityCurveInMoney.size(); ++i) {
-				final EquityCurve.Element e = equityCurveInMoney.get(i);
-				ts.add(new Day(e.date), e.value);
-			}
-			dataset.addSeries(ts);
-
-			chart.getXYPlot().setDataset(dataset);
-			final XYItemRenderer renderer = new StandardXYItemRenderer(StandardXYItemRenderer.LINES, new SerieXYToolTipGenerator(String.valueOf(id)));
-			renderer.setSeriesPaint(0, Color.RED);
-			chart.getXYPlot().setRenderer(renderer);
-			chart.getXYPlot().setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
-		}
-	}
-
 	@Override
 	public void start(Stage parent) throws Exception {
 		chartPane.setOrientation(Orientation.VERTICAL);
@@ -126,7 +84,7 @@ public class VisualTestStrategiesPane extends Application {
 				setStockStorage(stockStorage). //
 				setSimulationType(SimulationType.GRID). //
 				setObservableStrategySelector(createSelector()). //
-				setMetricsDrawer(new MetricsDrawerStub(chart)). //
+				setMetricsDrawer(new MetricsDrawerImpl(chart)). //
 				build();
 
 		chartPane.getItems().add(sp);

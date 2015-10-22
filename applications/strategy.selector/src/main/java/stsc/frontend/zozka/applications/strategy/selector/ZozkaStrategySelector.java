@@ -1,21 +1,13 @@
-package stsc.frontend.zozka.applications;
+package stsc.frontend.zozka.applications.strategy.selector;
 
 import java.io.IOException;
 import java.rmi.UnexpectedException;
 import java.util.Date;
 
-import org.controlsfx.dialog.Dialogs;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
-import stsc.common.FromToPeriod;
-import stsc.common.algorithms.BadAlgorithmException;
-import stsc.common.storage.StockStorage;
-import stsc.frontend.zozka.common.models.SimulationType;
-import stsc.frontend.zozka.common.panes.StrategiesPane;
-import stsc.frontend.zozka.components.controllers.PeriodAndDatafeedController;
-import stsc.frontend.zozka.components.simulation.dialogs.SimulatorSettingsController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
@@ -29,6 +21,21 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import stsc.common.FromToPeriod;
+import stsc.common.algorithms.BadAlgorithmException;
+import stsc.common.storage.StockStorage;
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
+import stsc.frontend.zozka.common.models.ObservableStrategySelector;
+import stsc.frontend.zozka.common.models.SimulationType;
+import stsc.frontend.zozka.common.panes.strategies.MetricsDrawerImpl;
+import stsc.frontend.zozka.common.panes.strategies.StrategiesPane;
+import stsc.frontend.zozka.components.panes.PeriodAndDatafeedPane;
+import stsc.frontend.zozka.components.simulation.dialogs.CreateSimulatorSettingsDialog;
+import stsc.general.simulator.multistarter.BadParameterException;
+import stsc.general.statistic.MetricType;
+import stsc.general.statistic.cost.function.CostWeightedSumFunction;
+import stsc.general.strategy.selector.StatisticsWithDistanceSelector;
+import stsc.general.strategy.selector.StrategyFilteringSelector;
 
 public class ZozkaStrategySelector extends Application {
 
@@ -38,13 +45,13 @@ public class ZozkaStrategySelector extends Application {
 	private final BorderPane chartPane = new BorderPane();
 	private JFreeChart chart;
 
-	private PeriodAndDatafeedController periodAndDatafeedController;
-	private SimulatorSettingsController simulatorSettingsController;
+	private PeriodAndDatafeedPane periodAndDatafeedController;
+	private CreateSimulatorSettingsDialog simulatorSettingsController;
 
 	private void fillTopPart() throws IOException {
 		final BorderPane pane = new BorderPane();
-		periodAndDatafeedController = new PeriodAndDatafeedController(owner);
-		simulatorSettingsController = new SimulatorSettingsController(owner);
+		periodAndDatafeedController = new PeriodAndDatafeedPane(owner);
+		simulatorSettingsController = new CreateSimulatorSettingsDialog(owner);
 		pane.setTop(periodAndDatafeedController.getGui());
 		final SplitPane centerSplitPane = new SplitPane();
 		centerSplitPane.getItems().add(simulatorSettingsController.getGui());
@@ -73,11 +80,11 @@ public class ZozkaStrategySelector extends Application {
 
 		final Button distributedGridSearchButton = new Button("Distributed Grid Search");
 		distributedGridSearchButton.setOnAction(e -> {
-			Dialogs.create().owner(owner).showException(new Exception("Distributed Grid Search Not Implemented Yet"));
+			new TextAreaDialog(new Exception("Distributed Grid Search Not Implemented Yet"));
 		});
 		final Button distributedGeneticSearchButton = new Button("Distributed Genetic Search");
 		distributedGeneticSearchButton.setOnAction(e -> {
-			Dialogs.create().owner(owner).showException(new Exception("Distributed Genetic Search Not Implemented Yet"));
+			new TextAreaDialog(new Exception("Distributed Genetic Search Not Implemented Yet"));
 		});
 
 		hbox.getChildren().add(localGridSearchButton);
@@ -114,14 +121,44 @@ public class ZozkaStrategySelector extends Application {
 			return;
 		final FromToPeriod period = periodAndDatafeedController.getPeriod();
 		try {
-			final StrategiesPane pane = new StrategiesPane(owner, period, simulatorSettingsController.getModel(), stockStorage, chart, simulationType);
+			final StrategiesPane pane = StrategiesPane.getBuilder(). //
+					setPeriod(period). //
+					setStockStorage(stockStorage). //
+					setSimulationType(simulationType). //
+					setSimulatorSettingsModel(simulatorSettingsController.getModel()). //
+					setMetricsDrawer(new MetricsDrawerImpl(chart)). //
+					setObservableStrategySelector(createSelector()). //
+					build();
 			final Tab tab = new Tab(tabName + "(" + (new Date()) + ")");
 			tab.setContent(pane);
 			tabPane.getTabs().add(tab);
 			tabPane.getSelectionModel().select(tab);
-		} catch (BadAlgorithmException | UnexpectedException | InterruptedException e) {
-			Dialogs.create().owner(owner).showException(e);
+		} catch (BadAlgorithmException | UnexpectedException | InterruptedException | BadParameterException e) {
+			new TextAreaDialog(e);
 		}
+	}
+
+	private ObservableStrategySelector createSelector() {
+		final CostWeightedSumFunction costFunction = new CostWeightedSumFunction();
+		costFunction.withParameter(MetricType.winProb, 4.0);
+		costFunction.withParameter(MetricType.ddValueAvGain, -1.0);
+		costFunction.withParameter(MetricType.avGain, 1.0);
+		costFunction.withParameter(MetricType.kelly, 1.0);
+		costFunction.withParameter(MetricType.avWin, 1.0);
+		costFunction.withParameter(MetricType.avLoss, -1.0);
+		costFunction.withParameter(MetricType.freq, 1.0);
+		costFunction.withParameter(MetricType.maxLoss, -1.0);
+		final StatisticsWithDistanceSelector selectorBase = new StatisticsWithDistanceSelector(10, 20, costFunction);
+		selectorBase.withDistanceParameter(MetricType.winProb, 0.75);
+		selectorBase.withDistanceParameter(MetricType.avGain, 0.075);
+		selectorBase.withDistanceParameter(MetricType.avWin, 0.075);
+		selectorBase.withDistanceParameter(MetricType.startMonthMax, 0.45);
+		selectorBase.withDistanceParameter(MetricType.avLoss, 0.7);
+		final StrategyFilteringSelector filteringSelector = new StrategyFilteringSelector(selectorBase);
+		// filteringSelector.withDoubleMinFilter(MetricType.freq, 0.01);
+		// filteringSelector.withDoubleMinFilter(MetricType.winProb, 0.2);
+		final ObservableStrategySelector selector = new ObservableStrategySelector(filteringSelector);
+		return selector;
 	}
 
 	private void fillBottomPart() {
