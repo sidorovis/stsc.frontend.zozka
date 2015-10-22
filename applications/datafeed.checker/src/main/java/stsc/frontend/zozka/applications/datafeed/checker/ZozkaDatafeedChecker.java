@@ -25,6 +25,15 @@ import stsc.frontend.zozka.common.panes.StockDatafeedListPane;
 import stsc.yahoo.YahooDatafeedSettings;
 import stsc.yahoo.liquiditator.StockFilter;
 
+/**
+ * Zozka Datafeed Checker is an GUI application that helps user to test / check
+ * correctness of the yahoo datafeed. <br/>
+ * User can choose folder with datafeed (double click at <datafeed path> label).
+ * <br/>
+ * Application will automatically upload separately 'data' folder and 'filtered'
+ * folder, look for difference and open dialog that provide possibility to
+ * re-download stocks with serious problems.
+ */
 public final class ZozkaDatafeedChecker extends Application {
 
 	private static final StockFilter stockFilter = new StockFilter();
