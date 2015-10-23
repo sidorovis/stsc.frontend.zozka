@@ -56,7 +56,7 @@ public final class ZozkaDatafeedCheckerDatafeedLoaderHelperTest {
 		data.waitForBackgroundProcess();
 		filtered.waitForBackgroundProcess();
 		final Set<String> diff = new ZozkaDatafeedCheckerDatafeedLoaderHelper(new StockFilter()).findDifferenceByDaysSizeAndStockFilter(data, filtered);
-		Assert.assertEquals(2, diff.size());
+		Assert.assertEquals(3, diff.size());
 	}
 
 }
