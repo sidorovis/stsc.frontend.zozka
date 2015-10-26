@@ -45,7 +45,8 @@ public class CurveTimeSerieSettingTest {
 		final TradeProcessorInit init = new TradeProcessorInit(stockStorage, getPeriod(), "EodExecutions = a1\na1.loadLine = eod.Adln()\n");
 		final List<String> outEodNames = init.generateOutForEods();
 		final SimulatorSettings settings = new SimulatorSettings(0, init);
-		final Simulator simulator = new SimulatorImpl(settings);
+		final Simulator simulator = new SimulatorImpl();
+		simulator.simulateMarketTrading(settings);
 		final int signalsSize = simulator.getSignalsStorage().getIndexSize("a1");
 		final CurveTimeSerieSetting curveTimeSerieSetting = new CurveTimeSerieSetting(true, outEodNames.get(0), 2, simulator.getSignalsStorage());
 		Assert.assertEquals(1, curveTimeSerieSetting.getTimeSeriesCollection().getSeries().size());
@@ -58,7 +59,8 @@ public class CurveTimeSerieSettingTest {
 				"EodExecutions = a1\na1.loadLine = OpenWhileSignalAlgorithm( .Level( f = 0.75d, Diff(.Input(e=close), .Input(e=open)) ) )\n");
 		final List<String> outStockNames = init.generateOutForStocks();
 		final SimulatorSettings settings = new SimulatorSettings(0, init);
-		final Simulator simulator = new SimulatorImpl(settings);
+		final Simulator simulator = new SimulatorImpl();
+		simulator.simulateMarketTrading(settings);
 
 		final CurveTimeSerieSetting curveTimeSerieSetting = new CurveTimeSerieSetting(outStockNames.get(0), "aapl", 4, simulator.getSignalsStorage());
 		Assert.assertEquals(1, curveTimeSerieSetting.getTimeSeriesCollection().getSeriesCount());

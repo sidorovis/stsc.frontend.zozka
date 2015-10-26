@@ -24,7 +24,9 @@ public class VisualTestEquityPane extends Application {
 		final TradeProcessorInit init = new TradeProcessorInit(yfss, period,
 				"EodExecutions = a1\na1.loadLine = OpenWhileSignalAlgorithm( .Level( f = 0.75d, Diff(.Input(e=close), .Input(e=open)) ) )\n");
 		final SimulatorSettings settings = new SimulatorSettings(0, init);
-		return new SimulatorImpl(settings);
+		final Simulator simulator = new SimulatorImpl();
+		simulator.simulateMarketTrading(settings);
+		return simulator;
 	}
 
 	@Override

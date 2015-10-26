@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javafx.application.Application;
 import javafx.scene.control.Alert;
@@ -77,10 +76,9 @@ public class VisualTestCurvesViewPane extends Application {
 	 * for test purpose
 	 */
 	SignalsStorage getSignalsStorage(TradeProcessorInit init) throws Exception {
-		final SimulatorSettings settings = new SimulatorSettings(0, init);
-
-		final Set<String> stockNames = new HashSet<String>(Arrays.asList(new String[] { getStock().getInstrumentName() }));
-		final Simulator simulator = new SimulatorImpl(settings, stockNames);
+		final SimulatorSettings settings = new SimulatorSettings(0, init, new HashSet<String>(Arrays.asList(new String[] { getStock().getInstrumentName() })));
+		final Simulator simulator = new SimulatorImpl();
+		simulator.simulateMarketTrading(settings);
 		return simulator.getSignalsStorage();
 
 	}

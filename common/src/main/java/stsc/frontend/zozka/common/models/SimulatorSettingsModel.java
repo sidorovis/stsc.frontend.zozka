@@ -14,7 +14,7 @@ import stsc.common.storage.StockStorage;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticFactory;
-import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticList;
+import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticListImpl;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridFactory;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 
@@ -86,7 +86,7 @@ public final class SimulatorSettingsModel {
 		return factory.getList();
 	}
 
-	public SimulatorSettingsGeneticList generateGeneticSettings(StockStorage stockStorage, FromToPeriod period) throws BadParameterException {
+	public SimulatorSettingsGeneticListImpl generateGeneticSettings(StockStorage stockStorage, FromToPeriod period) throws BadParameterException {
 		final SimulatorSettingsGeneticFactory factory = new SimulatorSettingsGeneticFactory(stockStorage, period);
 		for (ExecutionDescription executionDescription : model) {
 			if (executionDescription.getAlgorithmType().isStock()) {

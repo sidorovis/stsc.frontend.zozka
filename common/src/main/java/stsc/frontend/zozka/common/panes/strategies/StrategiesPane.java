@@ -28,7 +28,7 @@ import stsc.frontend.zozka.common.panes.ProgressWithStopPane;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.StrategySearcher;
 import stsc.general.simulator.multistarter.StrategySearcher.IndicatorProgressListener;
-import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticList;
+import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticListImpl;
 import stsc.general.simulator.multistarter.genetic.StrategyGeneticSearcher;
 import stsc.general.simulator.multistarter.genetic.StrategyGeneticSearcherBuilder;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
@@ -169,7 +169,7 @@ public final class StrategiesPane extends BorderPane {
 
 	private StrategySearcher startGeneticCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage)
 			throws BadAlgorithmException, InterruptedException, BadParameterException {
-		final SimulatorSettingsGeneticList list = settingsModel.generateGeneticSettings(stockStorage, period);
+		final SimulatorSettingsGeneticListImpl list = settingsModel.generateGeneticSettings(stockStorage, period);
 		checkThatMaxPossibleSizeCorrect(selector.maxPossibleAmount());
 		addListenerOnChanged(selector.getObservableStrategyList());
 
@@ -189,7 +189,7 @@ public final class StrategiesPane extends BorderPane {
 		return sgs;
 	}
 
-	private StrategyGeneticSearcher createStrategyGeneticSearcher(SimulatorSettingsGeneticList list, ObservableStrategySelector selector) {
+	private StrategyGeneticSearcher createStrategyGeneticSearcher(SimulatorSettingsGeneticListImpl list, ObservableStrategySelector selector) {
 		final StrategyGeneticSearcherBuilder builder = StrategyGeneticSearcher.getBuilder();
 		builder.withThreadAmount(4).withSimulatorSettings(list);
 		builder.withStrategySelector(selector);

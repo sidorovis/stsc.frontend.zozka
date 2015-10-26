@@ -41,13 +41,10 @@ import stsc.general.statistic.Metrics;
 import stsc.general.trading.TradeProcessorInit;
 
 /**
- * Strategy visualiser is an application that helps debug trading strategy.
- * <br/>
+ * Strategy visualiser is an application that helps debug trading strategy. <br/>
  * Provide access to next trading strategy debug information: <br/>
- * 1. on stock algorithms dependencies and their series (for supported by
- * {@link Output} algorithm type); <br/>
- * 2. eod algorithms with dependencies with output series (for supported by
- * {@link Output} algorithm type); <br/>
+ * 1. on stock algorithms dependencies and their series (for supported by {@link Output} algorithm type); <br/>
+ * 2. eod algorithms with dependencies with output series (for supported by {@link Output} algorithm type); <br/>
  * 3. eod algorithms equity curve result with statistic table.
  */
 public final class ZozkaStrategyVisualiser extends Application {
@@ -156,9 +153,10 @@ public final class ZozkaStrategyVisualiser extends Application {
 
 			final TradeProcessorInit init = new TradeProcessorInit(stockStorage, period, textArea.getText());
 			final List<String> executionsName = init.generateOutForStocks();
-			final SimulatorSettings settings = new SimulatorSettings(0, init);
+			final SimulatorSettings settings = new SimulatorSettings(0, init, Sets.newHashSet(stock.getInstrumentName()));
 
-			final Simulator simulator = new SimulatorImpl(settings, Sets.newHashSet(stock.getInstrumentName()));
+			final Simulator simulator = new SimulatorImpl();
+			simulator.simulateMarketTrading(settings);
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
 
 			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(stock, period, executionsName, signalsStorage);
@@ -181,7 +179,8 @@ public final class ZozkaStrategyVisualiser extends Application {
 			final List<String> executionsName = init.generateOutForEods();
 			final SimulatorSettings settings = new SimulatorSettings(0, init);
 
-			final Simulator simulator = new SimulatorImpl(settings);
+			final Simulator simulator = new SimulatorImpl();
+			simulator.simulateMarketTrading(settings);
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
 
 			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnEodAlgorithm(period, executionsName, signalsStorage);
@@ -208,12 +207,10 @@ public final class ZozkaStrategyVisualiser extends Application {
 		}
 		try {
 			final FromToPeriod period = periodAndDatafeedController.getPeriod();
+			final SimulatorSettings settings = new SimulatorSettings(0, new TradeProcessorInit(stockStorage, period, textArea.getText()));
 
-			final TradeProcessorInit init = new TradeProcessorInit(stockStorage, period, textArea.getText());
-			final SimulatorSettings settings = new SimulatorSettings(0, init);
-
-			final Simulator simulator = new SimulatorImpl(settings);
-
+			final Simulator simulator = new SimulatorImpl();
+			simulator.simulateMarketTrading(settings);
 			addEquityPaneTab(simulator, period, simulator.getMetrics());
 		} catch (BadAlgorithmException | BadSignalException | IOException e) {
 			new TextAreaDialog(e);
