@@ -11,6 +11,7 @@ import stsc.common.algorithms.BadAlgorithmException;
 import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.charts.panes.EquityPane;
 import stsc.general.simulator.Simulator;
+import stsc.general.simulator.SimulatorImpl;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.trading.TradeProcessorInit;
 import stsc.storage.mocks.StockStorageMock;
@@ -23,7 +24,7 @@ public class VisualTestEquityPane extends Application {
 		final TradeProcessorInit init = new TradeProcessorInit(yfss, period,
 				"EodExecutions = a1\na1.loadLine = OpenWhileSignalAlgorithm( .Level( f = 0.75d, Diff(.Input(e=close), .Input(e=open)) ) )\n");
 		final SimulatorSettings settings = new SimulatorSettings(0, init);
-		return new Simulator(settings);
+		return new SimulatorImpl(settings);
 	}
 
 	@Override

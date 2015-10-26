@@ -34,6 +34,7 @@ import stsc.frontend.zozka.charts.panes.EquityPane;
 import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 import stsc.frontend.zozka.components.panes.PeriodAndDatafeedPane;
 import stsc.general.simulator.Simulator;
+import stsc.general.simulator.SimulatorImpl;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
@@ -157,7 +158,7 @@ public final class ZozkaStrategyVisualiser extends Application {
 			final List<String> executionsName = init.generateOutForStocks();
 			final SimulatorSettings settings = new SimulatorSettings(0, init);
 
-			final Simulator simulator = new Simulator(settings, Sets.newHashSet(stock.getInstrumentName()));
+			final Simulator simulator = new SimulatorImpl(settings, Sets.newHashSet(stock.getInstrumentName()));
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
 
 			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(stock, period, executionsName, signalsStorage);
@@ -180,7 +181,7 @@ public final class ZozkaStrategyVisualiser extends Application {
 			final List<String> executionsName = init.generateOutForEods();
 			final SimulatorSettings settings = new SimulatorSettings(0, init);
 
-			final Simulator simulator = new Simulator(settings);
+			final Simulator simulator = new SimulatorImpl(settings);
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
 
 			final CurvesViewPane stockViewPane = CurvesViewPane.createPaneForOnEodAlgorithm(period, executionsName, signalsStorage);
@@ -211,7 +212,7 @@ public final class ZozkaStrategyVisualiser extends Application {
 			final TradeProcessorInit init = new TradeProcessorInit(stockStorage, period, textArea.getText());
 			final SimulatorSettings settings = new SimulatorSettings(0, init);
 
-			final Simulator simulator = new Simulator(settings);
+			final Simulator simulator = new SimulatorImpl(settings);
 
 			addEquityPaneTab(simulator, period, simulator.getMetrics());
 		} catch (BadAlgorithmException | BadSignalException | IOException e) {

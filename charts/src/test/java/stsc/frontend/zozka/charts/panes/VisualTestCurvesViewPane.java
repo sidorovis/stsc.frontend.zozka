@@ -18,6 +18,7 @@ import stsc.common.stocks.Stock;
 import stsc.common.storage.SignalsStorage;
 import stsc.common.storage.StockStorage;
 import stsc.general.simulator.Simulator;
+import stsc.general.simulator.SimulatorImpl;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.trading.TradeProcessorInit;
 import stsc.storage.mocks.StockStorageMock;
@@ -79,7 +80,7 @@ public class VisualTestCurvesViewPane extends Application {
 		final SimulatorSettings settings = new SimulatorSettings(0, init);
 
 		final Set<String> stockNames = new HashSet<String>(Arrays.asList(new String[] { getStock().getInstrumentName() }));
-		final Simulator simulator = new Simulator(settings, stockNames);
+		final Simulator simulator = new SimulatorImpl(settings, stockNames);
 		return simulator.getSignalsStorage();
 
 	}
