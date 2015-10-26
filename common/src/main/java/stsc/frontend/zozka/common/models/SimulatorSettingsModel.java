@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,14 +13,13 @@ import stsc.common.FromToPeriod;
 import stsc.common.storage.StockStorage;
 import stsc.general.simulator.SimulatorSettings;
 import stsc.general.simulator.multistarter.BadParameterException;
-import stsc.general.simulator.multistarter.genetic.GeneticExecutionInitializer;
+import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticFactory;
 import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticList;
-import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
+import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridFactory;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 
 /**
- * This class store GUI version of {@link SimulatorSettings} (+period field and
- * etc.).
+ * This class store GUI version of {@link SimulatorSettings} (+period field and etc.).
  */
 public final class SimulatorSettingsModel {
 
@@ -78,28 +75,26 @@ public final class SimulatorSettingsModel {
 	}
 
 	public SimulatorSettingsGridList generateGridSettings(StockStorage stockStorage, FromToPeriod period) throws BadParameterException {
-		final List<GridExecutionInitializer> stocks = new ArrayList<>();
-		final List<GridExecutionInitializer> eods = new ArrayList<>();
+		final SimulatorSettingsGridFactory factory = new SimulatorSettingsGridFactory(stockStorage, period);
 		for (ExecutionDescription executionDescription : model) {
 			if (executionDescription.getAlgorithmType().isStock()) {
-				stocks.add(executionDescription.createGridExecution(period));
+				factory.addStock(executionDescription.createGridExecution(period));
 			} else {
-				eods.add(executionDescription.createGridExecution(period));
+				factory.addEod(executionDescription.createGridExecution(period));
 			}
 		}
-		return new SimulatorSettingsGridList(stockStorage, period, stocks, eods, false);
+		return factory.getList();
 	}
 
 	public SimulatorSettingsGeneticList generateGeneticSettings(StockStorage stockStorage, FromToPeriod period) throws BadParameterException {
-		final List<GeneticExecutionInitializer> stocks = new ArrayList<>();
-		final List<GeneticExecutionInitializer> eods = new ArrayList<>();
+		final SimulatorSettingsGeneticFactory factory = new SimulatorSettingsGeneticFactory(stockStorage, period);
 		for (ExecutionDescription executionDescription : model) {
 			if (executionDescription.getAlgorithmType().isStock()) {
-				stocks.add(executionDescription.createGeneticExecution(period));
+				factory.addStock(executionDescription.createGeneticExecution(period));
 			} else {
-				eods.add(executionDescription.createGeneticExecution(period));
+				factory.addEod(executionDescription.createGeneticExecution(period));
 			}
 		}
-		return new SimulatorSettingsGeneticList(stockStorage, period, stocks, eods);
+		return factory.getList();
 	}
 }
