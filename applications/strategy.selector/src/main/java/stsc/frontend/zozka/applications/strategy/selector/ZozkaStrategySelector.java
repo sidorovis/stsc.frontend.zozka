@@ -34,7 +34,7 @@ import stsc.frontend.zozka.components.simulation.dialogs.CreateSimulatorSettings
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.cost.function.CostWeightedSumFunction;
-import stsc.general.strategy.selector.StatisticsWithDistanceSelector;
+import stsc.general.strategy.selector.StatisticsWithMetricsDistanceSelector;
 import stsc.general.strategy.selector.StrategyFilteringSelector;
 
 public class ZozkaStrategySelector extends Application {
@@ -148,7 +148,7 @@ public class ZozkaStrategySelector extends Application {
 		costFunction.withParameter(MetricType.avLoss, -1.0);
 		costFunction.withParameter(MetricType.freq, 1.0);
 		costFunction.withParameter(MetricType.maxLoss, -1.0);
-		final StatisticsWithDistanceSelector selectorBase = new StatisticsWithDistanceSelector(10, 20, costFunction);
+		final StatisticsWithMetricsDistanceSelector selectorBase = new StatisticsWithMetricsDistanceSelector(10, 20, costFunction);
 		selectorBase.withDistanceParameter(MetricType.winProb, 0.75);
 		selectorBase.withDistanceParameter(MetricType.avGain, 0.075);
 		selectorBase.withDistanceParameter(MetricType.avWin, 0.075);
