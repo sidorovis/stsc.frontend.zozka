@@ -12,7 +12,7 @@ import stsc.frontend.zozka.common.models.ExecutionDescription;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.genetic.GeneticExecutionInitializer;
 import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticFactory;
-import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticList;
+import stsc.general.simulator.multistarter.genetic.GeneticList;
 import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridFactory;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
@@ -66,7 +66,7 @@ public final class SimulationsDescription {
 		return factory.getList();
 	}
 
-	public SimulatorSettingsGeneticList getGenetic() throws BadParameterException {
+	public GeneticList getGenetic() throws BadParameterException {
 		final SimulatorSettingsGeneticFactory factory = new SimulatorSettingsGeneticFactory(stockStorage, period);
 		for (ExecutionDescription ed : executionDescriptions) {
 			GeneticExecutionInitializer ei = ed.createGeneticExecution(period);

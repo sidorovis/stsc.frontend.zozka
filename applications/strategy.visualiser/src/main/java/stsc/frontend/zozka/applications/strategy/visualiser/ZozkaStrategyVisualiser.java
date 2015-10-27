@@ -36,6 +36,7 @@ import stsc.frontend.zozka.components.panes.PeriodAndDatafeedPane;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorImpl;
 import stsc.general.simulator.SimulatorSettings;
+import stsc.general.simulator.SimulatorSettingsImpl;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
 import stsc.general.trading.TradeProcessorInit;
@@ -153,7 +154,7 @@ public final class ZozkaStrategyVisualiser extends Application {
 
 			final TradeProcessorInit init = new TradeProcessorInit(stockStorage, period, textArea.getText());
 			final List<String> executionsName = init.generateOutForStocks();
-			final SimulatorSettings settings = new SimulatorSettings(0, init, Sets.newHashSet(stock.getInstrumentName()));
+			final SimulatorSettings settings = new SimulatorSettingsImpl(0, init, Sets.newHashSet(stock.getInstrumentName()));
 
 			final Simulator simulator = new SimulatorImpl();
 			simulator.simulateMarketTrading(settings);
@@ -177,8 +178,7 @@ public final class ZozkaStrategyVisualiser extends Application {
 
 			final TradeProcessorInit init = new TradeProcessorInit(stockStorage, period, textArea.getText());
 			final List<String> executionsName = init.generateOutForEods();
-			final SimulatorSettings settings = new SimulatorSettings(0, init);
-
+			final SimulatorSettings settings = new SimulatorSettingsImpl(0, init);
 			final Simulator simulator = new SimulatorImpl();
 			simulator.simulateMarketTrading(settings);
 			final SignalsStorage signalsStorage = simulator.getSignalsStorage();
@@ -207,8 +207,7 @@ public final class ZozkaStrategyVisualiser extends Application {
 		}
 		try {
 			final FromToPeriod period = periodAndDatafeedController.getPeriod();
-			final SimulatorSettings settings = new SimulatorSettings(0, new TradeProcessorInit(stockStorage, period, textArea.getText()));
-
+			final SimulatorSettings settings = new SimulatorSettingsImpl(0, new TradeProcessorInit(stockStorage, period, textArea.getText()));
 			final Simulator simulator = new SimulatorImpl();
 			simulator.simulateMarketTrading(settings);
 			addEquityPaneTab(simulator, period, simulator.getMetrics());

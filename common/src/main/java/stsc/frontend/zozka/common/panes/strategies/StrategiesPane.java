@@ -191,7 +191,7 @@ public final class StrategiesPane extends BorderPane {
 
 	private StrategyGeneticSearcher createStrategyGeneticSearcher(SimulatorSettingsGeneticListImpl list, ObservableStrategySelector selector) {
 		final StrategyGeneticSearcherBuilder builder = StrategyGeneticSearcher.getBuilder();
-		builder.withThreadAmount(4).withSimulatorSettings(list);
+		builder.withThreadAmount(4).withGeneticList(list);
 		builder.withStrategySelector(selector);
 		builder.withPopulationCostFunction(new CostWeightedProductFunction());
 		builder.withPopulationSize(300);
