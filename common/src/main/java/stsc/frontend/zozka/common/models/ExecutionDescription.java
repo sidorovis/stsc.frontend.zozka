@@ -11,7 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import stsc.common.FromToPeriod;
 import stsc.common.algorithms.AlgorithmType;
-import stsc.general.simulator.multistarter.AlgorithmParameters;
+import stsc.general.simulator.multistarter.MultiAlgorithmParameters;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.MpDouble;
 import stsc.general.simulator.multistarter.MpInteger;
@@ -23,7 +23,7 @@ import stsc.general.simulator.multistarter.grid.AlgorithmSettingsGridIterator;
 import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 
 /**
- * {@link ExecutionDescription} is a GUI version of {@link AlgorithmParameters}
+ * {@link ExecutionDescription} is a GUI version of {@link MultiAlgorithmParameters}
  * with {@link AlgorithmType}, {@link #executionName}, {@link #algorithmName} .
  * <br/>
  */
@@ -122,14 +122,14 @@ public final class ExecutionDescription implements Externalizable {
 		return algorithmType;
 	}
 
-	private AlgorithmParameters generateParameters() throws BadParameterException {
-		final AlgorithmParameters parameters = new AlgorithmParameters();
+	private MultiAlgorithmParameters generateParameters() throws BadParameterException {
+		final MultiAlgorithmParameters parameters = new MultiAlgorithmParameters();
 		fillNumberParameters(parameters);
 		fillTextParameters(parameters);
 		return parameters;
 	}
 
-	private void fillTextParameters(AlgorithmParameters parameters) throws BadParameterException {
+	private void fillTextParameters(MultiAlgorithmParameters parameters) throws BadParameterException {
 		for (TextAlgorithmParameter p : textAlgorithms) {
 			if (p.getType().equals(ParameterType.STRING)) {
 				final String name = p.parameterNameProperty().get();
@@ -143,7 +143,7 @@ public final class ExecutionDescription implements Externalizable {
 		}
 	}
 
-	private void fillNumberParameters(AlgorithmParameters parameters) throws BadParameterException {
+	private void fillNumberParameters(MultiAlgorithmParameters parameters) throws BadParameterException {
 		for (NumberAlgorithmParameter p : numberAlgorithms) {
 			if (p.getType().equals(ParameterType.INTEGER)) {
 				final String name = p.parameterNameProperty().get();
