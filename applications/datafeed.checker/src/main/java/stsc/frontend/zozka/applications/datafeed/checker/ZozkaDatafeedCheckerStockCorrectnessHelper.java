@@ -11,7 +11,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import stsc.common.stocks.Stock;
-import stsc.common.stocks.UnitedFormatStock;
+import stsc.common.stocks.united.format.UnitedFormatStock;
 import stsc.frontend.zozka.charts.panes.StockComparePane;
 import stsc.yahoo.liquiditator.StockFilter;
 

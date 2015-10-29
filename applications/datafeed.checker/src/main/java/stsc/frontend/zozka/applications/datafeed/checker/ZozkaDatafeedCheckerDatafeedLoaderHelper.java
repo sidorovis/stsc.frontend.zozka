@@ -16,7 +16,7 @@ import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import stsc.common.stocks.Stock;
-import stsc.common.stocks.UnitedFormatStock;
+import stsc.common.stocks.united.format.UnitedFormatStock;
 import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.common.dialogs.StockListDialog;
 import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
