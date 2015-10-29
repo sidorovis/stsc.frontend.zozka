@@ -72,10 +72,10 @@ public class SimulatorSettingsModelTest {
 			Assert.assertEquals(5472, ss.size());
 			Assert.assertEquals(1, ss.getEodInitializers().size());
 			Assert.assertEquals(3, ss.getStockInitializers().size());
-			Assert.assertEquals("close", ss.getStockInitializers().get(0).current().getString("e"));
-			Assert.assertEquals("close", ss.getStockInitializers().get(1).current().getString("e"));
-			Assert.assertEquals("close", ss.getStockInitializers().get(1).next().getString("e"));
-			Assert.assertEquals("high", ss.getStockInitializers().get(1).current().getString("e"));
+			Assert.assertEquals("close", ss.getStockInitializers().get(0).current().getStringSetting("e", ""));
+			Assert.assertEquals("close", ss.getStockInitializers().get(1).current().getStringSetting("e", ""));
+			Assert.assertEquals("close", ss.getStockInitializers().get(1).next().getStringSetting("e", ""));
+			Assert.assertEquals("high", ss.getStockInitializers().get(1).current().getStringSetting("e", ""));
 			Assert.assertEquals("a2", ss.getStockInitializers().get(2).current().getSubExecutions().get(1));
 		}
 	}
