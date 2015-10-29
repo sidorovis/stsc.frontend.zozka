@@ -12,6 +12,7 @@ import stsc.common.FromToPeriod;
 import stsc.common.Settings;
 import stsc.common.algorithms.AlgorithmSettings;
 import stsc.common.algorithms.AlgorithmType;
+import stsc.common.algorithms.MutatingAlgorithmSettings;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.genetic.GeneticExecutionInitializer;
 
@@ -26,7 +27,7 @@ public class ExecutionDescriptionTest {
 		Assert.assertEquals("testAlgorithm", gei.getAlgorithmName());
 		Assert.assertEquals("testExecution", gei.getExecutionName());
 		for (int i = 0; i < 1000; ++i) {
-			final AlgorithmSettings aSettings = gei.generateRandom();
+			final MutatingAlgorithmSettings aSettings = gei.generateRandom();
 			Assert.assertTrue(10.0 <= aSettings.getDouble("pName").doubleValue());
 			Assert.assertTrue(20.0 >= aSettings.getDouble("pName").doubleValue());
 			Assert.assertEquals(1.5 * ((int) ((aSettings.getDouble("pName").doubleValue() - 10.0) / 1.5)) + 10.0, aSettings.getDouble("pName").doubleValue(),
@@ -43,7 +44,7 @@ public class ExecutionDescriptionTest {
 		Assert.assertEquals("testAlgorithm", gei.getAlgorithmName());
 		Assert.assertEquals("testExecution", gei.getExecutionName());
 		for (int i = 0; i < 1000; ++i) {
-			final AlgorithmSettings aSettings = gei.generateRandom();
+			final MutatingAlgorithmSettings aSettings = gei.generateRandom();
 			Assert.assertTrue(10 <= aSettings.getInteger("pName").intValue());
 			Assert.assertTrue(22 >= aSettings.getInteger("pName").intValue());
 			Assert.assertEquals(3 * ((int) ((aSettings.getInteger("pName").doubleValue() - 10.0) / 3.0)) + 10.0, aSettings.getInteger("pName").doubleValue(),
@@ -60,7 +61,7 @@ public class ExecutionDescriptionTest {
 		Assert.assertEquals("testAlgorithm", gei.getAlgorithmName());
 		Assert.assertEquals("testExecution", gei.getExecutionName());
 		for (int i = 0; i < 1000; ++i) {
-			final AlgorithmSettings aSettings = gei.generateRandom();
+			final MutatingAlgorithmSettings aSettings = gei.generateRandom();
 			Assert.assertTrue(Arrays.asList("asd", "cvb", "tyu").contains(aSettings.getString("pName")));
 		}
 	}
