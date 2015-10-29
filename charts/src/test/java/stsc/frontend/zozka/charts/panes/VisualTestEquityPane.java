@@ -12,8 +12,8 @@ import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.charts.panes.EquityPane;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorImpl;
-import stsc.general.simulator.SimulatorSettings;
-import stsc.general.simulator.SimulatorSettingsImpl;
+import stsc.general.simulator.SimulatorConfiguration;
+import stsc.general.simulator.SimulatorConfigurationImpl;
 import stsc.general.trading.TradeProcessorInit;
 import stsc.storage.mocks.StockStorageMock;
 
@@ -24,7 +24,7 @@ public class VisualTestEquityPane extends Application {
 		final FromToPeriod period = getPeriod();
 		final TradeProcessorInit init = new TradeProcessorInit(yfss, period,
 				"EodExecutions = a1\na1.loadLine = OpenWhileSignalAlgorithm( .Level( f = 0.75d, Diff(.Input(e=close), .Input(e=open)) ) )\n");
-		final SimulatorSettings settings = new SimulatorSettingsImpl(0, init);
+		final SimulatorConfiguration settings = new SimulatorConfigurationImpl(0, init);
 		final Simulator simulator = new SimulatorImpl();
 		simulator.simulateMarketTrading(settings);
 		return simulator;

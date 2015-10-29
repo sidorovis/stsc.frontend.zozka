@@ -11,7 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import stsc.common.FromToPeriod;
 import stsc.common.storage.StockStorage;
-import stsc.general.simulator.SimulatorSettingsImpl;
+import stsc.general.simulator.SimulatorConfigurationImpl;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticFactory;
 import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticListImpl;
@@ -19,7 +19,7 @@ import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridFactory;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 
 /**
- * This class store GUI version of {@link SimulatorSettingsImpl} (+period field and etc.).
+ * This class store GUI version of {@link SimulatorConfigurationImpl} (+period field and etc.).
  */
 public final class SimulatorSettingsModel {
 

@@ -11,20 +11,20 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import stsc.common.FromToPeriod;
 import stsc.common.algorithms.AlgorithmType;
-import stsc.general.simulator.multistarter.MultiAlgorithmParameters;
+import stsc.general.simulator.multistarter.AlgorithmConfigurationSetImpl;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.MpDouble;
 import stsc.general.simulator.multistarter.MpInteger;
 import stsc.general.simulator.multistarter.MpString;
 import stsc.general.simulator.multistarter.MpSubExecution;
-import stsc.general.simulator.multistarter.genetic.AlgorithmSettingsGeneticList;
+import stsc.general.simulator.multistarter.genetic.AlgorithmConfigurationSetGeneticGenerator;
 import stsc.general.simulator.multistarter.genetic.GeneticExecutionInitializer;
 import stsc.general.simulator.multistarter.grid.AlgorithmSettingsGridIterator;
 import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 
 /**
- * {@link ExecutionDescription} is a GUI version of {@link MultiAlgorithmParameters} with {@link AlgorithmType}, {@link #executionName}, {@link #algorithmName}
- * . <br/>
+ * {@link ExecutionDescription} is a GUI version of {@link AlgorithmConfigurationSetImpl} with {@link AlgorithmType}, {@link #executionName},
+ * {@link #algorithmName} . <br/>
  */
 public final class ExecutionDescription implements Externalizable {
 
@@ -113,7 +113,7 @@ public final class ExecutionDescription implements Externalizable {
 	}
 
 	public GeneticExecutionInitializer createGeneticExecution(FromToPeriod period) throws BadParameterException {
-		final AlgorithmSettingsGeneticList settings = new AlgorithmSettingsGeneticList(generateParameters());
+		final AlgorithmConfigurationSetGeneticGenerator settings = new AlgorithmConfigurationSetGeneticGenerator(generateParameters());
 		return new GeneticExecutionInitializer(executionName, algorithmName, settings);
 	}
 
@@ -121,14 +121,14 @@ public final class ExecutionDescription implements Externalizable {
 		return algorithmType;
 	}
 
-	private MultiAlgorithmParameters generateParameters() throws BadParameterException {
-		final MultiAlgorithmParameters parameters = new MultiAlgorithmParameters();
+	private AlgorithmConfigurationSetImpl generateParameters() throws BadParameterException {
+		final AlgorithmConfigurationSetImpl parameters = new AlgorithmConfigurationSetImpl();
 		fillNumberParameters(parameters);
 		fillTextParameters(parameters);
 		return parameters;
 	}
 
-	private void fillTextParameters(MultiAlgorithmParameters parameters) throws BadParameterException {
+	private void fillTextParameters(AlgorithmConfigurationSetImpl parameters) throws BadParameterException {
 		for (TextAlgorithmParameter p : textAlgorithms) {
 			if (p.getType().equals(ParameterType.STRING)) {
 				final String name = p.parameterNameProperty().get();
@@ -142,7 +142,7 @@ public final class ExecutionDescription implements Externalizable {
 		}
 	}
 
-	private void fillNumberParameters(MultiAlgorithmParameters parameters) throws BadParameterException {
+	private void fillNumberParameters(AlgorithmConfigurationSetImpl parameters) throws BadParameterException {
 		for (NumberAlgorithmParameter p : numberAlgorithms) {
 			if (p.getType().equals(ParameterType.INTEGER)) {
 				final String name = p.parameterNameProperty().get();

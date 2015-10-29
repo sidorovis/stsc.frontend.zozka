@@ -12,8 +12,8 @@ import stsc.common.algorithms.BadAlgorithmException;
 import stsc.common.storage.StockStorage;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorImpl;
-import stsc.general.simulator.SimulatorSettings;
-import stsc.general.simulator.SimulatorSettingsImpl;
+import stsc.general.simulator.SimulatorConfiguration;
+import stsc.general.simulator.SimulatorConfigurationImpl;
 import stsc.general.trading.TradeProcessorInit;
 import stsc.storage.mocks.StockStorageMock;
 
@@ -45,7 +45,7 @@ public class CurveTimeSerieSettingTest {
 	public void testCurveTimeSerieSettingForEodAlgorithm() throws BadAlgorithmException, ParseException, BadSignalException {
 		final TradeProcessorInit init = new TradeProcessorInit(stockStorage, getPeriod(), "EodExecutions = a1\na1.loadLine = eod.Adln()\n");
 		final List<String> outEodNames = init.generateOutForEods();
-		final SimulatorSettings settings = new SimulatorSettingsImpl(0, init);
+		final SimulatorConfiguration settings = new SimulatorConfigurationImpl(0, init);
 		final Simulator simulator = new SimulatorImpl();
 		simulator.simulateMarketTrading(settings);
 		final int signalsSize = simulator.getSignalsStorage().getIndexSize("a1");
@@ -59,7 +59,7 @@ public class CurveTimeSerieSettingTest {
 		final TradeProcessorInit init = new TradeProcessorInit(stockStorage, getPeriod(),
 				"EodExecutions = a1\na1.loadLine = OpenWhileSignalAlgorithm( .Level( f = 0.75d, Diff(.Input(e=close), .Input(e=open)) ) )\n");
 		final List<String> outStockNames = init.generateOutForStocks();
-		final SimulatorSettings settings = new SimulatorSettingsImpl(0, init);
+		final SimulatorConfiguration settings = new SimulatorConfigurationImpl(0, init);
 		final Simulator simulator = new SimulatorImpl();
 		simulator.simulateMarketTrading(settings);
 
