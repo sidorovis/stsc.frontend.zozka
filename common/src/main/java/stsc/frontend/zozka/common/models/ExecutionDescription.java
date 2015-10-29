@@ -19,7 +19,7 @@ import stsc.general.simulator.multistarter.MpString;
 import stsc.general.simulator.multistarter.MpSubExecution;
 import stsc.general.simulator.multistarter.genetic.AlgorithmConfigurationSetGeneticGenerator;
 import stsc.general.simulator.multistarter.genetic.GeneticExecutionInitializer;
-import stsc.general.simulator.multistarter.grid.AlgorithmSettingsGridIterator;
+import stsc.general.simulator.multistarter.grid.AlgorithmConfigurationSetGridGenerator;
 import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 
 /**
@@ -108,7 +108,7 @@ public final class ExecutionDescription implements Externalizable {
 	}
 
 	public GridExecutionInitializer createGridExecution(FromToPeriod period) throws BadParameterException {
-		final AlgorithmSettingsGridIterator settings = new AlgorithmSettingsGridIterator(generateParameters());
+		final AlgorithmConfigurationSetGridGenerator settings = new AlgorithmConfigurationSetGridGenerator(generateParameters());
 		return new GridExecutionInitializer(executionName, algorithmName, settings);
 	}
 
