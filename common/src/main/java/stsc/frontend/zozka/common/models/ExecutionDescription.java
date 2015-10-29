@@ -23,9 +23,8 @@ import stsc.general.simulator.multistarter.grid.AlgorithmSettingsGridIterator;
 import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 
 /**
- * {@link ExecutionDescription} is a GUI version of {@link MultiAlgorithmParameters}
- * with {@link AlgorithmType}, {@link #executionName}, {@link #algorithmName} .
- * <br/>
+ * {@link ExecutionDescription} is a GUI version of {@link MultiAlgorithmParameters} with {@link AlgorithmType}, {@link #executionName}, {@link #algorithmName}
+ * . <br/>
  */
 public final class ExecutionDescription implements Externalizable {
 
@@ -109,12 +108,12 @@ public final class ExecutionDescription implements Externalizable {
 	}
 
 	public GridExecutionInitializer createGridExecution(FromToPeriod period) throws BadParameterException {
-		final AlgorithmSettingsGridIterator settings = new AlgorithmSettingsGridIterator(period, false, generateParameters());
+		final AlgorithmSettingsGridIterator settings = new AlgorithmSettingsGridIterator(generateParameters());
 		return new GridExecutionInitializer(executionName, algorithmName, settings);
 	}
 
 	public GeneticExecutionInitializer createGeneticExecution(FromToPeriod period) throws BadParameterException {
-		final AlgorithmSettingsGeneticList settings = new AlgorithmSettingsGeneticList(period, generateParameters());
+		final AlgorithmSettingsGeneticList settings = new AlgorithmSettingsGeneticList(generateParameters());
 		return new GeneticExecutionInitializer(executionName, algorithmName, settings);
 	}
 
