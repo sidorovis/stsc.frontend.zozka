@@ -1,7 +1,6 @@
 package stsc.frontend.zozka.applications.strategy.selector;
 
 import java.io.IOException;
-import java.rmi.UnexpectedException;
 import java.util.Date;
 
 import org.jfree.chart.ChartFactory;
@@ -22,7 +21,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import stsc.common.FromToPeriod;
-import stsc.common.algorithms.BadAlgorithmException;
 import stsc.common.storage.StockStorage;
 import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 import stsc.frontend.zozka.common.models.ObservableStrategySelector;
@@ -31,10 +29,10 @@ import stsc.frontend.zozka.common.panes.strategies.MetricsDrawerImpl;
 import stsc.frontend.zozka.common.panes.strategies.StrategiesPane;
 import stsc.frontend.zozka.components.panes.PeriodAndDatafeedPane;
 import stsc.frontend.zozka.components.simulation.dialogs.CreateSimulatorSettingsDialog;
-import stsc.general.simulator.multistarter.BadParameterException;
+import stsc.general.simulator.multistarter.genetic.settings.distance.SimulatorSettingsIntervalImpl;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.cost.function.CostWeightedSumFunction;
-import stsc.general.strategy.selector.StatisticsWithMetricsClusterDistanceSelector;
+import stsc.general.strategy.selector.StatisticsWithSettingsClusterDistanceSelector;
 import stsc.general.strategy.selector.StrategyFilteringSelector;
 
 public class ZozkaStrategySelector extends Application {
@@ -133,7 +131,7 @@ public class ZozkaStrategySelector extends Application {
 			tab.setContent(pane);
 			tabPane.getTabs().add(tab);
 			tabPane.getSelectionModel().select(tab);
-		} catch (BadAlgorithmException | UnexpectedException | InterruptedException | BadParameterException e) {
+		} catch (Exception e) {
 			new TextAreaDialog(e);
 		}
 	}
@@ -148,15 +146,16 @@ public class ZozkaStrategySelector extends Application {
 		costFunction.withParameter(MetricType.avLoss, -1.0);
 		costFunction.withParameter(MetricType.freq, 1.0);
 		costFunction.withParameter(MetricType.maxLoss, -1.0);
-		final StatisticsWithMetricsClusterDistanceSelector selectorBase = new StatisticsWithMetricsClusterDistanceSelector(10, 20, costFunction);
-		selectorBase.withDistanceParameter(MetricType.winProb, 0.75);
-		selectorBase.withDistanceParameter(MetricType.avGain, 0.075);
-		selectorBase.withDistanceParameter(MetricType.avWin, 0.075);
-		selectorBase.withDistanceParameter(MetricType.startMonthMax, 0.45);
-		selectorBase.withDistanceParameter(MetricType.avLoss, 0.7);
+		final StatisticsWithSettingsClusterDistanceSelector selectorBase = new StatisticsWithSettingsClusterDistanceSelector(50, 20, new SimulatorSettingsIntervalImpl(),
+				costFunction).setEpsilon(25.0);
+		// selectorBase.withDistanceParameter(MetricType.winProb, 0.75);
+		// selectorBase.withDistanceParameter(MetricType.avGain, 0.075);
+		// selectorBase.withDistanceParameter(MetricType.avWin, 0.075);
+		// selectorBase.withDistanceParameter(MetricType.startMonthMax, 0.45);
+		// selectorBase.withDistanceParameter(MetricType.avLoss, 0.7);
 		final StrategyFilteringSelector filteringSelector = new StrategyFilteringSelector(selectorBase);
-		// filteringSelector.withDoubleMinFilter(MetricType.freq, 0.01);
-		// filteringSelector.withDoubleMinFilter(MetricType.winProb, 0.2);
+		filteringSelector.withDoubleMinFilter(MetricType.freq, 0.01);
+		filteringSelector.withDoubleMinFilter(MetricType.winProb, 0.1);
 		final ObservableStrategySelector selector = new ObservableStrategySelector(filteringSelector);
 		return selector;
 	}

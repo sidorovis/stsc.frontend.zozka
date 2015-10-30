@@ -25,12 +25,12 @@ import stsc.frontend.zozka.common.models.SimulationType;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
 import stsc.frontend.zozka.common.models.StatisticsDescription;
 import stsc.frontend.zozka.common.panes.ProgressWithStopPane;
+import stsc.general.simulator.SimulatorFactoryImpl;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.StrategySearcher;
 import stsc.general.simulator.multistarter.StrategySearcher.IndicatorProgressListener;
 import stsc.general.simulator.multistarter.genetic.SimulatorSettingsGeneticListImpl;
 import stsc.general.simulator.multistarter.genetic.StrategyGeneticSearcher;
-import stsc.general.simulator.multistarter.genetic.StrategyGeneticSearcherBuilder;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 import stsc.general.simulator.multistarter.grid.StrategyGridSearcher;
 import stsc.general.statistic.MetricType;
@@ -190,12 +190,14 @@ public final class StrategiesPane extends BorderPane {
 	}
 
 	private StrategyGeneticSearcher createStrategyGeneticSearcher(SimulatorSettingsGeneticListImpl list, ObservableStrategySelector selector) {
-		final StrategyGeneticSearcherBuilder builder = StrategyGeneticSearcher.getBuilder();
-		builder.withThreadAmount(4).withGeneticList(list);
-		builder.withStrategySelector(selector);
-		builder.withPopulationCostFunction(new CostWeightedProductFunction());
-		builder.withPopulationSize(300);
-		return builder.build();
+		return StrategyGeneticSearcher.getBuilder(). //
+				withThreadAmount(4). //
+				withGeneticList(list). //
+				withStrategySelector(selector).//
+				withPopulationCostFunction(new CostWeightedProductFunction()). //
+				withPopulationSize(300). //
+				withSimulatorFactory(new SimulatorFactoryImpl()). //
+				build();
 	}
 
 	private void addListenerOnChanged(ObservableList<TradingStrategy> strategyList) {
