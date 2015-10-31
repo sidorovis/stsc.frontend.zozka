@@ -29,6 +29,7 @@
 	<modules>
 		<module>common</module>
 		<module>charts</module>
+		<module>components</module>
 		<module>applications</module>
 	</modules>
 
