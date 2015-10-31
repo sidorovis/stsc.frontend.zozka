@@ -40,7 +40,7 @@ import stsc.general.strategy.TradingStrategy;
 
 public final class StrategiesPane extends BorderPane {
 
-	private static Metrics METRICS = new Metrics(Metrics.getBuilder());
+	private static Metrics METRICS = Metrics.createEmpty();
 
 	private final ObservableStrategySelector selector;
 	private final MetricsDrawer metricsDrawer;
