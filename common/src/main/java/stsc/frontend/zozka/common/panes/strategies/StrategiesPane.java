@@ -66,8 +66,8 @@ public final class StrategiesPane extends BorderPane {
 		return startCalculation(spb.getPeriod(), spb.getSimulatorSettingsModel(), spb.getStockStorage(), spb.getSimulationType());
 	}
 
-	private StrategySearcher startCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage, SimulationType simulationType)
-			throws BadAlgorithmException, InterruptedException, BadParameterException {
+	private StrategySearcher startCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage,
+			SimulationType simulationType) throws BadAlgorithmException, InterruptedException, BadParameterException {
 		switch (simulationType) {
 		case GENETIC:
 			return startGeneticCalculation(period, settingsModel, stockStorage);
@@ -164,7 +164,11 @@ public final class StrategiesPane extends BorderPane {
 		final SimulatorSettingsGridList list = settingsModel.generateGridSettings(stockStorage, period);
 		checkThatMaxPossibleSizeCorrect(list.size());
 		addListenerOnChanged(selector.getObservableStrategyList());
-		return new StrategyGridSearcher(list, selector, 4);
+
+		return StrategyGridSearcher.getBuilder(). //
+				setSimulatorSettingsGridList(list). //
+				setSelector(selector). //
+				setThreadAmount(4).build();
 	}
 
 	private StrategySearcher startGeneticCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage)
