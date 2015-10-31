@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import stsc.common.FromToPeriod;
 import stsc.common.algorithms.AlgorithmType;
+import stsc.general.simulator.multistarter.AlgorithmConfigurationSet;
 import stsc.general.simulator.multistarter.AlgorithmConfigurationSetImpl;
 import stsc.general.simulator.multistarter.BadParameterException;
 import stsc.general.simulator.multistarter.MpDouble;
@@ -24,7 +25,7 @@ import stsc.general.simulator.multistarter.grid.GridExecutionInitializer;
 
 /**
  * {@link ExecutionDescription} is a GUI version of {@link AlgorithmConfigurationSetImpl} with {@link AlgorithmType}, {@link #executionName},
- * {@link #algorithmName} . <br/>
+ * {@link #algorithmName}. <br/>
  */
 public final class ExecutionDescription implements Externalizable {
 
@@ -43,6 +44,9 @@ public final class ExecutionDescription implements Externalizable {
 		return ed;
 	}
 
+	/**
+	 * Empty value for {@link #loadFromFile(ObjectInputStream)} Factory method.
+	 */
 	private ExecutionDescription() {
 		this.algorithmType = AlgorithmType.STOCK_VALUE;
 		this.executionName = "";
@@ -121,28 +125,14 @@ public final class ExecutionDescription implements Externalizable {
 		return algorithmType;
 	}
 
-	private AlgorithmConfigurationSetImpl generateParameters() throws BadParameterException {
-		final AlgorithmConfigurationSetImpl parameters = new AlgorithmConfigurationSetImpl();
+	private AlgorithmConfigurationSet generateParameters() throws BadParameterException {
+		final AlgorithmConfigurationSet parameters = new AlgorithmConfigurationSetImpl();
 		fillNumberParameters(parameters);
 		fillTextParameters(parameters);
 		return parameters;
 	}
 
-	private void fillTextParameters(AlgorithmConfigurationSetImpl parameters) throws BadParameterException {
-		for (TextAlgorithmParameter p : textAlgorithms) {
-			if (p.getType().equals(ParameterType.STRING)) {
-				final String name = p.parameterNameProperty().get();
-				final List<String> domen = TextAlgorithmParameter.createDomenRepresentation(p.domenProperty().get());
-				parameters.getStrings().add(new MpString(name, domen));
-			} else if (p.getType().equals(ParameterType.SUB_EXECUTION)) {
-				final String name = p.parameterNameProperty().get();
-				final List<String> domen = TextAlgorithmParameter.createDomenRepresentation(p.domenProperty().get());
-				parameters.getSubExecutions().add(new MpSubExecution(name, domen));
-			}
-		}
-	}
-
-	private void fillNumberParameters(AlgorithmConfigurationSetImpl parameters) throws BadParameterException {
+	private void fillNumberParameters(final AlgorithmConfigurationSet parameters) throws BadParameterException {
 		for (NumberAlgorithmParameter p : numberAlgorithms) {
 			if (p.getType().equals(ParameterType.INTEGER)) {
 				final String name = p.parameterNameProperty().get();
@@ -156,6 +146,20 @@ public final class ExecutionDescription implements Externalizable {
 				final Double to = Double.valueOf(p.getTo());
 				final Double step = Double.valueOf(p.getStep());
 				parameters.getDoubles().add(new MpDouble(name, from, to, step));
+			}
+		}
+	}
+
+	private void fillTextParameters(final AlgorithmConfigurationSet parameters) throws BadParameterException {
+		for (TextAlgorithmParameter p : textAlgorithms) {
+			if (p.getType().equals(ParameterType.STRING)) {
+				final String name = p.parameterNameProperty().get();
+				final List<String> domen = TextAlgorithmParameter.createDomenRepresentation(p.domenProperty().get());
+				parameters.getStrings().add(new MpString(name, domen));
+			} else if (p.getType().equals(ParameterType.SUB_EXECUTION)) {
+				final String name = p.parameterNameProperty().get();
+				final List<String> domen = TextAlgorithmParameter.createDomenRepresentation(p.domenProperty().get());
+				parameters.getSubExecutions().add(new MpSubExecution(name, domen));
 			}
 		}
 	}
@@ -201,7 +205,8 @@ public final class ExecutionDescription implements Externalizable {
 			String parameterName = in.readUTF();
 			String type = in.readUTF();
 			String domen = in.readUTF();
-			textAlgorithms.add(new TextAlgorithmParameter(parameterName, ParameterType.findByName(type), TextAlgorithmParameter.createDomenRepresentation(domen)));
+			textAlgorithms
+					.add(new TextAlgorithmParameter(parameterName, ParameterType.findByName(type), TextAlgorithmParameter.createDomenRepresentation(domen)));
 		}
 	}
 

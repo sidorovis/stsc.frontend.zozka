@@ -39,8 +39,7 @@ public final class PeriodAndDatafeedPane extends Pane {
 
 	/**
 	 * On the start should be empty (shows that path was never selected). <br/>
-	 * Should be {@link String} type to have possibility to compare with
-	 * {@link #datafeedPath} field text value.
+	 * Should be {@link String} type to have possibility to compare with {@link #datafeedPath} field text value.
 	 */
 	private Optional<String> datafeed = Optional.empty();
 	private StockStorage stockStorage;

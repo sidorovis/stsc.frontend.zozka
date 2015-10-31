@@ -8,22 +8,25 @@ import java.nio.file.Paths;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import stsc.common.storage.StockStorage;
+import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 
-public class VisualTestDatafeedLoader extends Application {
+/**
+ * This is Visual Test for {@link DatafeedLoader} component.
+ */
+public final class VisualTestDatafeedLoader extends Application {
 
 	private void load(final Stage stage, final Path path) throws Exception {
 		final DatafeedLoader loader = new DatafeedLoader(path);
-		loader.startLoad(rh -> {
+		loader.startLoad(successHandler -> {
 			StockStorage stockStorage;
 			try {
 				stockStorage = loader.getStockStorage();
-				System.out.println(rh);
-				System.out.println(stockStorage);
+				new TextAreaDialog(successHandler.toString(), stockStorage.getStockNames().toString());
 			} catch (Exception e) {
-				e.printStackTrace();
+				new TextAreaDialog(e);
 			}
-		} , eh -> {
-			System.out.println(eh);
+		} , exitHandler -> {
+			new TextAreaDialog("", exitHandler.toString());
 		});
 	}
 

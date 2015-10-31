@@ -16,8 +16,7 @@ import stsc.yahoo.YahooDatafeedSettings;
 import stsc.yahoo.YahooFileStockStorage;
 
 /**
- * {@link YahooFileStockStorage} loader with GUI representation. Created as
- * progress bar.
+ * {@link YahooFileStockStorage} loader with GUI representation. Created as progress bar.
  */
 public final class DatafeedLoader {
 
@@ -39,6 +38,7 @@ public final class DatafeedLoader {
 		this.loadThread.start();
 
 		final Alert loadDialog = new Alert(AlertType.INFORMATION, "Wait for datafeed load...", ButtonType.CLOSE);
+		loadDialog.setWidth(400);
 		loadDialog.setTitle("Datafeed loading process");
 		loadDialog.setHeaderText(null);
 		loadDialog.getDialogPane().setContent(progressBar);

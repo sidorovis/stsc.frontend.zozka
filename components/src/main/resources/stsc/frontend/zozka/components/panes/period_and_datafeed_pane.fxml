@@ -7,23 +7,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<VBox prefHeight="60.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8"
-	xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="60.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<BorderPane prefHeight="29.0" prefWidth="600.0">
 			<left>
-				<Label prefHeight="21.0" prefWidth="69.0" text="Datafeed:"
-					BorderPane.alignment="CENTER">
+				<Label prefHeight="21.0" prefWidth="69.0" text="Datafeed:" BorderPane.alignment="CENTER">
 					<BorderPane.margin>
 						<Insets left="5.0" />
 					</BorderPane.margin>
 				</Label>
 			</left>
 			<center>
-				<Label fx:id="datafeedPath" maxHeight="1.7976931348623157E308"
-					maxWidth="1.7976931348623157E308" onMouseClicked="#datafeedEdit"
-					prefHeight="21.0" prefWidth="531.0" text="./test_data"
-					BorderPane.alignment="CENTER" />
+				<Label fx:id="datafeedPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#datafeedEdit" prefHeight="21.0" prefWidth="531.0" text="./" BorderPane.alignment="CENTER" />
 			</center>
 		</BorderPane>
 		<HBox prefHeight="0.0" prefWidth="544.0">
@@ -33,8 +28,7 @@
 						<Insets left="5.0" top="5.0" />
 					</HBox.margin>
 				</Label>
-				<DatePicker fx:id="fromPeriod" prefHeight="31.0"
-					prefWidth="142.0">
+				<DatePicker fx:id="fromPeriod" prefHeight="31.0" prefWidth="142.0">
 					<HBox.margin>
 						<Insets bottom="3.0" left="5.0" />
 					</HBox.margin>

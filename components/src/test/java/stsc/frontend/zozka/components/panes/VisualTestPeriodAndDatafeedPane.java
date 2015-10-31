@@ -7,12 +7,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import stsc.frontend.zozka.common.dialogs.TextAreaDialog;
 
-public class VisualTestPeriodAndDatafeedPane extends Application {
+/**
+ * This is Visual Test for {@link PeriodAndDatafeedPane} GUI component. <br/>
+ * Usage: please select some folder and dates at the dialog with pane then click 'Test Save' button. <br/>
+ * At the result it should try to load Yahoo Datafeed from selected folder and show loaded stock names at the {@link TextAreaDialog}.
+ */
+public final class VisualTestPeriodAndDatafeedPane extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		final PeriodAndDatafeedPane periodAndDatafeedPane = new PeriodAndDatafeedPane(stage);
-		BorderPane pane = new BorderPane();
+		final BorderPane pane = new BorderPane();
 		pane.setCenter(periodAndDatafeedPane.getGui());
 		final Button save = new Button("Test Save");
 		pane.setBottom(save);
@@ -21,11 +26,12 @@ public class VisualTestPeriodAndDatafeedPane extends Application {
 		stage.show();
 		save.setOnAction(eh -> {
 			periodAndDatafeedPane.loadStockStorage(loadStockHandler -> {
-				new TextAreaDialog("Load stock storage test results",
-						"Results are: \n" + loadStockHandler.getEventType() + "\n" + periodAndDatafeedPane.getStockStorage().getStockNames().toString());
+				new TextAreaDialog("Load stock storage test results", //
+						"Results are: \n" + loadStockHandler.getEventType() + "\n" + //
+								"Dates: " + periodAndDatafeedPane.getPeriod().getFrom() + " -> " + periodAndDatafeedPane.getPeriod().getTo() + "\n" + //
+								periodAndDatafeedPane.getStockStorage().getStockNames().toString());
 			});
 		});
-
 	}
 
 	public static void main(String[] args) {

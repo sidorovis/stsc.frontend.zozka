@@ -5,11 +5,10 @@ import javafx.scene.control.ProgressBar;
 import stsc.common.system.BackgroundProcess;
 
 /**
- * {@link ProgressBarTask} is an {@link Task} implementation with updating of
- * GUI {@link ProgressBar} with selected period of time. It should be started in
- * parallel thread.
+ * {@link ProgressBarTask} is an {@link Task} implementation with updating of GUI {@link ProgressBar} with selected period of time. <br/>
+ * It should be started in parallel thread.
  */
-public final class ProgressBarTask extends Task<Integer> {
+final class ProgressBarTask extends Task<Integer> {
 
 	private final int sleepTimeBetweenUpdates;
 	private final BackgroundProcess<?, ?> backgroundProcess;
