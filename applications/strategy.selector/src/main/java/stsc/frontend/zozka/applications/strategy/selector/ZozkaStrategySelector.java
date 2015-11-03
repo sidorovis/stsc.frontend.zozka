@@ -126,6 +126,7 @@ public class ZozkaStrategySelector extends Application {
 					setSimulatorSettingsModel(simulatorSettingsController.getModel()). //
 					setMetricsDrawer(new MetricsDrawerImpl(chart)). //
 					setObservableStrategySelector(createSelector()). //
+					setCostFunction(createCostFunction()). //
 					build();
 			final Tab tab = new Tab(tabName + "(" + (new Date()) + ")");
 			tab.setContent(pane);
@@ -137,27 +138,34 @@ public class ZozkaStrategySelector extends Application {
 	}
 
 	private ObservableStrategySelector createSelector() {
-		final CostWeightedSumFunction costFunction = new CostWeightedSumFunction();
-		costFunction.withParameter(MetricType.winProb, 4.0);
-		costFunction.withParameter(MetricType.ddValueAvGain, -1.0);
-		costFunction.withParameter(MetricType.avGain, 1.0);
-		costFunction.withParameter(MetricType.kelly, 1.0);
-		costFunction.withParameter(MetricType.avWin, 1.0);
-		costFunction.withParameter(MetricType.avLoss, -1.0);
-		costFunction.withParameter(MetricType.freq, 1.0);
-		costFunction.withParameter(MetricType.maxLoss, -1.0);
-		final StatisticsWithSettingsClusterDistanceSelector selectorBase = new StatisticsWithSettingsClusterDistanceSelector(50, 20, new SimulatorSettingsIntervalImpl(),
-				costFunction).setEpsilon(25.0);
+		final CostWeightedSumFunction costFunction = createCostFunction();
+		final StatisticsWithSettingsClusterDistanceSelector selectorBase = new StatisticsWithSettingsClusterDistanceSelector(50, 20,
+				new SimulatorSettingsIntervalImpl(), costFunction).setEpsilon(25.0);
 		// selectorBase.withDistanceParameter(MetricType.winProb, 0.75);
 		// selectorBase.withDistanceParameter(MetricType.avGain, 0.075);
 		// selectorBase.withDistanceParameter(MetricType.avWin, 0.075);
 		// selectorBase.withDistanceParameter(MetricType.startMonthMax, 0.45);
 		// selectorBase.withDistanceParameter(MetricType.avLoss, 0.7);
 		final StrategyFilteringSelector filteringSelector = new StrategyFilteringSelector(selectorBase);
-		filteringSelector.withDoubleMinFilter(MetricType.freq, 0.01);
-		filteringSelector.withDoubleMinFilter(MetricType.winProb, 0.1);
+		// filteringSelector.withDoubleMinFilter(MetricType.freq, 0.01);
+		// filteringSelector.withDoubleMinFilter(MetricType.winProb, 0.1);
 		final ObservableStrategySelector selector = new ObservableStrategySelector(filteringSelector);
 		return selector;
+	}
+
+	private CostWeightedSumFunction createCostFunction() {
+		final CostWeightedSumFunction costFunction = new CostWeightedSumFunction();
+		costFunction.withParameter(MetricType.winProb, 4.0);
+		costFunction.withParameter(MetricType.ddValueAverage, -1.0);
+		costFunction.withParameter(MetricType.avGain, 1.0);
+		costFunction.withParameter(MetricType.avWin, 1.0);
+		costFunction.withParameter(MetricType.avLoss, -1.0);
+		costFunction.withParameter(MetricType.freq, 1.0);
+		costFunction.withParameter(MetricType.maxLoss, -1.0);
+		costFunction.withParameter(MetricType.ddValueAverage, -2.0);
+		costFunction.withParameter(MetricType.ddDurationAverage, -2.0);
+		costFunction.withParameter(MetricType.avWinAvLoss, 1.0);
+		return costFunction;
 	}
 
 	private void fillBottomPart() {

@@ -10,11 +10,11 @@ import stsc.frontend.zozka.common.models.ObservableStrategySelector;
 import stsc.frontend.zozka.common.models.SimulationType;
 import stsc.frontend.zozka.common.models.SimulatorSettingsModel;
 import stsc.general.simulator.multistarter.BadParameterException;
+import stsc.general.statistic.cost.function.CostFunction;
 
 /**
  * Builder class for {@link StrategiesPane}. <br/>
- * All getters are package private - so only {@link StrategiesPane} coudl get
- * them.
+ * All getters are package private - so only {@link StrategiesPane} coudl get them.
  */
 public final class StrategiesPaneBuilder {
 
@@ -25,6 +25,9 @@ public final class StrategiesPaneBuilder {
 	private SimulationType simulationType;
 
 	private ObservableStrategySelector observableStrategySelector;
+	private CostFunction createCostFunction;
+
+	private int threadAmount = 4;
 
 	/**
 	 * could be created only from {@link StrategiesPane} static method
@@ -87,6 +90,24 @@ public final class StrategiesPaneBuilder {
 
 	public StrategiesPaneBuilder setMetricsDrawer(MetricsDrawer metricsDrawer) {
 		this.metricsDrawer = metricsDrawer;
+		return this;
+	}
+
+	public CostFunction getCreateCostFunction() {
+		return createCostFunction;
+	}
+
+	public StrategiesPaneBuilder setCostFunction(CostFunction createCostFunction) {
+		this.createCostFunction = createCostFunction;
+		return this;
+	}
+
+	public int getThreadAmount() {
+		return threadAmount;
+	}
+
+	public StrategiesPaneBuilder setThreadAmount(int threadAmount) {
+		this.threadAmount = threadAmount;
 		return this;
 	}
 

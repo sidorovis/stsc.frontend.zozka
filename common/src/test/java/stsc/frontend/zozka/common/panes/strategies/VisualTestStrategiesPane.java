@@ -46,7 +46,7 @@ public class VisualTestStrategiesPane extends Application {
 	private ObservableStrategySelector createSelector() {
 		final CostWeightedSumFunction costFunction = new CostWeightedSumFunction();
 		costFunction.withParameter(MetricType.winProb, 4.0);
-		costFunction.withParameter(MetricType.ddValueAvGain, -1.0);
+		costFunction.withParameter(MetricType.ddValueAverage, -1.0);
 		costFunction.withParameter(MetricType.avGain, 1.0);
 		costFunction.withParameter(MetricType.kelly, 1.0);
 		costFunction.withParameter(MetricType.avWin, 1.0);
@@ -85,6 +85,7 @@ public class VisualTestStrategiesPane extends Application {
 				setSimulationType(SimulationType.GRID). //
 				setObservableStrategySelector(createSelector()). //
 				setMetricsDrawer(new MetricsDrawerImpl(chart)). //
+				setThreadAmount(4). //
 				build();
 
 		chartPane.getItems().add(sp);

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.Validate;
+
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -35,7 +37,7 @@ import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 import stsc.general.simulator.multistarter.grid.StrategyGridSearcher;
 import stsc.general.statistic.MetricType;
 import stsc.general.statistic.Metrics;
-import stsc.general.statistic.cost.function.CostWeightedProductFunction;
+import stsc.general.statistic.cost.function.CostFunction;
 import stsc.general.strategy.TradingStrategy;
 
 public final class StrategiesPane extends BorderPane {
@@ -47,6 +49,9 @@ public final class StrategiesPane extends BorderPane {
 
 	private final ObservableList<StatisticsDescription> model = FXCollections.observableArrayList();
 	private final ProgressWithStopPane controlPane;
+	private final CostFunction costFunction;
+	private final int threadAmount;
+
 	private final TableView<StatisticsDescription> table = new TableView<>();
 
 	public static StrategiesPaneBuilder getBuilder() {
@@ -54,9 +59,15 @@ public final class StrategiesPane extends BorderPane {
 	}
 
 	StrategiesPane(final StrategiesPaneBuilder spb) throws BadAlgorithmException, UnexpectedException, InterruptedException, BadParameterException {
+		Validate.notNull(spb.getObservableStrategySelector());
+		Validate.notNull(spb.getMetricsDrawer());
+		Validate.notNull(spb.getCreateCostFunction());
+
 		this.selector = spb.getObservableStrategySelector();
 		this.metricsDrawer = spb.getMetricsDrawer();
 		this.controlPane = new ProgressWithStopPane();
+		this.costFunction = spb.getCreateCostFunction();
+		this.threadAmount = spb.getThreadAmount();
 		createTopElements();
 		createEmptyTable();
 		setupControlPane(startCalculation(spb));
@@ -107,7 +118,13 @@ public final class StrategiesPane extends BorderPane {
 			column.setEditable(false);
 			table.getColumns().add(column);
 		}
-
+		{
+			final TableColumn<StatisticsDescription, Number> column = new TableColumn<>();
+			column.setCellValueFactory(cellData -> cellData.getValue().getCostFunctionResult());
+			column.setText("<Cost Function>");
+			column.setEditable(false);
+			table.getColumns().add(column);
+		}
 		for (Map.Entry<MetricType, Integer> e : METRICS.getIntegerMetrics().entrySet()) {
 			final TableColumn<StatisticsDescription, Number> column = new TableColumn<>();
 			column.setCellValueFactory(cellData -> cellData.getValue().getProperty(e.getKey()));
@@ -168,7 +185,8 @@ public final class StrategiesPane extends BorderPane {
 		return StrategyGridSearcher.getBuilder(). //
 				setSimulatorSettingsGridList(list). //
 				setSelector(selector). //
-				setThreadAmount(4).build();
+				setThreadAmount(threadAmount). //
+				build();
 	}
 
 	private StrategySearcher startGeneticCalculation(FromToPeriod period, SimulatorSettingsModel settingsModel, StockStorage stockStorage)
@@ -195,10 +213,10 @@ public final class StrategiesPane extends BorderPane {
 
 	private StrategyGeneticSearcher createStrategyGeneticSearcher(SimulatorSettingsGeneticListImpl list, ObservableStrategySelector selector) {
 		return StrategyGeneticSearcher.getBuilder(). //
-				withThreadAmount(4). //
+				withThreadAmount(threadAmount). //
 				withGeneticList(list). //
 				withStrategySelector(selector).//
-				withPopulationCostFunction(new CostWeightedProductFunction()). //
+				withPopulationCostFunction(costFunction). //
 				withPopulationSize(300). //
 				withSimulatorFactory(new SimulatorFactoryImpl()). //
 				build();
@@ -225,8 +243,9 @@ public final class StrategiesPane extends BorderPane {
 			while (change.next()) {
 				if (change.wasAdded()) {
 					for (TradingStrategy ts : change.getAddedSubList()) {
+						final double tradingStrategyCost = costFunction.calculate(ts.getMetrics());
 						Platform.runLater(() -> {
-							model.add(new StatisticsDescription(ts));
+							model.add(new StatisticsDescription(ts, tradingStrategyCost));
 						});
 					}
 				}

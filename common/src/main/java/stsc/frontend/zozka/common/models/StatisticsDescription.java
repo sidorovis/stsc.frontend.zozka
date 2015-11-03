@@ -7,19 +7,24 @@ import stsc.general.statistic.Metrics;
 import stsc.general.strategy.TradingStrategy;
 
 /**
- * This is Zozka GUI model for {@link StrategiesPane} table. Used to create
- * Trading Strategy description table with selected {@link Metrics}.
+ * This is Zozka GUI model for {@link StrategiesPane} table. Used to create Trading Strategy description table with selected {@link Metrics}.
  */
 public final class StatisticsDescription {
 
 	private final TradingStrategy tradingStrategy;
+	private final Double costFunctionResult;
 
-	public StatisticsDescription(final TradingStrategy tradingStrategy) {
+	public StatisticsDescription(final TradingStrategy tradingStrategy, final Double costFunctionResult) {
 		this.tradingStrategy = tradingStrategy;
+		this.costFunctionResult = costFunctionResult;
 	}
 
 	public long getId() {
 		return tradingStrategy.getSettings().getId();
+	}
+
+	public SimpleDoubleProperty getCostFunctionResult() {
+		return new SimpleDoubleProperty(costFunctionResult);
 	}
 
 	public SimpleDoubleProperty getProperty(final MetricType metricType) {
