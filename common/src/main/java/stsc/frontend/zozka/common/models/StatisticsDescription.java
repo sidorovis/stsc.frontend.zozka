@@ -24,11 +24,15 @@ public final class StatisticsDescription {
 	}
 
 	public SimpleDoubleProperty getCostFunctionResult() {
-		return new SimpleDoubleProperty(costFunctionResult);
+		return new SimpleDoubleProperty(trimDouble(costFunctionResult));
 	}
 
 	public SimpleDoubleProperty getProperty(final MetricType metricType) {
-		return new SimpleDoubleProperty(tradingStrategy.getMetrics().getMetric(metricType));
+		return new SimpleDoubleProperty(trimDouble(tradingStrategy.getMetrics().getMetric(metricType)));
+	}
+
+	private double trimDouble(double value) {
+		return Math.ceil(value * 1000000.0) / 1000000.0;
 	}
 
 	@Override

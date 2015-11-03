@@ -3,7 +3,6 @@ package stsc.frontend.zozka.common.panes.strategies;
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 
@@ -36,13 +35,10 @@ import stsc.general.simulator.multistarter.genetic.StrategyGeneticSearcher;
 import stsc.general.simulator.multistarter.grid.SimulatorSettingsGridList;
 import stsc.general.simulator.multistarter.grid.StrategyGridSearcher;
 import stsc.general.statistic.MetricType;
-import stsc.general.statistic.Metrics;
 import stsc.general.statistic.cost.function.CostFunction;
 import stsc.general.strategy.TradingStrategy;
 
 public final class StrategiesPane extends BorderPane {
-
-	private static Metrics METRICS = Metrics.createEmpty();
 
 	private final ObservableStrategySelector selector;
 	private final MetricsDrawer metricsDrawer;
@@ -62,6 +58,7 @@ public final class StrategiesPane extends BorderPane {
 		Validate.notNull(spb.getObservableStrategySelector());
 		Validate.notNull(spb.getMetricsDrawer());
 		Validate.notNull(spb.getCreateCostFunction());
+		Validate.isTrue(spb.getThreadAmount() > 0, "Thread amount should be bigger then zero.");
 
 		this.selector = spb.getObservableStrategySelector();
 		this.metricsDrawer = spb.getMetricsDrawer();
@@ -88,7 +85,6 @@ public final class StrategiesPane extends BorderPane {
 	}
 
 	private void setupControlPane(final StrategySearcher strategySearcher) throws UnexpectedException {
-
 		controlPane.setOnStopButtonAction(() -> {
 			strategySearcher.stopSearch();
 		});
@@ -114,7 +110,7 @@ public final class StrategiesPane extends BorderPane {
 		{
 			final TableColumn<StatisticsDescription, Number> column = new TableColumn<>();
 			column.setCellValueFactory(cellData -> new SimpleIntegerProperty((int) cellData.getValue().getId()));
-			column.setText("Id");
+			column.setText("ID");
 			column.setEditable(false);
 			table.getColumns().add(column);
 		}
@@ -125,18 +121,10 @@ public final class StrategiesPane extends BorderPane {
 			column.setEditable(false);
 			table.getColumns().add(column);
 		}
-		for (Map.Entry<MetricType, Integer> e : METRICS.getIntegerMetrics().entrySet()) {
+		for (MetricType mt : MetricType.values()) {
 			final TableColumn<StatisticsDescription, Number> column = new TableColumn<>();
-			column.setCellValueFactory(cellData -> cellData.getValue().getProperty(e.getKey()));
-			column.setText(e.getKey().name());
-			column.setEditable(false);
-			table.getColumns().add(column);
-		}
-
-		for (Map.Entry<MetricType, Double> e : METRICS.getDoubleMetrics().entrySet()) {
-			final TableColumn<StatisticsDescription, Number> column = new TableColumn<>();
-			column.setCellValueFactory(cellData -> cellData.getValue().getProperty(e.getKey()));
-			column.setText(e.getKey().name());
+			column.setCellValueFactory(cellData -> cellData.getValue().getProperty(mt));
+			column.setText(mt.name());
 			column.setEditable(false);
 			table.getColumns().add(column);
 		}
