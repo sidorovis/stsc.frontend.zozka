@@ -9,7 +9,7 @@ import stsc.general.strategy.selector.BorderedStrategySelector;
 import stsc.general.strategy.selector.StrategySelector;
 
 /**
- * This class provide adapter for {@link StrategySelector} to JavaFx {@link ObservableList}.
+ * Adapter for {@link StrategySelector} to JavaFx {@link ObservableList}.
  */
 public final class ObservableStrategySelector extends BorderedStrategySelector {
 

@@ -1,8 +1,6 @@
 package stsc.frontend.zozka.common.panes.strategies;
 
 import java.rmi.UnexpectedException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 
@@ -38,13 +36,26 @@ import stsc.general.statistic.MetricType;
 import stsc.general.statistic.cost.function.CostFunction;
 import stsc.general.strategy.TradingStrategy;
 
+/**
+ * This is a complicated GUI component for strategy search mechanism. <br/>
+ * Currently could work with {@link StrategyGridSearcher} and {@link StrategyGeneticSearcher}. <br/>
+ * Represented as table of {@link TradingStrategy} (GUI object: {@link StatisticsDescription}). <br/>
+ * Also require {@link MetricsDrawer} GUI component for drawing selected by user {@link TradingStrategy} from table. <br/>
+ * Table consist next columns: <br/>
+ * <ID> - personal id of the strategy. <br/>
+ * <Cost Function> - result double value for CostFunction (could be the same as used at {@link ObservableStrategySelector}) - just to sort strategies in any
+ * convenient way. <br/>
+ * {@link MetricType}'s into order that was defined at the {@link MetricType} enumeration. <br/>
+ * User can see selected by pre-specified selector strategies into convinient table view, observe any strategy details (using one click and double click
+ * actions).
+ */
 public final class StrategiesPane extends BorderPane {
 
 	private final ObservableStrategySelector selector;
 	private final MetricsDrawer metricsDrawer;
 
 	private final ObservableList<StatisticsDescription> model = FXCollections.observableArrayList();
-	private final ProgressWithStopPane controlPane;
+	private final ProgressWithStopPane progressPane;
 	private final CostFunction costFunction;
 	private final int threadAmount;
 
@@ -62,7 +73,7 @@ public final class StrategiesPane extends BorderPane {
 
 		this.selector = spb.getObservableStrategySelector();
 		this.metricsDrawer = spb.getMetricsDrawer();
-		this.controlPane = new ProgressWithStopPane();
+		this.progressPane = new ProgressWithStopPane();
 		this.costFunction = spb.getCreateCostFunction();
 		this.threadAmount = spb.getThreadAmount();
 		createTopElements();
@@ -85,7 +96,7 @@ public final class StrategiesPane extends BorderPane {
 	}
 
 	private void setupControlPane(final StrategySearcher strategySearcher) throws UnexpectedException {
-		controlPane.setOnStopButtonAction(() -> {
+		progressPane.setOnStopButtonAction(() -> {
 			strategySearcher.stopSearch();
 		});
 		strategySearcher.addIndicatorProgress(new IndicatorProgressListener() {
@@ -93,9 +104,9 @@ public final class StrategiesPane extends BorderPane {
 			public void processed(double percent) {
 				Platform.runLater(() -> {
 					if (Double.compare(1.0, percent) <= 0) {
-						controlPane.hide();
+						progressPane.hide();
 					} else {
-						controlPane.setIndicatorProgress(percent);
+						progressPane.setIndicatorProgress(percent);
 					}
 				});
 			}
@@ -103,7 +114,7 @@ public final class StrategiesPane extends BorderPane {
 	}
 
 	private void createTopElements() {
-		this.setTop(controlPane);
+		this.setTop(progressPane);
 	}
 
 	private void createEmptyTable() {
@@ -211,44 +222,12 @@ public final class StrategiesPane extends BorderPane {
 	}
 
 	private void addListenerOnChanged(ObservableList<TradingStrategy> strategyList) {
-		strategyList.addListener(new ListChangeListener<TradingStrategy>() {
-			@Override
-			public void onChanged(ListChangeListener.Change<? extends TradingStrategy> c) {
-				processOnChanged(c);
-			}
-		});
+		strategyList.addListener(new StatisticsDescriptionObservableModelUpdater(model, costFunction));
 	}
 
 	private void checkThatMaxPossibleSizeCorrect(long maxPossibleSize) throws BadAlgorithmException {
 		if (maxPossibleSize == 0) {
 			throw new BadAlgorithmException("Simulation Settings Grid size equal to Zero.");
-		}
-	}
-
-	protected void processOnChanged(ListChangeListener.Change<? extends TradingStrategy> listChange) {
-		synchronized (model) {
-			final ListChangeListener.Change<? extends TradingStrategy> change = listChange;
-			while (change.next()) {
-				if (change.wasAdded()) {
-					for (TradingStrategy ts : change.getAddedSubList()) {
-						final double tradingStrategyCost = costFunction.calculate(ts.getMetrics());
-						Platform.runLater(() -> {
-							model.add(new StatisticsDescription(ts, tradingStrategyCost));
-						});
-					}
-				}
-				if (change.wasRemoved()) {
-					final List<Long> idsToDelete = new ArrayList<Long>();
-					for (TradingStrategy tsRemoved : change.getRemoved()) {
-						idsToDelete.add(tsRemoved.getSettings().getId());
-					}
-					Platform.runLater(() -> {
-						model.removeIf(p -> {
-							return idsToDelete.contains(p.getId());
-						});
-					});
-				}
-			}
 		}
 	}
 }
