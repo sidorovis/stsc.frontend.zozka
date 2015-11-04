@@ -24,12 +24,15 @@ import stsc.general.strategy.selector.StatisticsWithMetricsClusterDistanceSelect
 import stsc.general.strategy.selector.StrategyFilteringSelector;
 import stsc.storage.mocks.StockStorageMock;
 
-public class VisualTestStrategiesPane extends Application {
+/**
+ * Visual Test for {@link StrategiesPane}.
+ */
+public final class VisualTestStrategiesPane extends Application {
 
 	@Rule
 	public TemporaryFolder testFolder = new TemporaryFolder();
 
-	final SplitPane chartPane = new SplitPane();
+	private final SplitPane chartPane = new SplitPane();
 
 	private JFreeChart addChartPane() {
 		final JFreeChart chart = ChartFactory.createTimeSeriesChart("", "Time", "Value", null, true, false, false);
@@ -44,15 +47,7 @@ public class VisualTestStrategiesPane extends Application {
 	}
 
 	private ObservableStrategySelector createSelector() {
-		final CostWeightedSumFunction costFunction = new CostWeightedSumFunction();
-		costFunction.withParameter(MetricType.winProb, 4.0);
-		costFunction.withParameter(MetricType.ddValueAverage, -1.0);
-		costFunction.withParameter(MetricType.avGain, 1.0);
-		costFunction.withParameter(MetricType.kelly, 1.0);
-		costFunction.withParameter(MetricType.avWin, 1.0);
-		costFunction.withParameter(MetricType.avLoss, -1.0);
-		costFunction.withParameter(MetricType.freq, 1.0);
-		costFunction.withParameter(MetricType.maxLoss, -1.0);
+		final CostWeightedSumFunction costFunction = createCostFunction();
 		final StatisticsWithMetricsClusterDistanceSelector selectorBase = new StatisticsWithMetricsClusterDistanceSelector(10, 20, costFunction);
 		selectorBase.withDistanceParameter(MetricType.winProb, 0.75);
 		selectorBase.withDistanceParameter(MetricType.avGain, 0.075);
@@ -64,6 +59,19 @@ public class VisualTestStrategiesPane extends Application {
 		// filteringSelector.withDoubleMinFilter(MetricType.winProb, 0.2);
 		final ObservableStrategySelector selector = new ObservableStrategySelector(filteringSelector);
 		return selector;
+	}
+
+	private CostWeightedSumFunction createCostFunction() {
+		final CostWeightedSumFunction costFunction = new CostWeightedSumFunction();
+		costFunction.withParameter(MetricType.winProb, 4.0);
+		costFunction.withParameter(MetricType.ddValueAverage, -1.0);
+		costFunction.withParameter(MetricType.avGain, 1.0);
+		costFunction.withParameter(MetricType.kelly, 1.0);
+		costFunction.withParameter(MetricType.avWin, 1.0);
+		costFunction.withParameter(MetricType.avLoss, -1.0);
+		costFunction.withParameter(MetricType.freq, 1.0);
+		costFunction.withParameter(MetricType.maxLoss, -1.0);
+		return costFunction;
 	}
 
 	@Override
@@ -86,6 +94,7 @@ public class VisualTestStrategiesPane extends Application {
 				setObservableStrategySelector(createSelector()). //
 				setMetricsDrawer(new MetricsDrawerImpl(chart)). //
 				setThreadAmount(4). //
+				setCostFunction(createCostFunction()). //
 				build();
 
 		chartPane.getItems().add(sp);
