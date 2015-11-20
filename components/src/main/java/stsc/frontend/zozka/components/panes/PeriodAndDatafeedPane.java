@@ -51,6 +51,11 @@ public final class PeriodAndDatafeedPane extends Pane {
 	@FXML
 	private DatePicker toPeriod;
 
+	public PeriodAndDatafeedPane(final Stage owner, String defaultPath) throws IOException {
+		this(owner);
+		this.datafeedPath.setText(defaultPath);
+	}
+
 	public PeriodAndDatafeedPane(final Stage owner) throws IOException {
 		this.owner = owner;
 		final URL location = getClass().getResource("period_and_datafeed_pane.fxml");

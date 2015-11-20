@@ -59,7 +59,7 @@ public final class ZozkaStrategyVisualiser extends Application {
 
 	private void fillTopPart() throws IOException {
 		final BorderPane pane = new BorderPane();
-		periodAndDatafeedController = new PeriodAndDatafeedPane(owner);
+		periodAndDatafeedController = new PeriodAndDatafeedPane(owner, "d:\\_yahoo_datafeed");
 		pane.setTop(periodAndDatafeedController.getGui());
 		pane.setCenter(textArea);
 		textArea.setText("StockExecutions = a1\na1.loadLine=Input()\n");
