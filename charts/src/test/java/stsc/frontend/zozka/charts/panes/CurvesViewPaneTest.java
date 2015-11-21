@@ -21,7 +21,7 @@ public class CurvesViewPaneTest {
 		final CurvesViewPane curvesViewPane = CurvesViewPane.createPaneForAdjectiveClose(aapl);
 		Assert.assertEquals(2, curvesViewPane.getTableModel().size());
 		Assert.assertEquals(1, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getSeriesCount());
-		Assert.assertEquals(7429, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getItemCount(0));
+		Assert.assertEquals(8792, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getItemCount(0));
 		jfxPanel.setEnabled(false);
 	}
 
@@ -32,7 +32,7 @@ public class CurvesViewPaneTest {
 		final CurvesViewPane curvesViewPane = CurvesViewPane.createPaneForAdjectiveClose(aapl, visualTestCurvesViewPane.getPeriod());
 		Assert.assertEquals(2, curvesViewPane.getTableModel().size());
 		Assert.assertEquals(1, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getSeriesCount());
-		Assert.assertEquals(4030, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getItemCount(0));
+		Assert.assertEquals(4028, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getItemCount(0));
 		jfxPanel.setEnabled(false);
 	}
 
@@ -47,10 +47,10 @@ public class CurvesViewPaneTest {
 		final CurvesViewPane curvesViewPane = CurvesViewPane.createPaneForOnStockAlgorithm(aapl, visualTestCurvesViewPane.getPeriod(), executionsName, signalsStorage);
 		Assert.assertEquals(4, curvesViewPane.getTableModel().size());
 		Assert.assertEquals(1, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getSeriesCount());
-		Assert.assertEquals(4031, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getItemCount(0));
-		Assert.assertEquals(4031, curvesViewPane.getTableModel().get(1).getTimeSeriesCollection().getItemCount(0));
-		Assert.assertEquals(4031, curvesViewPane.getTableModel().get(2).getTimeSeriesCollection().getItemCount(0));
-		Assert.assertEquals(764, curvesViewPane.getTableModel().get(3).getTimeSeriesCollection().getItemCount(0));
+		Assert.assertEquals(4030, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getItemCount(0));
+		Assert.assertEquals(4030, curvesViewPane.getTableModel().get(1).getTimeSeriesCollection().getItemCount(0));
+		Assert.assertEquals(4030, curvesViewPane.getTableModel().get(2).getTimeSeriesCollection().getItemCount(0));
+		Assert.assertEquals(51, curvesViewPane.getTableModel().get(3).getTimeSeriesCollection().getItemCount(0));
 		jfxPanel.setEnabled(false);
 	}
 
@@ -64,7 +64,7 @@ public class CurvesViewPaneTest {
 		final CurvesViewPane curvesViewPane = CurvesViewPane.createPaneForOnEodAlgorithm(visualTestCurvesViewPane.getPeriod(), executionsName, signalsStorage);
 		Assert.assertEquals(1, curvesViewPane.getTableModel().size());
 		Assert.assertEquals(1, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getSeriesCount());
-		Assert.assertEquals(4031, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getItemCount(0));
+		Assert.assertEquals(4030, curvesViewPane.getTableModel().get(0).getTimeSeriesCollection().getItemCount(0));
 
 		jfxPanel.setEnabled(false);
 	}

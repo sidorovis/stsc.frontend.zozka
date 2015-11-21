@@ -16,11 +16,12 @@ public class DatasetForStockTest {
 	public void testDatasetForStock() {
 		final DatasetForStock dfs = new DatasetForStock(stockStorage.getStock("aapl").get());
 		Assert.assertEquals(1, dfs.getSeriesCount());
-		Assert.assertEquals(2.91, dfs.getOpenValue(0, 0), Settings.doubleEpsilon);
-		Assert.assertEquals(2.95063, dfs.getHighValue(0, 0), Settings.doubleEpsilon);
-		Assert.assertEquals(2.882547, dfs.getLowValue(0, 0), Settings.doubleEpsilon);
-		Assert.assertEquals(2.91, dfs.getCloseValue(0, 0), Settings.doubleEpsilon);
-		Assert.assertEquals(2981600.0, dfs.getVolumeValue(0, 0), Settings.doubleEpsilon);
+		Assert.assertEquals(8792, dfs.getItemCount(0));
+		Assert.assertEquals(0.438207, dfs.getOpenValue(0, 0), Settings.doubleEpsilon);
+		Assert.assertEquals(0.440112, dfs.getHighValue(0, 0), Settings.doubleEpsilon);
+		Assert.assertEquals(0.415344, dfs.getLowValue(0, 1), Settings.doubleEpsilon);
+		Assert.assertEquals(0.438207, dfs.getCloseValue(0, 0), Settings.doubleEpsilon);
+		Assert.assertEquals(117258400.0, dfs.getVolumeValue(0, 0), Settings.doubleEpsilon);
 		for (int i = 0; i <= dfs.getItemCount(0); ++i) {
 			Assert.assertNotNull(dfs.getOpen(0, i));
 			Assert.assertNotNull(dfs.getHigh(0, i));

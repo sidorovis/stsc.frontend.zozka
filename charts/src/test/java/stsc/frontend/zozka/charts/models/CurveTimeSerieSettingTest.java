@@ -65,7 +65,7 @@ public class CurveTimeSerieSettingTest {
 
 		final CurveTimeSerieSetting curveTimeSerieSetting = new CurveTimeSerieSetting(outStockNames.get(0), "aapl", 4, simulator.getSignalsStorage());
 		Assert.assertEquals(1, curveTimeSerieSetting.getTimeSeriesCollection().getSeriesCount());
-		Assert.assertEquals(7430, curveTimeSerieSetting.getTimeSeriesCollection().getItemCount(0));
+		Assert.assertEquals(8764, curveTimeSerieSetting.getTimeSeriesCollection().getItemCount(0));
 	}
 
 }
