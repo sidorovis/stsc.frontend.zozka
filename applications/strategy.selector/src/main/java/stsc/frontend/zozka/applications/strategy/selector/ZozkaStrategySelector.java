@@ -147,7 +147,7 @@ public class ZozkaStrategySelector extends Application {
 		// selectorBase.withDistanceParameter(MetricType.startMonthMax, 0.45);
 		// selectorBase.withDistanceParameter(MetricType.avLoss, 0.7);
 		final StrategyFilteringSelector filteringSelector = new StrategyFilteringSelector(selectorBase);
-		// filteringSelector.withDoubleMinFilter(MetricType.freq, 0.01);
+		filteringSelector.withDoubleMinFilter(MetricType.freq, 0.001);
 		// filteringSelector.withDoubleMinFilter(MetricType.winProb, 0.1);
 		final ObservableStrategySelector selector = new ObservableStrategySelector(filteringSelector);
 		return selector;

@@ -78,7 +78,7 @@ public final class CreateSimulatorSettingsDialog {
 		if (!model.isEmpty()) {
 			final Alert alert = new Alert(AlertType.CONFIRMATION, "Do you want to erase exist model?", ButtonType.YES, ButtonType.NO);
 			final Optional<ButtonType> result = alert.showAndWait();
-			if (!result.isPresent() || !result.equals(ButtonType.YES)) {
+			if (!result.isPresent() || !result.get().equals(ButtonType.YES)) {
 				return;
 			}
 		}
