@@ -18,8 +18,8 @@ import stsc.common.storage.SignalsStorage;
 import stsc.common.storage.StockStorage;
 import stsc.general.simulator.Simulator;
 import stsc.general.simulator.SimulatorImpl;
-import stsc.general.simulator.SimulatorConfiguration;
-import stsc.general.simulator.SimulatorConfigurationImpl;
+import stsc.general.simulator.Execution;
+import stsc.general.simulator.ExecutionImpl;
 import stsc.general.trading.TradeProcessorInit;
 import stsc.storage.mocks.StockStorageMock;
 
@@ -77,7 +77,7 @@ public class VisualTestCurvesViewPane extends Application {
 	 * for test purpose
 	 */
 	SignalsStorage getSignalsStorage(TradeProcessorInit init) throws Exception {
-		final SimulatorConfiguration settings = new SimulatorConfigurationImpl(0, init, new HashSet<String>(Arrays.asList(new String[] { getStock().getInstrumentName() })));
+		final Execution settings = new ExecutionImpl(0, init, new HashSet<String>(Arrays.asList(new String[] { getStock().getInstrumentName() })));
 		final Simulator simulator = new SimulatorImpl();
 		simulator.simulateMarketTrading(settings);
 		return simulator.getSignalsStorage();
